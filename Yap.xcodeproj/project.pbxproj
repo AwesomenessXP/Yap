@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3511BCBC2B77E34700ADB53E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3511BCBB2B77E34700ADB53E /* Info.plist */; };
 		3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBD2B77E34E00ADB53E /* LocationManager.swift */; };
 		3511BCC02B77E35500ADB53E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBF2B77E35500ADB53E /* RootView.swift */; };
 		E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C392B77304D00150AF4 /* YapApp.swift */; };
-		E7A81C3C2B77304D00150AF4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C3B2B77304D00150AF4 /* ContentView.swift */; };
 		E7A81C3E2B77304F00150AF4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C3D2B77304F00150AF4 /* Assets.xcassets */; };
 		E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */; };
 		E7A81C4B2B77304F00150AF4 /* YapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C4A2B77304F00150AF4 /* YapTests.swift */; };
@@ -37,12 +35,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3511BCBB2B77E34700ADB53E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3511BCBD2B77E34E00ADB53E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		3511BCBF2B77E35500ADB53E /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		E7A81C362B77304D00150AF4 /* Yap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A81C392B77304D00150AF4 /* YapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YapApp.swift; sourceTree = "<group>"; };
-		E7A81C3B2B77304D00150AF4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E7A81C3D2B77304F00150AF4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E7A81C462B77304F00150AF4 /* YapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,8 +97,6 @@
 			isa = PBXGroup;
 			children = (
 				E7A81C392B77304D00150AF4 /* YapApp.swift */,
-				E7A81C3B2B77304D00150AF4 /* ContentView.swift */,
-				3511BCBB2B77E34700ADB53E /* Info.plist */,
 				3511BCBD2B77E34E00ADB53E /* LocationManager.swift */,
 				3511BCBF2B77E35500ADB53E /* RootView.swift */,
 				E7A81C3D2B77304F00150AF4 /* Assets.xcassets */,
@@ -216,7 +210,7 @@
 				};
 			};
 			buildConfigurationList = E7A81C312B77304D00150AF4 /* Build configuration list for PBXProject "Yap" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -242,7 +236,6 @@
 			files = (
 				E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */,
 				E7A81C3E2B77304F00150AF4 /* Assets.xcassets in Resources */,
-				3511BCBC2B77E34700ADB53E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +261,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3511BCC02B77E35500ADB53E /* RootView.swift in Sources */,
-				E7A81C3C2B77304D00150AF4 /* ContentView.swift in Sources */,
 				E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */,
 				3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */,
 			);
@@ -359,7 +351,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -416,7 +408,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -434,14 +426,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = Y9KP4W8TWP;
+				DEVELOPMENT_TEAM = 84AMP4NSAF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Yap/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -463,14 +457,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = Y9KP4W8TWP;
+				DEVELOPMENT_TEAM = 84AMP4NSAF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Yap/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
