@@ -23,7 +23,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func requestLocation() {
-        manager.startUpdatingLocation()
+        manager.requestLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -37,7 +37,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 newDist = ("\(locations[locations.count-1].distance(from: locations[locations.count-2]))")
             }
         }
-        print("\(locations)")
+        print("Locations: \(locations)")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
