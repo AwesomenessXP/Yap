@@ -10,7 +10,7 @@ import CoreLocation
 import CoreLocationUI
 
 struct RootView: View {
-    @ObservedObject var locationManager = LocationManager()
+    @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
         VStack {
@@ -34,11 +34,10 @@ struct RootView: View {
                 .cornerRadius(20)
             }
         }
-        .onAppear() {
-        }
     }
 }
 
 #Preview {
     RootView()
+        .environmentObject(LocationManager())
 }

@@ -5,7 +5,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     @Published var degrees: Double = 0
     @Published var location: CLLocation?
-    
+    @Published var region: CLCircularRegion?
+    let radius: CLLocationDistance = 200.0
+        
     override init() {
         super.init()
         manager.delegate = self
@@ -25,6 +27,12 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         location = locations.last
+        if let location = location {
+            region = CLCircularRegion(center: location.coordinate, radius: radius, identifier: "MyCircularRegion")
+            if let region = region {
+                print("Circular Region: \(region)")
+            }
+        }
         print("\(locations)")
     }
     
