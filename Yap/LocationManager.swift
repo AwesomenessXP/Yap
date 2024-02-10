@@ -7,14 +7,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var locations: [CLLocation]?
     @Published var region: CLCircularRegion?
     @Published var newDist: String?
-    let radius: CLLocationDistance = 200.0
+    let radius: CLLocationDistance = 222.638
         
     override init() {
         super.init()
         manager.delegate = self
         manager.startUpdatingHeading()
         manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        manager.requestAlwaysAuthorization()
+        manager.requestWhenInUseAuthorization()
         print("\(manager.accuracyAuthorization)")
     }
     
