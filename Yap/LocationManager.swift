@@ -1,11 +1,11 @@
 import SwiftUI
 import CoreLocation
+import MapKit
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     @Published var degrees: Double = 0
     @Published var locations: [CLLocation]?
-    @Published var region: CLCircularRegion?
     @Published var newDist: String?
     let radius: CLLocationDistance = 222.638
         
@@ -29,10 +29,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.locations = locations
         if let locations = self.locations {
-            region = CLCircularRegion(center: locations[locations.count-1].coordinate, radius: radius, identifier: "MyCircularRegion")
-            if let region = region {
-                print("Circular Region: \(region)")
-            }
             if locations.count >= 2 {
                 newDist = ("\(locations[locations.count-1].distance(from: locations[locations.count-2]))")
             }
@@ -46,5 +42,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func checkLocationAuthorization() -> CLAuthorizationStatus {
         return manager.authorizationStatus
+    }
+    
+    func createGridRegion(centerCoordinate: CLLocationCoordinate2D, spanDegrees: CLLocationDegrees) -> MKCoordinateRegion {
+        let region = MKCoordinateRegion(center: centerCoordinate, latitudinalMeters: spanDegrees * 111000, longitudinalMeters: spanDegrees * 111000)
+        return region
     }
 }
