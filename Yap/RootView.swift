@@ -56,43 +56,35 @@ struct RootView: View {
     let currentUser = User(id: 1, name: "You")
     
     var body: some View {
-        VStack {
-            HStack {
-                Text("Yap")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
+        NavigationStack{
+            VStack {
+                HStack {
+                    Spacer()
+                    Text("Yap")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
+                    
+                    Image(systemName: "megaphone")
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                    Spacer()
+                    NavigationLink {
+                        SettingPage()
+                                    } label: {
+                                        Image(systemName: "gear")
+                                            .foregroundColor(Color.white)
+                                    }
+                }
+                .padding()
+                .background(Color.black)
                 
-                Image(systemName: "megaphone")
-                    .font(.system(size: 30))
-                    .foregroundColor(.white)
-            }
-            .padding()
-            .background(Color.black)
-            
-            ScrollView {
-                ForEach(messages, id: \.message) { userMessage in
-                    if userMessage.user.id == currentUser.id {
-                        // User message
-                        HStack {
-                            Spacer()
-                            Text(userMessage.message)
-                                .padding()
-                                .foregroundColor(Color.white)
-                                .background(Color.gray.opacity(0.15))
-                                .cornerRadius(10)
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 10)
-                        }
-                    } else {
-                        // Bot message
-                        VStack(alignment: .leading) {
-                            Text(userMessage.user.name)
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .padding(.leading, 32)
-                            
+                ScrollView {
+                    ForEach(messages, id: \.message) { userMessage in
+                        if userMessage.user.id == currentUser.id {
+                            // User message
                             HStack {
+                                Spacer()
                                 Text(userMessage.message)
                                     .padding()
                                     .foregroundColor(Color.white)
@@ -100,35 +92,54 @@ struct RootView: View {
                                     .cornerRadius(10)
                                     .padding(.horizontal, 16)
                                     .padding(.bottom, 10)
-                                Spacer()
+                            }
+                        } else {
+                            // Bot message
+                            VStack(alignment: .leading) {
+                                Text(userMessage.user.name)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                    .padding(.leading, 32)
+                                
+                                HStack {
+                                    Text(userMessage.message)
+                                        .padding()
+                                        .foregroundColor(Color.white)
+                                        .background(Color.gray.opacity(0.15))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal, 16)
+                                        .padding(.bottom, 10)
+                                    Spacer()
+                                }
                             }
                         }
-                    }
-                }.rotationEffect(.degrees(180))
-            }
-            .rotationEffect(.degrees(180))
-            .background(Color.black.opacity(0.9))
-            
-            HStack {
-                TextField("Type something", text: $messageText)
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
-                    .foregroundColor(.white)
-                
-                Button {
-                    sendMessage(message: messageText)
-                } label: {
-                    Image(systemName: "paperplane.fill")
-                        .foregroundColor(.white)
+                    }.rotationEffect(.degrees(180))
                 }
-                .font(.system(size: 26))
-                .padding(.horizontal, 10)
+                .rotationEffect(.degrees(180))
+                .background(Color.black.opacity(0.9))
+                
+                HStack {
+                    TextField("Type something", text: $messageText)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        .foregroundColor(.white)
+                    
+                    Button {
+                        sendMessage(message: messageText)
+                    } label: {
+                        Image(systemName: "paperplane.fill")
+                            .foregroundColor(.white)
+                    }
+                    .font(.system(size: 26))
+                    .padding(.horizontal, 10)
+                }
+                .padding()
+                .background(Color.black)
             }
-            .padding()
-            .background(Color.black)
+            .background(Color.black.edgesIgnoringSafeArea(.all))
         }
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+
     }
     
     func sendMessage(message: String) {
