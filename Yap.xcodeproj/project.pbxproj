@@ -10,6 +10,7 @@
 		20FBDEEA2B8499FA00107807 /* SettingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FBDEE92B8499FA00107807 /* SettingPage.swift */; };
 		3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBD2B77E34E00ADB53E /* LocationManager.swift */; };
 		3511BCC02B77E35500ADB53E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBF2B77E35500ADB53E /* RootView.swift */; };
+		35898B0E2B858AB0008A96F6 /* Convex in Frameworks */ = {isa = PBXBuildFile; productRef = 35898B0D2B858AB0008A96F6 /* Convex */; };
 		E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C392B77304D00150AF4 /* YapApp.swift */; };
 		E7A81C3E2B77304F00150AF4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C3D2B77304F00150AF4 /* Assets.xcassets */; };
 		E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */; };
@@ -55,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35898B0E2B858AB0008A96F6 /* Convex in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +151,9 @@
 			dependencies = (
 			);
 			name = Yap;
+			packageProductDependencies = (
+				35898B0D2B858AB0008A96F6 /* Convex */,
+			);
 			productName = Yap;
 			productReference = E7A81C362B77304D00150AF4 /* Yap.app */;
 			productType = "com.apple.product-type.application";
@@ -221,6 +226,9 @@
 				Base,
 			);
 			mainGroup = E7A81C2D2B77304D00150AF4;
+			packageReferences = (
+				35898B0C2B858AB0008A96F6 /* XCRemoteSwiftPackageReference "convex-swift" */,
+			);
 			productRefGroup = E7A81C372B77304D00150AF4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -606,6 +614,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		35898B0C2B858AB0008A96F6 /* XCRemoteSwiftPackageReference "convex-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MathieuTricoire/convex-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		35898B0D2B858AB0008A96F6 /* Convex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35898B0C2B858AB0008A96F6 /* XCRemoteSwiftPackageReference "convex-swift" */;
+			productName = Convex;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E7A81C2E2B77304D00150AF4 /* Project object */;
 }

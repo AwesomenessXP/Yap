@@ -5,6 +5,7 @@
 //  Created by Haskell Macaraig on 2/9/24.
 //
 
+import Convex
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
@@ -15,46 +16,20 @@ struct User {
 }
 
 struct RootView: View {
-    // able to access location with location manager, look at commented
-    // code for example
     @EnvironmentObject var locationManager: LocationManager
-    private let timerInterval: TimeInterval = 1.0
+    @Environment(\.convexClient) private var client
+
     
-//    var body: some View {
-// -------- USE THIS AS AN EXAMPLE TO GET USER LOCATION //////
-// ---------------------------------------------------- /////
-        
-//        VStack {
-//            if let myLocation = locationManager.locations {
-//                Text("Latitude: \(myLocation[myLocation.count-1].coordinate.latitude)")
-//                Text("Longitude: \(myLocation[myLocation.count-1].coordinate.longitude)")
-//                Text("Horiz Accuracy: \(myLocation[myLocation.count-1].horizontalAccuracy)")
-//                Text("Vert Accuracy: \(myLocation[myLocation.count-1].verticalAccuracy)")
-//                Text("Time: \(myLocation[myLocation.count-1].timestamp)")
-//                if let dist = locationManager.newDist {
-//                    Text("Distance from previous location: \(dist)")
-//                }
-//            } else {
-//                Text("Get location update")
-//                LocationButton {
-//                    locationManager.requestLocation()
-//                }
-//                .labelStyle(.iconOnly)
-//                .cornerRadius(20)
-//            }
-//        }
-//        .onAppear {
-//            // Start the timer when the view appears
-//            Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-//                locationManager.requestLocation()
-//            }
-//        }
-//    }
+    private let timerInterval: TimeInterval = 1.0
     
     @State private var messageText = ""
     @State var messages: [(user: User, message: String)] = [(User(id: 0, name: "Bot"), "Welcome to Chat Bot 2.0!")]
+
     let currentUser = User(id: 1, name: "You")
-    
+    @State var latitude: Double = 0.0
+    @State var longitude: Double = 0.0
+    @ConvexQuery(\.listMessages, args: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)]) private var messages_convex
+
     var body: some View {
         NavigationStack{
             VStack {
@@ -141,6 +116,8 @@ struct RootView: View {
             // Start the timer when the view appears
             Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
                 locationManager.requestLocation()
+                latitude = Double(locationManager.locations?.last?.coordinate.latitude ?? 0.0)
+                longitude = Double(locationManager.locations?.last?.coordinate.longitude ?? 0.0)
             }
         }
 
