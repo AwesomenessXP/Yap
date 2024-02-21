@@ -14,7 +14,6 @@ struct RootView: View {
 
     private let timerInterval: TimeInterval = 10.0
     @State private var messageText = ""
-    @State var messages: [(user: User, message: String)] = [(User(id: 0, name: "Bot"), "Welcome to Chat Bot 2.0!")]
 
     let currentUser = User(id: 1, name: "You")
     @State var latitude: Double = 0.0
@@ -147,7 +146,6 @@ struct RootView: View {
         if let message = parsed_message {
             let message = "\(message)"
             withAnimation {
-                messages.append((user: currentUser, message: message))
                 self.messageText = ""
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -159,10 +157,6 @@ struct RootView: View {
         }
     }
 
-
-    func getBotResponse(message: String) -> String {
-        return "Echo: \(message)"
-    }
 }
 
 struct MessageView: View {
