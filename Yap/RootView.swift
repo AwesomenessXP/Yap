@@ -12,11 +12,11 @@ struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.convexClient) private var client
 
-    private let timerInterval: TimeInterval = 10.0
+    private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
     @State var messages: [(user: User, message: String)] = [(User(id: 0, name: "Bot"), "Welcome to Chat Bot 2.0!")]
 
-    let currentUser = User(id: 1, name: "You")
+    let currentUser = User(id: 1, name: "HASKMONEY")
     @State var latitude: Double = 0.0
     @State var longitude: Double = 0.0
 
@@ -79,15 +79,18 @@ struct RootView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
                 .foregroundColor(.white)
-
-            LocationButton {
+            
+            Button {
                 Task {
                     await sendMessage(message: messageText)
                 }
                 locationManager.requestLocation()
+            } label: {
+                Image(systemName: "paperplane.fill")
+                    .foregroundColor(.white)
             }
-            .labelStyle(.iconOnly)
-            .cornerRadius(20)
+            .font(.system(size: 26))
+            .padding(.horizontal, 10)
         }
         .padding()
         .background(Color.black)
