@@ -81,8 +81,10 @@ struct RootView: View {
                 .foregroundColor(.white)
 
             LocationButton {
-                sendMessage(message: messageText)
-                locationManager.requestLocation()
+                Task {
+                    await sendMessage(message: messageText)
+                    locationManager.requestLocation()
+                }
             }
             .labelStyle(.iconOnly)
             .cornerRadius(20)
@@ -143,8 +145,9 @@ struct RootView: View {
     func sendMessage(message: String) async {
         var parsed_message = await fetchMessage(message: message)
         if let message = parsed_message {
+            let message = "\(message)"
             withAnimation {
-                messages.append((user: currentUser, message: String(message)))
+                messages.append((user: currentUser, message: message))
                 self.messageText = ""
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
