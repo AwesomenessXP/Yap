@@ -122,11 +122,7 @@ struct RootView: View {
             }
         }
     }
-    
 
-    func getBotResponse(message: String) -> String {
-        return "Echo: \(message)"
-    }
 }
 
 struct MessageView: View {
