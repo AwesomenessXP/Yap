@@ -1,10 +1,4 @@
-//
-//  ContentView.swift
-//  Yap
-//
-//  Created by Haskell Macaraig on 2/9/24.
-//
-
+import Convex
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
@@ -15,158 +9,204 @@ struct User {
 }
 
 struct RootView: View {
-    // able to access location with location manager, look at commented
-    // code for example
     @EnvironmentObject var locationManager: LocationManager
-    private let timerInterval: TimeInterval = 1.0
-    
-//    var body: some View {
-// -------- USE THIS AS AN EXAMPLE TO GET USER LOCATION //////
-// ---------------------------------------------------- /////
-        
-//        VStack {
-//            if let myLocation = locationManager.locations {
-//                Text("Latitude: \(myLocation[myLocation.count-1].coordinate.latitude)")
-//                Text("Longitude: \(myLocation[myLocation.count-1].coordinate.longitude)")
-//                Text("Horiz Accuracy: \(myLocation[myLocation.count-1].horizontalAccuracy)")
-//                Text("Vert Accuracy: \(myLocation[myLocation.count-1].verticalAccuracy)")
-//                Text("Time: \(myLocation[myLocation.count-1].timestamp)")
-//                if let dist = locationManager.newDist {
-//                    Text("Distance from previous location: \(dist)")
-//                }
-//            } else {
-//                Text("Get location update")
-//                LocationButton {
-//                    locationManager.requestLocation()
-//                }
-//                .labelStyle(.iconOnly)
-//                .cornerRadius(20)
-//            }
-//        }
-//        .onAppear {
-//            // Start the timer when the view appears
-//            Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-//                locationManager.requestLocation()
-//            }
-//        }
-//    }
-    
+    @Environment(\.convexClient) private var client
+
+    private let timerInterval: TimeInterval = 10.0
     @State private var messageText = ""
     @State var messages: [(user: User, message: String)] = [(User(id: 0, name: "Bot"), "Welcome to Chat Bot 2.0!")]
+
     let currentUser = User(id: 1, name: "You")
-    
+    @State var latitude: Double = 0.0
+    @State var longitude: Double = 0.0
+
+    // Assuming ConvexQuery initialization needs simplification
+    // Placeholder for @ConvexQuery to illustrate without direct dynamic updates
+    @ConvexQuery(\.listMessages, args: ["lat": Value(floatLiteral: 0.0), "long": Value(floatLiteral: 0.0)]) private var messages_convex
+
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             VStack {
-                HStack {
-                    Spacer()
-                    Text("Yap")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.white)
-                    
-                    Image(systemName: "megaphone")
-                        .font(.system(size: 30))
-                        .foregroundColor(.white)
-                    Spacer()
-                    NavigationLink {
-                        SettingPage()
-                                    } label: {
-                                        Image(systemName: "gear")
-                                            .foregroundColor(Color.white)
-                                    }
-                }
-                .padding()
-                .background(Color.black)
-                
-                ScrollView {
-                    ForEach(messages, id: \.message) { userMessage in
-                        if userMessage.user.id == currentUser.id {
-                            // User message
-                            HStack {
-                                Spacer()
-                                Text(userMessage.message)
-                                    .padding()
-                                    .foregroundColor(Color.white)
-                                    .background(Color.gray.opacity(0.15))
-                                    .cornerRadius(10)
-                                    .padding(.horizontal, 16)
-                                    .padding(.bottom, 10)
-                            }
-                        } else {
-                            // Bot message
-                            VStack(alignment: .leading) {
-                                Text(userMessage.user.name)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .padding(.leading, 32)
-                                
-                                HStack {
-                                    Text(userMessage.message)
-                                        .padding()
-                                        .foregroundColor(Color.white)
-                                        .background(Color.gray.opacity(0.15))
-                                        .cornerRadius(10)
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 10)
-                                    Spacer()
-                                }
-                            }
-                        }
-                    }.rotationEffect(.degrees(180))
-                }
-                .rotationEffect(.degrees(180))
-                .background(Color.black.opacity(0.9))
-                
-                HStack {
-                    TextField("Type something", text: $messageText)
-                        .padding()
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(10)
-                        .foregroundColor(.white)
-                    
-                    LocationButton {
-                        sendMessage(message: messageText)
-                        locationManager.requestLocation()
-                    }
-                    .labelStyle(.iconOnly)
-                    .cornerRadius(20)
-                }
-                .padding()
-                .background(Color.black)
+                headerView
+                messagesView
+                inputField
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
         }
         .onAppear {
-            // Start the timer when the view appears
-            Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-                locationManager.requestLocation()
+            startLocationUpdates()
+        }
+    }
+
+    var headerView: some View {
+        HStack {
+            Spacer()
+            Text("Yap")
+                .font(.title)
+                .bold()
+                .foregroundColor(.white)
+
+            Image(systemName: "megaphone")
+                .font(.system(size: 30))
+                .foregroundColor(.white)
+            Spacer()
+            NavigationLink(destination: SettingPage()) {
+                Image(systemName: "gear").foregroundColor(Color.white)
             }
         }
+        .padding()
+        .background(Color.black)
+    }
 
+    var messagesView: some View {
+        ScrollView {
+            // Assuming this simplification for demonstration
+            if case let .array(messages_convex) = messages_convex {
+                ForEach(messages_convex, id: \.[dynamicMember: "_id"]) { message in
+                    MessageView(message: message, currentUser: currentUser)
+                }
+                .rotationEffect(.degrees(180))
+            }
+        }
+        .rotationEffect(.degrees(180))
+        .background(Color.black.opacity(0.9))
+    }
+
+    var inputField: some View {
+        HStack {
+            TextField("Type something", text: $messageText)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+                .foregroundColor(.white)
+
+            LocationButton {
+                Task {
+                    await sendMessage(message: messageText)
+                }
+                locationManager.requestLocation()
+            }
+            .labelStyle(.iconOnly)
+            .cornerRadius(20)
+        }
+        .padding()
+        .background(Color.black)
+    }
+
+    func startLocationUpdates() {
+        Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { _ in
+            self.updateLocation()
+        }
+    }
+
+    func updateLocation() {
+//        Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
+            locationManager.requestLocation()
+            latitude = Double(locationManager.locations?.last?.coordinate.latitude ?? 0.0)
+            longitude = Double(locationManager.locations?.last?.coordinate.longitude ?? 0.0)
+            $messages_convex.updateArgsAndSubscribe(newArgs: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)], client: client)
+            
+                print("hi")
+//                print(messages_convex)
+
+//        }
     }
     
-    func sendMessage(message: String) {
-        withAnimation {
-            // Append messages with currentUser, no username prefix for user messages
-            messages.append((user: currentUser, message: message))
-            self.messageText = ""
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation {
-                    messages.append((user: User(id: 0, name: "Haskell"), message: getBotResponse(message: message)))
+    struct customString: ExpressibleByStringLiteral {
+        let value: String
+        
+        init(stringLiteral value: String) {
+            self.value = value
+        }
+    }
+    
+    func fetchMessage(message: String) async -> Value? {
+        do {
+            // Ensure client is unwrapped safely to avoid try? which can suppress errors.
+            if let client = self.client {
+                // Execute the mutation and handle errors appropriately.
+                return try await client.mutation(path: "myFunctions:sendMessage",
+                                          args: [
+                                              "display_name": Value(stringLiteral: self.currentUser.name),
+                                              "message": Value(stringLiteral: message),
+                                              "lat": Value(floatLiteral: self.latitude),
+                                              "long": Value(floatLiteral: self.longitude),
+                                              "user_id": Value(stringLiteral: String(self.currentUser.id))
+                                          ])
+            }
+        } catch {
+            // Handle or log error appropriately
+            print("Error sending message: \(error)")
+            return nil
+        }
+        return nil
+    }
+    
+    func sendMessage(message: String) async {
+        let parsed_message = await fetchMessage(message: message)
+        if let message = parsed_message {
+            let message = "\(message)"
+            withAnimation {
+                messages.append((user: currentUser, message: message))
+                self.messageText = ""
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation {
+                        
+                    }
                 }
             }
         }
     }
-    
+
+
     func getBotResponse(message: String) -> String {
-        // Simulate bot response logic
         return "Echo: \(message)"
     }
 }
+
+struct MessageView: View {
+    var message: Value
+    var currentUser: User
+
+    var body: some View {
+        if message.user_id?.description == currentUser.id.description {
+            HStack {
+                Spacer()
+                Text(message.message?.description ?? "")
+                    .padding()
+                    .foregroundColor(Color.white)
+                    .background(Color.gray.opacity(0.15))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 10)
+            }
+        } else {
+            VStack(alignment: .leading) {
+                Text(message.display_name?.description ?? "")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.leading, 32)
+
+                HStack {
+                    Text(message.message?.description ?? "")
+                        .padding()
+                        .foregroundColor(Color.white)
+                        .background(Color.gray.opacity(0.15))
+                        .cornerRadius(10)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 10)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
+// Note: The SettingPage struct needs to be defined elsewhere in your code.
 
 #Preview {
     RootView()
         .environmentObject(LocationManager())
 }
+
