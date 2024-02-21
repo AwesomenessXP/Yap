@@ -83,8 +83,8 @@ struct RootView: View {
             LocationButton {
                 Task {
                     await sendMessage(message: messageText)
-                    locationManager.requestLocation()
                 }
+                locationManager.requestLocation()
             }
             .labelStyle(.iconOnly)
             .cornerRadius(20)
@@ -143,7 +143,7 @@ struct RootView: View {
     }
     
     func sendMessage(message: String) async {
-        var parsed_message = await fetchMessage(message: message)
+        let parsed_message = await fetchMessage(message: message)
         if let message = parsed_message {
             let message = "\(message)"
             withAnimation {
