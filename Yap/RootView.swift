@@ -125,19 +125,23 @@ struct RootView: View {
                         .cornerRadius(10)
                         .foregroundColor(.white)
                     
-                    Button {
+                    LocationButton {
                         sendMessage(message: messageText)
-                    } label: {
-                        Image(systemName: "paperplane.fill")
-                            .foregroundColor(.white)
+                        locationManager.requestLocation()
                     }
-                    .font(.system(size: 26))
-                    .padding(.horizontal, 10)
+                    .labelStyle(.iconOnly)
+                    .cornerRadius(20)
                 }
                 .padding()
                 .background(Color.black)
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
+        }
+        .onAppear {
+            // Start the timer when the view appears
+            Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
+                locationManager.requestLocation()
+            }
         }
 
     }
