@@ -131,7 +131,7 @@ struct RootView: View {
                                               "message": Value(stringLiteral: message),
                                               "lat": Value(floatLiteral: self.latitude),
                                               "long": Value(floatLiteral: self.longitude),
-                                              "user_id": Value(integerLiteral: self.currentUser.id)
+                                              "user_id": Value(stringLiteral: String(self.currentUser.id))
                                           ])
             }
         } catch {
