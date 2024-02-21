@@ -28,8 +28,15 @@ struct RootView: View {
     let currentUser = User(id: 1, name: "You")
     @State var latitude: Double = 0.0
     @State var longitude: Double = 0.0
-    @ConvexQuery(\.listMessages, args: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)]) private var messages_convex
+    @ConvexQuery(\.listMessages, args: ["lat": Value(floatLiteral: 0.0), "long": Value(floatLiteral: 0.0)]) private var messages_convex
 
+    private let dateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .short
+        return dateFormatter
+    }()
+    
     var body: some View {
         NavigationStack{
             VStack {
@@ -53,46 +60,49 @@ struct RootView: View {
                 }
                 .padding()
                 .background(Color.black)
-                
-                ScrollView {
-                    ForEach(messages, id: \.message) { userMessage in
-                        if userMessage.user.id == currentUser.id {
-                            // User message
-                            HStack {
-                                Spacer()
-                                Text(userMessage.message)
-                                    .padding()
-                                    .foregroundColor(Color.white)
-                                    .background(Color.gray.opacity(0.15))
-                                    .cornerRadius(10)
-                                    .padding(.horizontal, 16)
-                                    .padding(.bottom, 10)
-                            }
-                        } else {
-                            // Bot message
-                            VStack(alignment: .leading) {
-                                Text(userMessage.user.name)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .padding(.leading, 32)
-                                
+                if case let .array(messages_convex) = messages_convex {
+                    
+                    ScrollView {
+                        ForEach(messages_convex, id: \.message) { userMessage in
+                            if userMessage.user_id.description == String(currentUser.id) {
+                                // User message
                                 HStack {
-                                    Text(userMessage.message)
+                                    Spacer()
+                                    Text(userMessage.message.description)
                                         .padding()
                                         .foregroundColor(Color.white)
                                         .background(Color.gray.opacity(0.15))
                                         .cornerRadius(10)
                                         .padding(.horizontal, 16)
                                         .padding(.bottom, 10)
-                                    Spacer()
+                                }
+                            } 
+                            else {
+                                // Bot message
+                                VStack(alignment: .leading) {
+                                    Text(userMessage.display_name)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                        .padding(.leading, 32)
+                                    
+                                    HStack {
+                                        Text(userMessage.message)
+                                            .padding()
+                                            .foregroundColor(Color.white)
+                                            .background(Color.gray.opacity(0.15))
+                                            .cornerRadius(10)
+                                            .padding(.horizontal, 16)
+                                            .padding(.bottom, 10)
+                                        Spacer()
+                                    }
                                 }
                             }
-                        }
-                    }.rotationEffect(.degrees(180))
+                        }.rotationEffect(.degrees(180))
+                    }
+                    .rotationEffect(.degrees(180))
+                    .background(Color.black.opacity(0.9))
+                    
                 }
-                .rotationEffect(.degrees(180))
-                .background(Color.black.opacity(0.9))
-                
                 HStack {
                     TextField("Type something", text: $messageText)
                         .padding()
@@ -118,6 +128,11 @@ struct RootView: View {
                 locationManager.requestLocation()
                 latitude = Double(locationManager.locations?.last?.coordinate.latitude ?? 0.0)
                 longitude = Double(locationManager.locations?.last?.coordinate.longitude ?? 0.0)
+                $messages_convex.updateArgsAndSubscribe(newArgs: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)], client: client)
+                
+//                print("hi")
+//                print(messages_convex)
+
             }
         }
 
