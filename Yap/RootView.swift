@@ -1,4 +1,3 @@
-import Convex
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
@@ -10,19 +9,14 @@ struct User {
 
 struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
-    @Environment(\.convexClient) private var client
+    @EnvironmentObject var websocketClient: WebsocketClient
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
-    @State var messages: [(user: User, message: String)] = [(User(id: 0, name: "Bot"), "Welcome to Chat Bot 2.0!")]
 
-    let currentUser = User(id: 1, name: "HASKMONEY")
+    let currentUser = User(id: 1, name: "Shrey")
     @State var latitude: Double = 0.0
     @State var longitude: Double = 0.0
-
-    // Assuming ConvexQuery initialization needs simplification
-    // Placeholder for @ConvexQuery to illustrate without direct dynamic updates
-    @ConvexQuery(\.listMessages, args: ["lat": Value(floatLiteral: 0.0), "long": Value(floatLiteral: 0.0)]) private var messages_convex
 
     var body: some View {
         NavigationStack {
@@ -34,7 +28,8 @@ struct RootView: View {
             .background(Color.black.edgesIgnoringSafeArea(.all))
         }
         .onAppear {
-            startLocationUpdates()
+            
+                startLocationUpdates()
         }
     }
 
@@ -61,13 +56,11 @@ struct RootView: View {
     var messagesView: some View {
         ScrollView {
             // Assuming this simplification for demonstration
-            if case let .array(messages_convex) = messages_convex {
-                ForEach(messages_convex, id: \.[dynamicMember: "_id"]) { message in
+                ForEach(websocketClient.messages) { message in
                     MessageView(message: message, currentUser: currentUser)
                 }
                 .rotationEffect(.degrees(180))
             }
-        }
         .rotationEffect(.degrees(180))
         .background(Color.black.opacity(0.9))
     }
@@ -82,9 +75,9 @@ struct RootView: View {
             
             Button {
                 Task {
-                    await sendMessage(message: messageText)
+                    sendMessage(message: messageText)
                 }
-                locationManager.requestLocation()
+//                locationManager.requestLocation()
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
@@ -107,12 +100,10 @@ struct RootView: View {
             locationManager.requestLocation()
             latitude = Double(locationManager.locations?.last?.coordinate.latitude ?? 0.0)
             longitude = Double(locationManager.locations?.last?.coordinate.longitude ?? 0.0)
-            $messages_convex.updateArgsAndSubscribe(newArgs: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)], client: client)
+        
+        websocketClient.modifyQuerySet(args: ["lat": latitude, "long": longitude])
+//            $messages_convex.updateArgsAndSubscribe(newArgs: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)], client: client)
             
-                print("hi")
-//                print(messages_convex)
-
-//        }
     }
     
     struct customString: ExpressibleByStringLiteral {
@@ -123,45 +114,15 @@ struct RootView: View {
         }
     }
     
-    func fetchMessage(message: String) async -> Value? {
+    func sendMessage(message: String) {
         do {
-            // Ensure client is unwrapped safely to avoid try? which can suppress errors.
-            if let client = self.client {
-                // Execute the mutation and handle errors appropriately.
-                return try await client.mutation(path: "myFunctions:sendMessage",
-                                          args: [
-                                              "display_name": Value(stringLiteral: self.currentUser.name),
-                                              "message": Value(stringLiteral: message),
-                                              "lat": Value(floatLiteral: self.latitude),
-                                              "long": Value(floatLiteral: self.longitude),
-                                              "user_id": Value(stringLiteral: String(self.currentUser.id))
-                                          ])
+            Task {
+                messageText = ""
+                await websocketClient.sendMessage(displayName: self.currentUser.name, latitude: self.latitude, longitude: self.longitude, message: message, userId: String(self.currentUser.id))
             }
-        } catch {
-            // Handle or log error appropriately
-            print("Error sending message: \(error)")
-            return nil
         }
-        return nil
     }
     
-    func sendMessage(message: String) async {
-        let parsed_message = await fetchMessage(message: message)
-        if let message = parsed_message {
-            let message = "\(message)"
-            withAnimation {
-                messages.append((user: currentUser, message: message))
-                self.messageText = ""
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    withAnimation {
-                        
-                    }
-                }
-            }
-        }
-    }
-
 
     func getBotResponse(message: String) -> String {
         return "Echo: \(message)"
@@ -169,14 +130,14 @@ struct RootView: View {
 }
 
 struct MessageView: View {
-    var message: Value
+    var message: Message
     var currentUser: User
 
     var body: some View {
-        if message.user_id?.description == currentUser.id.description {
+        if message.userId == currentUser.id.description {
             HStack {
                 Spacer()
-                Text(message.message?.description ?? "")
+                Text(message.message.description ?? "")
                     .padding()
                     .foregroundColor(Color.white)
                     .background(Color.gray.opacity(0.15))
@@ -186,13 +147,13 @@ struct MessageView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                Text(message.display_name?.description ?? "")
+                Text(message.displayName.description ?? "")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.leading, 32)
 
                 HStack {
-                    Text(message.message?.description ?? "")
+                    Text(message.message.description ?? "")
                         .padding()
                         .foregroundColor(Color.white)
                         .background(Color.gray.opacity(0.15))

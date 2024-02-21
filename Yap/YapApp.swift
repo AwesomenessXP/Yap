@@ -6,26 +6,19 @@
 //
 
 import SwiftUI
-import Convex
-
-extension ConvexQueries {
-    var listMessages: ConvexQueryDescription {
-        ConvexQueryDescription(path: "myFunctions:getMessagesLive")
-    }
-}
 
 @main
 struct YapApp: App {
     @StateObject var locationManager = LocationManager()
-    private var client = Client(deploymentUrl: "https://nautical-wolf-360.convex.cloud")
-
+    let websocketClient = WebsocketClient()
+    
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(locationManager)
-                .convexClient(client)
+                .environmentObject(websocketClient)
                 .task {
-                    await client.connect()
+                    websocketClient.connect()
                 }
         }
     }
