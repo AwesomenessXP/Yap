@@ -14,7 +14,7 @@ struct RootView: View {
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
 
-    let currentUser = User(id: 69, name: "Haskell")
+    let currentUser = User(id: 420, name: "Haskell")
     @State var latitude: Double = 0.0
     @State var longitude: Double = 0.0
 
@@ -95,6 +95,7 @@ struct RootView: View {
     }
 
     func startLocationUpdates() async throws {
+        locationManager.requestLocation()
         for try await update in locationManager.updates {
             if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
