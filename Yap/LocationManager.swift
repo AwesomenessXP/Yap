@@ -4,10 +4,10 @@ import MapKit
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
+    let updates = CLLocationUpdate.liveUpdates()
+    
     @Published var degrees: Double = 0
-    @Published var locations: [CLLocation]?
-    @Published var newDist: String?
-    let radius: CLLocationDistance = 222.638
+    @Published var location: [CLLocation]?
         
     override init() {
         super.init()
@@ -27,12 +27,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.locations = locations
-        if let locations = self.locations {
-            if locations.count >= 2 {
-                newDist = ("\(locations[locations.count-1].distance(from: locations[locations.count-2]))")
-            }
-        }
+        self.location = locations
         print("Locations: \(locations)")
     }
     

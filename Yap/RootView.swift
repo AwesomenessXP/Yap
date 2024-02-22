@@ -14,22 +14,28 @@ struct RootView: View {
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
 
-    let currentUser = User(id: 1, name: "Shrey")
+    let currentUser = User(id: 69, name: "Haskell")
     @State var latitude: Double = 0.0
     @State var longitude: Double = 0.0
 
     var body: some View {
         NavigationStack {
             VStack {
+                Text("hey")
                 headerView
                 messagesView
                 inputField
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
-        }
-        .onAppear {
-            
-                startLocationUpdates()
+            .onAppear() {
+                Task {
+                    do {
+                        try await startLocationUpdates()
+                    } catch {
+                        print("Unable to fetch location")
+                    }
+                }
+            }
         }
     }
 
@@ -77,7 +83,6 @@ struct RootView: View {
                 Task {
                     sendMessage(message: messageText)
                 }
-//                locationManager.requestLocation()
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
@@ -89,21 +94,24 @@ struct RootView: View {
         .background(Color.black)
     }
 
-    func startLocationUpdates() {
-        Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { _ in
-            self.updateLocation()
+    func startLocationUpdates() async throws {
+        for try await update in locationManager.updates {
+            if let speed = update.location?.speed {
+                // check if the user is walking (avg walking speed is 1.43 m/s)
+                if speed > 1.43 {
+                    updateLocation()
+                }
+            }
+            if update.isStationary {
+                break
+            }
         }
     }
 
     func updateLocation() {
-//        Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-            locationManager.requestLocation()
-            latitude = Double(locationManager.locations?.last?.coordinate.latitude ?? 0.0)
-            longitude = Double(locationManager.locations?.last?.coordinate.longitude ?? 0.0)
-        
+        latitude = Double(locationManager.location?.last?.coordinate.latitude ?? 0.0)
+        longitude = Double(locationManager.location?.last?.coordinate.longitude ?? 0.0)
         websocketClient.modifyQuerySet(args: ["lat": latitude, "long": longitude])
-//            $messages_convex.updateArgsAndSubscribe(newArgs: ["lat": Value(floatLiteral: latitude), "long": Value(floatLiteral: longitude)], client: client)
-            
     }
     
     struct customString: ExpressibleByStringLiteral {
@@ -115,12 +123,8 @@ struct RootView: View {
     }
     
     func sendMessage(message: String) {
-        do {
-            Task {
-                messageText = ""
-                await websocketClient.sendMessage(displayName: self.currentUser.name, latitude: self.latitude, longitude: self.longitude, message: message, userId: String(self.currentUser.id))
-            }
-        }
+        messageText = ""
+        websocketClient.sendMessage(displayName: self.currentUser.name, latitude: self.latitude, longitude: self.longitude, message: message, userId: String(self.currentUser.id))
     }
 
 }
@@ -133,7 +137,7 @@ struct MessageView: View {
         if message.userId == currentUser.id.description {
             HStack {
                 Spacer()
-                Text(message.message.description ?? "")
+                Text(Optional(message.message.description) ?? "")
                     .padding()
                     .foregroundColor(Color.white)
                     .background(Color.gray.opacity(0.15))
@@ -143,13 +147,13 @@ struct MessageView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                Text(message.displayName.description ?? "")
+                Text(Optional(message.displayName.description) ?? "")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.leading, 32)
 
                 HStack {
-                    Text(message.message.description ?? "")
+                    Text(Optional(message.message.description) ?? "")
                         .padding()
                         .foregroundColor(Color.white)
                         .background(Color.gray.opacity(0.15))
@@ -168,5 +172,6 @@ struct MessageView: View {
 #Preview {
     RootView()
         .environmentObject(LocationManager())
+        .environmentObject(WebsocketClient())
 }
 
