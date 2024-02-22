@@ -97,22 +97,19 @@ struct RootView: View {
     func startLocationUpdates() async throws {
         for try await update in locationManager.updates {
             if let speed = update.location?.speed {
-                // check if the user is walking (avg walking speed is 1.43 m/s)
+                latitude = Double(update.location?.coordinate.latitude ?? 0.0)
+                longitude = Double(update.location?.coordinate.longitude ?? 0.0)
+
                 if speed > 1.43 {
-                    updateLocation()
+                    websocketClient.modifyQuerySet(
+                        args: ["lat": latitude, "long": longitude]
+                    )
                 }
             }
             if update.isStationary {
                 break
             }
         }
-    }
-
-    func updateLocation() {
-        latitude = Double(locationManager.location?.last?.coordinate.latitude ?? 0.0)
-        longitude = Double(locationManager.location?.last?.coordinate.longitude ?? 0.0)
-        print("\(latitude), \(longitude)")
-        websocketClient.modifyQuerySet(args: ["lat": latitude, "long": longitude])
     }
     
     struct customString: ExpressibleByStringLiteral {

@@ -15,8 +15,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         manager.startUpdatingHeading()
         manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         manager.requestWhenInUseAuthorization()
-        manager.startUpdatingLocation()
+        
         print("\(manager.accuracyAuthorization)")
+    }
+    
+    func requestLocation() {
+        manager.startUpdatingLocation()
+        manager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
