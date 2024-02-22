@@ -111,6 +111,7 @@ struct RootView: View {
     func updateLocation() {
         latitude = Double(locationManager.location?.last?.coordinate.latitude ?? 0.0)
         longitude = Double(locationManager.location?.last?.coordinate.longitude ?? 0.0)
+        print("\(latitude), \(longitude)")
         websocketClient.modifyQuerySet(args: ["lat": latitude, "long": longitude])
     }
     

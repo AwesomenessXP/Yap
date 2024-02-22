@@ -122,7 +122,7 @@ class WebsocketClient: ObservableObject {
                     DispatchQueue.main.async {
                         self.messages = newMessages.reversed()
                     }
-                    print(messages)
+//                    print(messages)
                 }
             } catch {
                 print("Error parsing message JSON: \(error)")
