@@ -13,41 +13,40 @@ struct SettingPage: View {
     @State var time = ""
     @State var userName: String = "You"
     @State var settingTimer = coolDownTimer()
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
-        VStack{
-            HStack{
-                Text("Setting")
-                    .font(.title)
-                    .foregroundColor(.white)
-            }
-            Spacer()
-            VStack{
-                HStack{
-                    Spacer()
-                    Text("User Name").padding(50)
+        NavigationStack{
+            ZStack {
+                Form {
+                    Section(header: Text("User profile")) {
+                        TextField("User Name", text: $userName).onTapGesture{
+                            isFocused = true
+                        }
                         .foregroundColor(.white)
-                    TextField("User Name", text: $userName).onTapGesture{
-                        isFocused = true
+                        .focused($isFocused)
                     }
-                    .foregroundColor(.white)
-                    .background(Color.gray.opacity(0.15))
-                    .focused($isFocused)
-                    Spacer()
                 }
-                Spacer()
-                Spacer()
-                Button("Confirm"){
-                    time = Date().description(with: .current)
-                    settingTimer.updateDate()
-                    print(time)
+                .preferredColorScheme(.dark)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Settings")
+                            .font(.headline)
+                            .foregroundColor(Color.white)
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            time = Date().description(with: .current)
+                            settingTimer.updateDate()
+                            print(time)
+                            dismiss()
+                        }) { Text("Save") }
+                    }
                 }
-                .padding()
-                .foregroundColor(.white)
-                .background(.gray)
-                .cornerRadius(30)
-                Spacer()
             }
-        }.background(Color.black.edgesIgnoringSafeArea(.all))
+        }
     }
 }
 
