@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
+import MapKit
 
 struct User {
     var id: Int
@@ -10,23 +11,44 @@ struct User {
 struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var websocketClient: WebsocketClient
+    @EnvironmentObject var locationModel: LocationModel
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
 
-    let currentUser = User(id: 69, name: "Haskell")
-    @State var latitude: Double = 0.0
-    @State var longitude: Double = 0.0
+    let currentUser = User(id: 5, name: "Jackie")
+    @State var latitude: Double?
+    @State var longitude: Double?
+    
+    @FocusState var isFocused: Bool
 
     var body: some View {
         NavigationStack {
             VStack {
-                Text("hey")
                 headerView
-                messagesView
+                if let messages = websocketClient.messages {
+                    ScrollView {
+                            ForEach(messages) { message in
+                                MessageView(message: message, currentUser: currentUser)
+                            }
+                            .rotationEffect(.degrees(180))
+                    }
+                    .rotationEffect(.degrees(180))
+                    .background(Color.black.opacity(0.9))
+                }
+                else {
+                    Spacer()
+                    ProgressView()
+                        .scaleEffect(2)
+                        .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                    Spacer()
+                }
                 inputField
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
+            .onTapGesture {
+                isFocused = false
+            }
             .onAppear() {
                 Task {
                     do {
@@ -36,6 +58,9 @@ struct RootView: View {
                     }
                 }
             }
+            .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+                Button("OK", role: .cancel) {}
+            })
         }
     }
 
@@ -46,29 +71,19 @@ struct RootView: View {
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
-
             Image(systemName: "megaphone")
                 .font(.system(size: 30))
                 .foregroundColor(.white)
             Spacer()
+            NavigationLink(destination: ContentView()) {
+                Image(systemName: "map").foregroundColor(Color.white)
+            }
+
             NavigationLink(destination: SettingPage()) {
                 Image(systemName: "gear").foregroundColor(Color.white)
-            }
-        }
+            }        }
         .padding()
         .background(Color.black)
-    }
-
-    var messagesView: some View {
-        ScrollView {
-            // Assuming this simplification for demonstration
-                ForEach(websocketClient.messages) { message in
-                    MessageView(message: message, currentUser: currentUser)
-                }
-                .rotationEffect(.degrees(180))
-            }
-        .rotationEffect(.degrees(180))
-        .background(Color.black.opacity(0.9))
     }
 
     var inputField: some View {
@@ -78,6 +93,9 @@ struct RootView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
                 .foregroundColor(.white)
+                .onChange(of: messageText) {
+                    messageText = String(messageText.prefix(240))
+                }
             
             Button {
                 Task {
@@ -91,7 +109,7 @@ struct RootView: View {
             .padding(.horizontal, 10)
         }
         .padding()
-        .background(Color.black)
+        .focused($isFocused)
     }
 
     func startLocationUpdates() async throws {
@@ -99,11 +117,14 @@ struct RootView: View {
             if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
+                locationModel.storeCoords(lat: (update.location?.coordinate.latitude ?? 0.0), long: (update.location?.coordinate.longitude ?? 0.0))
 
-                if speed > 1.43 {
-                    websocketClient.modifyQuerySet(
-                        args: ["lat": latitude, "long": longitude]
-                    )
+                if let latitude = latitude, let longitude = longitude {
+                    if speed > 1.43 {
+                        websocketClient.modifyQuerySet(
+                            args: ["lat": latitude, "long": longitude]
+                        )
+                    }
                 }
             }
             if update.isStationary {
@@ -112,17 +133,13 @@ struct RootView: View {
         }
     }
     
-    struct customString: ExpressibleByStringLiteral {
-        let value: String
-        
-        init(stringLiteral value: String) {
-            self.value = value
-        }
-    }
-    
     func sendMessage(message: String) {
         messageText = ""
-        websocketClient.sendMessage(displayName: self.currentUser.name, latitude: self.latitude, longitude: self.longitude, message: message, userId: String(self.currentUser.id))
+        if let latitude = latitude, let longitude = longitude {
+            if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message, userId: String(self.currentUser.id))
+            }
+        }
     }
 
 }
@@ -171,5 +188,6 @@ struct MessageView: View {
     RootView()
         .environmentObject(LocationManager())
         .environmentObject(WebsocketClient())
+        .environmentObject(LocationModel())
 }
 

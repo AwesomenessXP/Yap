@@ -2,13 +2,13 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     let updates = CLLocationUpdate.liveUpdates()
     
     @Published var degrees: Double = 0
     @Published var location: [CLLocation]?
-        
+    
     override init() {
         super.init()
         manager.delegate = self
@@ -21,6 +21,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestLocation() {
         manager.startUpdatingLocation()
+    }
+    
+    func stopRequestLocation() {
         manager.stopUpdatingLocation()
     }
     
@@ -36,7 +39,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         print(error)
     }
     
-    func checkLocationAuthorization() -> CLAuthorizationStatus {
-        return manager.authorizationStatus
+    func isAuthorized() -> Bool {
+        let status = manager.authorizationStatus
+        if status == .denied || status == .restricted || status == .notDetermined {
+            return false
+        }
+        return true
     }
 }

@@ -12,74 +12,48 @@ struct SettingPage: View {
     @FocusState var isFocused
     @State var time = ""
     @State var userName: String = "You"
-    @State var timeManager = coolDownTimer()
+    @State var settingTimer = coolDownTimer()
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
-        VStack{
-            HStack{
-                Text("Setting")
-                    .font(.title)
-                    .foregroundColor(.white)
-            }
-            Spacer()
-            VStack{
-                HStack{
-                    Spacer()
-                    Text("User Name").padding(50)
-                        .foregroundColor(.white)
-                    TextField("User Name", text: $userName).onTapGesture{
-                        isFocused = true
+        NavigationStack{
+            ZStack {
+                Form {
+                    Section(header: Text("Notification")) {
+                        Toggle("Super mode", isOn: .constant(true))
                     }
-                    .foregroundColor(.white)
-                    .background(Color.gray.opacity(0.15))
-                    .focused($isFocused)
-                    Spacer()
-                }
-                Spacer()
-                Spacer()
-                Button("Confirm"){
-                    //for now just for changing username
-                    // check for cool down, if cd good, then apply change
-                    // and update new changed time
-                    // should the time of last change be stored in server?
-                    time = Date().description(with: .current)
-                    timeManager.updateDate()
                     
-                    print(time)
+                    Section(header: Text("User profile")) {
+                        TextField("User Name", text: $userName).onTapGesture{
+                            isFocused = true
+                        }
+                        .foregroundColor(.white)
+                        .focused($isFocused)
+                    }
                 }
-                .padding()
-                .foregroundColor(.white)
-                .background(.gray)
-                .cornerRadius(30)
-                Spacer()
+                .preferredColorScheme(.dark)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Settings")
+                            .font(.headline)
+                            .foregroundColor(Color.white)
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            time = Date().description(with: .current)
+                            settingTimer.updateDate()
+                            print(time)
+                            dismiss()
+                        }) { Text("Save") }
+                    }
+                }
             }
-        }.background(Color.black.edgesIgnoringSafeArea(.all))
+        }
     }
 }
 
-class coolDownTimer{
-    private var time : Date?
-    private let CD = 5.0
-//    init(){
-//        self.time = Date()
-//    }
-    func updateDate() -> Void{
-        if !self.checkCD(){
-            time = Date()
-        } else{
-            print("within CD")
-        }
-    }
-    func checkCD() -> Bool{
-        if let currentTime = time{
-            let timeInterval = Date().timeIntervalSince(currentTime)
-            print(timeInterval)
-            return timeInterval < CD
-        }
-        else{
-            return false
-        }
-    }
-}
 
 #Preview {
     SettingPage()

@@ -11,8 +11,11 @@
 		3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBD2B77E34E00ADB53E /* LocationManager.swift */; };
 		3511BCC02B77E35500ADB53E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBF2B77E35500ADB53E /* RootView.swift */; };
 		35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */; };
+		758270662B88654F00FCA694 /* CoolDownManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758270652B88654F00FCA694 /* CoolDownManager.swift */; };
+		7582706E2B88688600FCA694 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7582706D2B88688600FCA694 /* Assets.xcassets */; };
+		758270702B88696600FCA694 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7582706F2B88696600FCA694 /* Launch Screen.storyboard */; };
+		758270722B891E6B00FCA694 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758270712B891E6B00FCA694 /* MapView.swift */; };
 		E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C392B77304D00150AF4 /* YapApp.swift */; };
-		E7A81C3E2B77304F00150AF4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C3D2B77304F00150AF4 /* Assets.xcassets */; };
 		E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */; };
 		E7A81C4B2B77304F00150AF4 /* YapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C4A2B77304F00150AF4 /* YapTests.swift */; };
 		E7A81C552B77304F00150AF4 /* YapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C542B77304F00150AF4 /* YapUITests.swift */; };
@@ -41,9 +44,12 @@
 		3511BCBD2B77E34E00ADB53E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		3511BCBF2B77E35500ADB53E /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketHandler.swift; sourceTree = "<group>"; };
+		758270652B88654F00FCA694 /* CoolDownManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoolDownManager.swift; sourceTree = "<group>"; };
+		7582706D2B88688600FCA694 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7582706F2B88696600FCA694 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		758270712B891E6B00FCA694 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		E7A81C362B77304D00150AF4 /* Yap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A81C392B77304D00150AF4 /* YapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YapApp.swift; sourceTree = "<group>"; };
-		E7A81C3D2B77304F00150AF4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E7A81C462B77304F00150AF4 /* YapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A81C4A2B77304F00150AF4 /* YapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YapTests.swift; sourceTree = "<group>"; };
@@ -101,10 +107,13 @@
 			isa = PBXGroup;
 			children = (
 				20FBDEE92B8499FA00107807 /* SettingPage.swift */,
+				758270652B88654F00FCA694 /* CoolDownManager.swift */,
 				E7A81C392B77304D00150AF4 /* YapApp.swift */,
 				3511BCBD2B77E34E00ADB53E /* LocationManager.swift */,
 				3511BCBF2B77E35500ADB53E /* RootView.swift */,
-				E7A81C3D2B77304F00150AF4 /* Assets.xcassets */,
+				758270712B891E6B00FCA694 /* MapView.swift */,
+				7582706D2B88688600FCA694 /* Assets.xcassets */,
+				7582706F2B88696600FCA694 /* Launch Screen.storyboard */,
 				E7A81C3F2B77304F00150AF4 /* Preview Content */,
 				35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */,
 			);
@@ -244,8 +253,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				758270702B88696600FCA694 /* Launch Screen.storyboard in Resources */,
+				7582706E2B88688600FCA694 /* Assets.xcassets in Resources */,
 				E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */,
-				E7A81C3E2B77304F00150AF4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +280,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				758270722B891E6B00FCA694 /* MapView.swift in Sources */,
+				758270662B88654F00FCA694 /* CoolDownManager.swift in Sources */,
 				35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */,
 				3511BCC02B77E35500ADB53E /* RootView.swift in Sources */,
 				E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */,
@@ -438,7 +450,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = 84AMP4NSAF;
+				DEVELOPMENT_TEAM = BU4NVKNK4C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;
@@ -448,6 +460,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -472,7 +485,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = 84AMP4NSAF;
+				DEVELOPMENT_TEAM = BU4NVKNK4C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;
@@ -482,6 +495,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
