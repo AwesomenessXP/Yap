@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct Message: Identifiable, Codable {
     let id: String
@@ -24,6 +25,7 @@ class WebsocketClient: ObservableObject {
     private var latestVersionID = 0
     private var latestQueryID = 0
     private var requestId = 0
+    @Published var user_id: String = UIDevice.current.identifierForVendor!.uuidString
 
     init() {
         session = URLSession(configuration: .default)
@@ -145,7 +147,7 @@ class WebsocketClient: ObservableObject {
         }
     }
     
-    func sendMessage(displayName: String, latitude: Double, longitude: Double, message: String, userId: String) {
+    func sendMessage(displayName: String, latitude: Double, longitude: Double, message: String) {
         // Construct the message payload
         let messagePayload: [String: Any] = [
             "type": "Mutation",
@@ -157,7 +159,7 @@ class WebsocketClient: ObservableObject {
                     "lat": latitude,
                     "long": longitude,
                     "message": message,
-                    "user_id": userId
+                    "user_id": user_id
                 ]
             ]
         ]
