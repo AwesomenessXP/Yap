@@ -63,48 +63,59 @@ struct RootView: View {
     }
 
     var headerView: some View {
-        HStack {
-            Spacer()
-            Text("Yap")
-                .font(.title)
-                .bold()
-                .foregroundColor(.white)
-            Image(systemName: "megaphone")
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-            Spacer()
-            NavigationLink(destination: ContentView()) {
-                Image(systemName: "map").foregroundColor(Color.white)
+        ZStack {
+            HStack {
+                Text("YAP")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+                
+                Image(systemName: "megaphone")
+                    .font(.system(size: 21))
+                    .foregroundColor(.white)
             }
-
-            NavigationLink(destination: SettingPage()) {
-                Image(systemName: "gear").foregroundColor(Color.white)
-            }        }
+            
+            HStack {
+                Spacer()
+                NavigationLink(destination: ContentView()) {
+                    Image(systemName: "map").foregroundColor(Color.white)
+                }
+                    
+                NavigationLink(destination: SettingPage()) {
+                    Image(systemName: "gear").foregroundColor(Color.white)
+                }
+            }
+            
+        }
         .padding()
         .background(Color.black)
+        
+        
     }
 
     var inputField: some View {
         HStack {
-            TextField("Type something", text: $messageText)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-                .foregroundColor(.white)
-                .onChange(of: messageText) {
-                    messageText = String(messageText.prefix(240))
-                }
+            HStack {
+                TextField("Type something", text: $messageText)
+                    .foregroundColor(.white)
+                    .onChange(of: messageText) {
+                        messageText = String(messageText.prefix(240))
+                    }
+                    .padding(.leading, 15)
+            }
+            .padding(.vertical, 8) // Adjust the vertical padding to fit your design needs
+            .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.2), lineWidth: 2))
             
             Button {
                 Task {
                     sendMessage(message: messageText)
                 }
             } label: {
-                Image(systemName: "paperplane.fill")
+                Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.white)
             }
-            .font(.system(size: 26))
-            .padding(.horizontal, 10)
+            .font(.system(size: 27))
+            .padding(.leading, 5)
         }
         .padding()
         .focused($isFocused)
@@ -154,10 +165,9 @@ struct MessageView: View {
                 Text(Optional(message.message.description) ?? "")
                     .padding()
                     .foregroundColor(Color.white)
-                    .background(Color.gray.opacity(0.15))
                     .cornerRadius(10)
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 10)
+                    .padding(.bottom, 1)
             }
         } else {
             VStack(alignment: .leading) {
@@ -170,10 +180,9 @@ struct MessageView: View {
                     Text(Optional(message.message.description) ?? "")
                         .padding()
                         .foregroundColor(Color.white)
-                        .background(Color.gray.opacity(0.15))
                         .cornerRadius(10)
                         .padding(.horizontal, 16)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 1)
                     Spacer()
                 }
             }

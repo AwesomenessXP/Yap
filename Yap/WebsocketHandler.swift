@@ -32,7 +32,7 @@ class WebsocketClient: ObservableObject {
     }
     
     func connect() {
-        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")!
+        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")!
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
         
