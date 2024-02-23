@@ -20,7 +20,7 @@ struct Message: Identifiable, Codable {
 class WebsocketClient: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession
-    @Published var messages: [Message] = []
+    @Published var messages: [Message]?
     private var latestVersionID = 0
     private var latestQueryID = 0
     private var requestId = 0
@@ -95,6 +95,7 @@ class WebsocketClient: ObservableObject {
             switch result {
             case .failure(let error):
                 print("Error in receiving message: \(error)")
+                print(result)
             case .success(let message):
                 switch message {
                 case .string(let text):
@@ -105,7 +106,7 @@ class WebsocketClient: ObservableObject {
                     fatalError()
                 }
                 
-                self?.listenForMessages()
+            self?.listenForMessages()
             }
         }
     }
@@ -122,7 +123,7 @@ class WebsocketClient: ObservableObject {
                     DispatchQueue.main.async {
                         self.messages = newMessages.reversed()
                     }
-//                    print(messages)
+                    print("Messages loaded")
                 }
             } catch {
                 print("Error parsing message JSON: \(error)")
@@ -136,7 +137,7 @@ class WebsocketClient: ObservableObject {
             let jsonString = String(data: jsonData, encoding: .utf8)!
             webSocketTask?.send(.string(jsonString)) { error in
                 if let error = error {
-                    print("Error in sending message: \(error)")
+                    print("Error in sending message: \(error.localizedDescription)")
                 }
             }
         } catch {
