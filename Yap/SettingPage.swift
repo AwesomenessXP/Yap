@@ -19,6 +19,10 @@ struct SettingPage: View {
         NavigationStack{
             ZStack {
                 Form {
+                    Section(header: Text("Notification")) {
+                        Toggle("Super mode", isOn: .constant(true))
+                    }
+                    
                     Section(header: Text("User profile")) {
                         TextField("User Name", text: $userName).onTapGesture{
                             isFocused = true
