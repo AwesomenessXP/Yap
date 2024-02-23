@@ -56,6 +56,9 @@ struct RootView: View {
                     }
                 }
             }
+            .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+                Button("OK", role: .cancel) {}
+            })
         }
     }
 
