@@ -107,6 +107,9 @@ struct RootView: View {
     }
 
     func startLocationUpdates() async throws {
+        websocketClient.modifyQuerySet(
+            args: ["lat": latitude, "long": longitude]
+        )
         for try await update in locationManager.updates {
             if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
