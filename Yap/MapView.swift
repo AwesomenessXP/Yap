@@ -15,6 +15,7 @@ struct DarkModeMapView: UIViewRepresentable {
         let mapView = MKMapView()
         mapView.setRegion(region, animated: true)
         mapView.overrideUserInterfaceStyle = .dark
+        mapView.showsUserLocation = true
         return mapView
     }
     
@@ -113,7 +114,8 @@ struct RadarView: View {
 // Now merging the ContentView with MapView and RadarAnimation
 // ContentView struct now uses DarkModeMapView for the map
 struct ContentView: View {
-    @State private var cameraPosition: MKCoordinateRegion = .userRegion
+    @EnvironmentObject var locationManager: LocationManager
+    @State var cameraPosition: MKCoordinateRegion? = .userRegion
     
     // Radar animation state variables
     @State var startAnimation = false
@@ -123,13 +125,24 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            DarkModeMapView(region: cameraPosition)
-                .edgesIgnoringSafeArea(.all)
-            
-            // Radar animation overlay at user location
-            RadarView(isAnimating: $startAnimation, fadeAnimation1: $fadeAnimation1, fadeAnimation2: $fadeAnimation2, fadeAnimation3: $fadeAnimation3)
-                .position(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2) // Adjust position as needed
-                .onAppear(perform: performAnimation)
+            if let cameraPosition = cameraPosition {
+                DarkModeMapView(region: cameraPosition)
+                    .edgesIgnoringSafeArea(.all)
+                
+                // Radar animation overlay at user location
+                RadarView(isAnimating: $startAnimation, fadeAnimation1: $fadeAnimation1, fadeAnimation2: $fadeAnimation2, fadeAnimation3: $fadeAnimation3)
+                    .position(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2) // Adjust position as needed
+                    .onAppear(perform: performAnimation)
+            }
+        }
+        .onAppear() {
+            if let coords = locationManager.location?.last?.coordinate {
+                cameraPosition = MKCoordinateRegion(
+                    center: coords,
+                    latitudinalMeters: 100,
+                    longitudinalMeters: 100
+                )
+            }
         }
     }
     
@@ -160,19 +173,22 @@ struct ContentView: View {
 
 extension CLLocationCoordinate2D {
     static var userLocation: CLLocationCoordinate2D {
-        return .init(latitude: 25.7602, longitude: -80.1959) // User's location
+        let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
+        let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
+        return .init(latitude: lat, longitude: long) // User's location
     }
 }
 
 extension MKCoordinateRegion {
     static var userRegion: MKCoordinateRegion {
-        return .init(center: .userLocation, latitudinalMeters: 10000, longitudinalMeters: 10000)
+        return .init(center: .userLocation, latitudinalMeters: 100, longitudinalMeters: 100)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(LocationManager())
     }
 }
 

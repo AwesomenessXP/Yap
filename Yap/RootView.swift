@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
+import MapKit
 
 struct User {
     var id: Int
@@ -10,6 +11,7 @@ struct User {
 struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var websocketClient: WebsocketClient
+    @EnvironmentObject var locationModel: LocationModel
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
@@ -73,10 +75,13 @@ struct RootView: View {
                 .font(.system(size: 30))
                 .foregroundColor(.white)
             Spacer()
+            NavigationLink(destination: ContentView()) {
+                Image(systemName: "map").foregroundColor(Color.white)
+            }
+
             NavigationLink(destination: SettingPage()) {
                 Image(systemName: "gear").foregroundColor(Color.white)
-            }
-        }
+            }        }
         .padding()
         .background(Color.black)
     }
@@ -112,6 +117,7 @@ struct RootView: View {
             if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
+                locationModel.storeCoords(lat: (update.location?.coordinate.latitude ?? 0.0), long: (update.location?.coordinate.longitude ?? 0.0))
 
                 if let latitude = latitude, let longitude = longitude {
                     if speed > 1.43 {
@@ -182,5 +188,6 @@ struct MessageView: View {
     RootView()
         .environmentObject(LocationManager())
         .environmentObject(WebsocketClient())
+        .environmentObject(LocationModel())
 }
 

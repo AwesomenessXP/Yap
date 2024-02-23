@@ -2,7 +2,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     let updates = CLLocationUpdate.liveUpdates()
     

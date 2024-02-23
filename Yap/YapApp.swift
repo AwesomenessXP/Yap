@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct YapApp: App {
     @StateObject var locationManager = LocationManager()
+    @StateObject var locationModel = LocationModel()
     let websocketClient = WebsocketClient()
     
     var body: some Scene {
@@ -17,6 +18,7 @@ struct YapApp: App {
             RootView()
                 .environmentObject(locationManager)
                 .environmentObject(websocketClient)
+                .environmentObject(locationModel)
                 .task {
                     websocketClient.connect()
                 }
