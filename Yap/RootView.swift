@@ -14,7 +14,7 @@ struct RootView: View {
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
-    let currentUser = User(name: "Jackie")
+    let currentUser = User(name: "JKT")
     @State var latitude: Double?
     @State var longitude: Double?
     
@@ -160,32 +160,40 @@ struct MessageView: View {
     
     var body: some View {
         if message.userId == websocketClient.user_id {
-            HStack {
-                Spacer()
-                Text(Optional(message.message.description) ?? "")
-                    .padding()
-                    .foregroundColor(Color.white)
-                    .cornerRadius(10)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 1)
+            VStack(alignment: .leading) {
+                Text(Optional(message.displayName.description) ?? "")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.leading, 16)
+
+                HStack {
+                    Text(Optional(message.message.description) ?? "")
+                        .foregroundColor(Color.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal, 16)
+                    Spacer()
+                }
             }
+            .padding(.leading, 21)
+            .padding(.vertical, 5)
+
         } else {
             VStack(alignment: .leading) {
                 Text(Optional(message.displayName.description) ?? "")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .padding(.leading, 32)
+                    .padding(.leading, 16)
 
                 HStack {
                     Text(Optional(message.message.description) ?? "")
-                        .padding()
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                         .padding(.horizontal, 16)
-                        .padding(.bottom, 1)
                     Spacer()
                 }
             }
+            .padding(.leading, 21)
+            .padding(.vertical, 5)
         }
     }
 }
