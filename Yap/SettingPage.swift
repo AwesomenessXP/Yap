@@ -12,7 +12,7 @@ struct SettingPage: View {
     @FocusState var isFocused
     @State var time = ""
     @State var userName: String = "You"
-    @State var timeManager = coolDownTimer()
+    @State var settingTimer = coolDownTimer()
     var body: some View {
         VStack{
             HStack{
@@ -37,13 +37,8 @@ struct SettingPage: View {
                 Spacer()
                 Spacer()
                 Button("Confirm"){
-                    //for now just for changing username
-                    // check for cool down, if cd good, then apply change
-                    // and update new changed time
-                    // should the time of last change be stored in server?
                     time = Date().description(with: .current)
-                    timeManager.updateDate()
-                    
+                    settingTimer.updateDate()
                     print(time)
                 }
                 .padding()
@@ -59,17 +54,24 @@ struct SettingPage: View {
 class coolDownTimer{
     private var time : Date?
     private let CD = 5.0
-//    init(){
-//        self.time = Date()
-//    }
+    private let dateFormatter = DateFormatter()
+    init(){
+        getTimeStamp()
+    }
     func updateDate() -> Void{
-        if !self.checkCD(){
+        if !self.hasCD(){
             time = Date()
+            if let unwrapped_time = time {
+                let time_str = dateFormatter.string(from: unwrapped_time)
+                UserDefaults.standard.setValue(time_str, forKey: "SettingChangeTimeStamp")
+                UserDefaults.standard.synchronize()
+            } 
         } else{
             print("within CD")
         }
     }
-    func checkCD() -> Bool{
+    
+    func hasCD() -> Bool{
         if let currentTime = time{
             let timeInterval = Date().timeIntervalSince(currentTime)
             print(timeInterval)
@@ -77,6 +79,14 @@ class coolDownTimer{
         }
         else{
             return false
+        }
+    }
+    
+    func getTimeStamp() -> Void {
+        dateFormatter.dateFormat = "dd MMM yyyy HH:mm:ss Z"
+        if let time_str = UserDefaults.standard.string(forKey: "SettingChangeTimeStamp"){
+            time = dateFormatter.date(from: time_str)
+            UserDefaults.standard.synchronize()
         }
     }
 }
