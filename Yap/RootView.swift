@@ -56,6 +56,9 @@ struct RootView: View {
                     }
                 }
             }
+            .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+                Button("OK", role: .cancel) {}
+            })
         }
     }
 
@@ -66,7 +69,6 @@ struct RootView: View {
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
-
             Image(systemName: "megaphone")
                 .font(.system(size: 30))
                 .foregroundColor(.white)
