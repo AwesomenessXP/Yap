@@ -160,39 +160,32 @@ struct MessageView: View {
     
     var body: some View {
         if message.userId == websocketClient.user_id {
-            VStack(alignment: .leading) {
-                Text(Optional(message.displayName.description) ?? "")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding(.leading, 16)
-
-                HStack {
-                    Text(Optional(message.message.description) ?? "")
-                        .foregroundColor(Color.white)
-                        .cornerRadius(10)
-                        .padding(.horizontal, 16)
-                    Spacer()
-                }
+            HStack {
+                Spacer()
+                Text(Optional(message.message.description) ?? "")
+                    .foregroundColor(Color.white)
+                    .cornerRadius(10)
+                    .padding(.horizontal, 16)
             }
-            .padding(.leading, 21)
-            .padding(.vertical, 5)
+            .padding(.trailing, 21)
+            .padding(.vertical, 12)
+    
 
         } else {
             VStack(alignment: .leading) {
                 Text(Optional(message.displayName.description) ?? "")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .padding(.leading, 16)
+                    .padding(.vertical, 3)
 
                 HStack {
                     Text(Optional(message.message.description) ?? "")
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
-                        .padding(.horizontal, 16)
                     Spacer()
                 }
             }
-            .padding(.leading, 21)
+            .padding(.leading, 24)
             .padding(.vertical, 5)
         }
     }
