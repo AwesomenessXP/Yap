@@ -4,7 +4,6 @@ import CoreLocationUI
 import MapKit
 
 struct User {
-    var id: Int
     var name: String
 }
 
@@ -15,8 +14,7 @@ struct RootView: View {
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
-
-    let currentUser = User(id: 10, name: "Jackie")
+    let currentUser = User(name: "Jackie")
     @State var latitude: Double?
     @State var longitude: Double?
     
@@ -29,7 +27,7 @@ struct RootView: View {
                 if let messages = websocketClient.messages {
                     ScrollView {
                             ForEach(messages) { message in
-                                MessageView(message: message, currentUser: currentUser)
+                                MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
                             }
                             .rotationEffect(.degrees(180))
                     }
@@ -137,7 +135,7 @@ struct RootView: View {
         messageText = ""
         if let latitude = latitude, let longitude = longitude {
             if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message, userId: String(self.currentUser.id))
+                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
             }
         }
     }
@@ -147,9 +145,10 @@ struct RootView: View {
 struct MessageView: View {
     var message: Message
     var currentUser: User
-
+    var websocketClient: WebsocketClient
+    
     var body: some View {
-        if message.userId == currentUser.id.description {
+        if message.userId == websocketClient.user_id {
             HStack {
                 Spacer()
                 Text(Optional(message.message.description) ?? "")
