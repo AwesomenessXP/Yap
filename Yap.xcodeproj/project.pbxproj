@@ -10,6 +10,7 @@
 		20FBDEEA2B8499FA00107807 /* SettingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FBDEE92B8499FA00107807 /* SettingPage.swift */; };
 		3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBD2B77E34E00ADB53E /* LocationManager.swift */; };
 		3511BCC02B77E35500ADB53E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBF2B77E35500ADB53E /* RootView.swift */; };
+		3583BA5C2B893C7E0067D6F4 /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3583BA5B2B893C7E0067D6F4 /* LocationModel.swift */; };
 		35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */; };
 		758270662B88654F00FCA694 /* CoolDownManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758270652B88654F00FCA694 /* CoolDownManager.swift */; };
 		7582706E2B88688600FCA694 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7582706D2B88688600FCA694 /* Assets.xcassets */; };
@@ -43,6 +44,7 @@
 		20FBDEE92B8499FA00107807 /* SettingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingPage.swift; sourceTree = "<group>"; };
 		3511BCBD2B77E34E00ADB53E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		3511BCBF2B77E35500ADB53E /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3583BA5B2B893C7E0067D6F4 /* LocationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
 		35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketHandler.swift; sourceTree = "<group>"; };
 		758270652B88654F00FCA694 /* CoolDownManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoolDownManager.swift; sourceTree = "<group>"; };
 		7582706D2B88688600FCA694 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				20FBDEE92B8499FA00107807 /* SettingPage.swift */,
 				758270652B88654F00FCA694 /* CoolDownManager.swift */,
 				E7A81C392B77304D00150AF4 /* YapApp.swift */,
+				3583BA5B2B893C7E0067D6F4 /* LocationModel.swift */,
 				3511BCBD2B77E34E00ADB53E /* LocationManager.swift */,
 				3511BCBF2B77E35500ADB53E /* RootView.swift */,
 				758270712B891E6B00FCA694 /* MapView.swift */,
@@ -280,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3583BA5C2B893C7E0067D6F4 /* LocationModel.swift in Sources */,
 				758270722B891E6B00FCA694 /* MapView.swift in Sources */,
 				758270662B88654F00FCA694 /* CoolDownManager.swift in Sources */,
 				35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */,
@@ -450,7 +454,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = BU4NVKNK4C;
+				DEVELOPMENT_TEAM = 84AMP4NSAF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;
@@ -485,7 +489,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Yap/Preview Content\"";
-				DEVELOPMENT_TEAM = BU4NVKNK4C;
+				DEVELOPMENT_TEAM = 84AMP4NSAF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;

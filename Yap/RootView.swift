@@ -16,7 +16,7 @@ struct RootView: View {
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
 
-    let currentUser = User(id: 5, name: "Jackie")
+    let currentUser = User(id: 10, name: "Jackie")
     @State var latitude: Double?
     @State var longitude: Double?
     
@@ -114,19 +114,19 @@ struct RootView: View {
 
     func startLocationUpdates() async throws {
         for try await update in locationManager.updates {
-            if let speed = update.location?.speed {
+//            if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
                 locationModel.storeCoords(lat: (update.location?.coordinate.latitude ?? 0.0), long: (update.location?.coordinate.longitude ?? 0.0))
 
                 if let latitude = latitude, let longitude = longitude {
-                    if speed > 1.43 {
+//                    if speed > 1.43 {
                         websocketClient.modifyQuerySet(
                             args: ["lat": latitude, "long": longitude]
                         )
-                    }
+//                    \
                 }
-            }
+//            }
             if update.isStationary {
                 break
             }
