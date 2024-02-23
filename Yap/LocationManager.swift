@@ -21,6 +21,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestLocation() {
         manager.startUpdatingLocation()
+    }
+    
+    func stopRequestLocation() {
         manager.stopUpdatingLocation()
     }
     

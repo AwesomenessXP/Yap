@@ -14,9 +14,9 @@ struct RootView: View {
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
 
-    let currentUser = User(id: 4, name: "Haskell")
-    @State var latitude: Double = 0.0
-    @State var longitude: Double = 0.0
+    let currentUser = User(id: 5, name: "Jackie")
+    @State var latitude: Double?
+    @State var longitude: Double?
     
     @FocusState var isFocused: Bool
 
@@ -50,7 +50,6 @@ struct RootView: View {
             .onAppear() {
                 Task {
                     do {
-                        locationManager.requestLocation()
                         try await startLocationUpdates()
                     } catch {
                         print("Unable to fetch location")
@@ -107,18 +106,17 @@ struct RootView: View {
     }
 
     func startLocationUpdates() async throws {
-        websocketClient.modifyQuerySet(
-            args: ["lat": latitude, "long": longitude]
-        )
         for try await update in locationManager.updates {
             if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
 
-                if speed > 1.43 {
-                    websocketClient.modifyQuerySet(
-                        args: ["lat": latitude, "long": longitude]
-                    )
+                if let latitude = latitude, let longitude = longitude {
+                    if speed > 1.43 {
+                        websocketClient.modifyQuerySet(
+                            args: ["lat": latitude, "long": longitude]
+                        )
+                    }
                 }
             }
             if update.isStationary {
@@ -129,8 +127,10 @@ struct RootView: View {
     
     func sendMessage(message: String) {
         messageText = ""
-        if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            websocketClient.sendMessage(displayName: self.currentUser.name, latitude: self.latitude, longitude: self.longitude, message: message, userId: String(self.currentUser.id))
+        if let latitude = latitude, let longitude = longitude {
+            if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message, userId: String(self.currentUser.id))
+            }
         }
     }
 
