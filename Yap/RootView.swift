@@ -66,7 +66,6 @@ struct RootView: View {
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
-
             Image(systemName: "megaphone")
                 .font(.system(size: 30))
                 .foregroundColor(.white)
