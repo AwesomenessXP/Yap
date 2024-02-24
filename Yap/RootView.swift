@@ -127,7 +127,7 @@ struct RootView: View {
                     })
             }
             .padding(.vertical, 8) // Adjust the vertical padding to fit your design needs
-            .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.2), lineWidth: 2))
+            .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
             
             Button {
                 Task {
@@ -187,7 +187,6 @@ struct MessageView: View {
                 Spacer()
                 Text(Optional(message.message.description) ?? "")
                     .foregroundColor(Color.white)
-                    .cornerRadius(10)
                     .padding(.horizontal, 16)
             }
             .padding(.trailing, 21)
@@ -204,7 +203,6 @@ struct MessageView: View {
                 HStack {
                     Text(Optional(message.message.description) ?? "")
                         .foregroundColor(Color.white)
-                        .cornerRadius(10)
                     Spacer()
                 }
             }
