@@ -21,11 +21,11 @@ struct Message: Identifiable, Codable {
 class WebsocketClient: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession
-    @Published var messages: [Message]? = [Message(id: "sdfsdf", displayName: "Yes", message: "idk", userId: "sdf")]
+    @Published var messages: [Message]?
     private var latestVersionID = 0
     private var latestQueryID = 0
     private var requestId = 0
-    @Published var user_id: String = UIDevice.current.identifierForVendor!.uuidString
+    @Published var user_id: String? = UIDevice.current.identifierForVendor?.uuidString
 
     init() {
         session = URLSession(configuration: .default)
@@ -124,8 +124,6 @@ class WebsocketClient: ObservableObject {
                     let newMessages = try JSONDecoder().decode([Message].self, from: newData)
                     DispatchQueue.main.async {
                         self.messages = newMessages.reversed()
-                        self.messages?.append(Message(id: "sdfsdf", displayName: "Konsing", message: "YOOOOO", userId: "sdf"))
-                        self.messages?.append(Message(id: "sdfsdfsdfsdf", displayName: "Konsing", message: "I'm busy I cant make it tonight", userId: "ssdfdf"))
                     }
                     print("Messages loaded")
                 }
@@ -151,26 +149,28 @@ class WebsocketClient: ObservableObject {
     
     func sendMessage(displayName: String, latitude: Double, longitude: Double, message: String) {
         // Construct the message payload
-        let messagePayload: [String: Any] = [
-            "type": "Mutation",
-            "requestId": requestId,
-            "udfPath": "myFunctions:sendMessage",
-            "args": [
-                [
-                    "display_name": displayName,
-                    "lat": latitude,
-                    "long": longitude,
-                    "message": message,
-                    "user_id": user_id
+        if let user_id = self.user_id {
+            let messagePayload: [String: Any] = [
+                "type": "Mutation",
+                "requestId": requestId,
+                "udfPath": "myFunctions:sendMessage",
+                "args": [
+                    [
+                        "display_name": displayName,
+                        "lat": latitude,
+                        "long": longitude,
+                        "message": message,
+                        "user_id": user_id
+                    ]
                 ]
             ]
-        ]
-        
-        // Convert the payload to JSON and send it
-        send(json: messagePayload)
-        
-        // Increment the requestId for the next message
-        requestId += 1
+            
+            // Convert the payload to JSON and send it
+            send(json: messagePayload)
+            
+            // Increment the requestId for the next message
+            requestId += 1
+        }
     }
 
     

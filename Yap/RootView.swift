@@ -216,7 +216,7 @@ struct MessageView: View {
         if message.userId == websocketClient.user_id {
             VStack(alignment: .trailing) {
                 Text(Optional(message.displayName.description) ?? "")
-                    .font(.caption)
+                    .font(.system(size: 14))
                     .foregroundColor(.gray)
                     .padding(.trailing, 30)
                     .padding(.bottom, -15)
@@ -226,6 +226,7 @@ struct MessageView: View {
                     Text(Optional(message.message.description) ?? "")
                         .foregroundColor(Color.white)
                         .padding(.horizontal, 9)
+                        .font(.system(size: 16))
                 }
                 .padding(.trailing, 21)
                 .padding(.vertical, 12)
@@ -236,6 +237,7 @@ struct MessageView: View {
             VStack(alignment: .leading) {
                 Text(Optional(message.displayName.description) ?? "")
                     .font(.caption)
+                    .font(.system(size: 14))
                     .foregroundColor(.gray)
                     .padding(.vertical, 3)
                     .padding(.bottom, -5)
