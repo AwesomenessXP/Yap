@@ -143,7 +143,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
         
         do {
             guard let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
-            
+
             if let modifications = jsonResponse["modifications"] as? [[String: Any]] {
                 for modification in modifications {
                     if let type = modification["type"] as? String, type == "QueryUpdated",
@@ -166,6 +166,14 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
             
             if let result = jsonResponse["result"] as? [String: String], let trueId = result["true_id"] {
                 UserDefaults.standard.setValue(trueId, forKey: "true_id")
+            }
+            
+            if let result = jsonResponse["result"] as? [String: String], let error = result["error"] {
+                if (error == "401") {
+                    self.register()
+                } else if (error == "400") {
+                    print("No location found")
+                }
             }
             
         } catch {
@@ -197,7 +205,10 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 self.send(json: messagePayload)
                 self.requestId += 1
             }
-            self.getMessages()
+            DispatchQueue.main.async {
+                self.getMessages()
+            }
+
         }
     }
     

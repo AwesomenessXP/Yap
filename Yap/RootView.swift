@@ -182,6 +182,7 @@ struct RootView: View {
 
     func startLocationUpdates() async throws {
         for try await update in locationManager.updates {
+                print("location updates")
 //            if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
