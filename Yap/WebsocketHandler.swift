@@ -18,7 +18,7 @@ struct Message: Identifiable, Codable {
 }
 
 
-class WebsocketClient: ObservableObject {
+class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessionWebSocketDelegate {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession
     @Published var messages: [Message]?
@@ -28,26 +28,27 @@ class WebsocketClient: ObservableObject {
     @Published var user_id: String? = UIDevice.current.identifierForVendor?.uuidString
     @Published var user_count = 0
     
-    init() {
+    override init() {
         session = URLSession(configuration: .default)
     }
     
     func connect() {
-        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")!
-        webSocketTask = session.webSocketTask(with: url)
-        webSocketTask?.resume()
-        
-        sendInitialConnection()
-        listenForMessages()
-        
-        let token = UserDefaults.standard.value(forKey: "user_token")
-        if (token == nil) {
-            register()
-        } 
-        else {
-            getMessages()
+        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")
+        if let url = url {
+            webSocketTask = session.webSocketTask(with: url)
+            webSocketTask?.resume()
+            
+            sendInitialConnection()
+            listenForMessages()
+            
+            let token = UserDefaults.standard.value(forKey: "user_token")
+            if (token == nil) {
+                register()
+            }
+            else {
+                getMessages()
+            }
         }
-        
     }
     
     private func sendInitialConnection() {
@@ -66,7 +67,6 @@ class WebsocketClient: ObservableObject {
         
         let token = UserDefaults.standard.value(forKey: "user_token")
         if ((token != nil) && (user_id != nil)) {
-            
             if let user_id = user_id {
                 if let user_token = token {
                 latestVersionID = latestVersionID + 1
