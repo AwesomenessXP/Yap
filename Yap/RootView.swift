@@ -219,5 +219,6 @@ struct MessageView: View {
         .environmentObject(LocationManager())
         .environmentObject(WebsocketClient())
         .environmentObject(LocationModel())
+        .environmentObject(SettingsModel())
 }
 
