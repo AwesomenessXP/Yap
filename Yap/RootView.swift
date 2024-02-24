@@ -91,8 +91,11 @@ struct RootView: View {
                     .padding()
                     
                     Button {
-                        let _ = settingsModel.addUsername(name: username)
-                        self.usernameSet = true
+                        DispatchQueue.main.async {
+                            self.settingsModel.addUsername(name: username)
+                            self.usernameSet = true
+                        }
+                        
                     }
                     label: {
                         Text("Start Yapping")
