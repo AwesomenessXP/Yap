@@ -184,7 +184,7 @@ struct RootView: View {
 
                 if let latitude = latitude, let longitude = longitude {
 //                    if speed > 1.43 {
-                        websocketClient.modifyQuerySet(
+                        await websocketClient.modifyQuerySet(
                             args: ["lat": latitude, "long": longitude]
                         )
 //                    \
@@ -204,7 +204,9 @@ struct RootView: View {
         }
         if let latitude = latitude, let longitude = longitude {
             if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
+                Task {
+                    await websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
+                }
             }
         }
     }

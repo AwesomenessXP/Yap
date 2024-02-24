@@ -31,16 +31,16 @@ class WebsocketClient: ObservableObject {
         session = URLSession(configuration: .default)
     }
     
-    func connect() {
+    func connect() async {
         let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")!
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        sendInitialConnection()
+        await sendInitialConnection()
         listenForMessages()
     }
     
-    private func sendInitialConnection() {
+    private func sendInitialConnection() async {
         let uuidString = UUID().uuidString // Generate a new UUID for sessionId
         let connectionData: [String: Any] = [
             "connectionCount": 0,
@@ -49,14 +49,14 @@ class WebsocketClient: ObservableObject {
             "sessionId": uuidString
         ]
         
-        send(json: connectionData)
+        await send(json: connectionData)
     }
     
-    func modifyQuerySet(args: [String : Double]) {
+    func modifyQuerySet(args: [String : Double]) async {
         if (latestQueryID != 0) {
             latestVersionID = latestVersionID + 1
             print("Sending Remove message \(latestVersionID) and \(latestQueryID)")
-            send(json: [
+            await send(json: [
                 "type": "ModifyQuerySet",
                 "baseVersion": latestVersionID - 1,
                 "newVersion": latestVersionID,
@@ -72,7 +72,7 @@ class WebsocketClient: ObservableObject {
         
         latestVersionID = latestVersionID + 1
         print("Sending Add message \(latestVersionID) and \(latestQueryID)")
-        send(json: [
+        await send(json: [
             "type": "ModifyQuerySet",
             "baseVersion": latestVersionID - 1,
             "newVersion": latestVersionID,
@@ -105,8 +105,10 @@ class WebsocketClient: ObservableObject {
                 @unknown default:
                     fatalError()
                 }
-                
-            self?.listenForMessages()
+            
+                if let self = self {
+                    self.listenForMessages()
+                }
             }
         }
     }
@@ -131,7 +133,7 @@ class WebsocketClient: ObservableObject {
         }
     }
     
-    private func send(json: [String: Any]) {
+    private func send(json: [String: Any]) async {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
             let jsonString = String(data: jsonData, encoding: .utf8)!
@@ -145,7 +147,7 @@ class WebsocketClient: ObservableObject {
         }
     }
     
-    func sendMessage(displayName: String, latitude: Double, longitude: Double, message: String) {
+    func sendMessage(displayName: String, latitude: Double, longitude: Double, message: String) async {
         // Construct the message payload
         if let user_id = self.user_id {
             let messagePayload: [String: Any] = [
@@ -164,7 +166,7 @@ class WebsocketClient: ObservableObject {
             ]
             
             // Convert the payload to JSON and send it
-            send(json: messagePayload)
+            await send(json: messagePayload)
             
             // Increment the requestId for the next message
             requestId += 1
