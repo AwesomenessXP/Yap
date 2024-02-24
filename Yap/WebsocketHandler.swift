@@ -32,12 +32,14 @@ class WebsocketClient: ObservableObject {
     }
     
     func connect() async {
-        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")!
-        webSocketTask = session.webSocketTask(with: url)
-        webSocketTask?.resume()
-        
-        await sendInitialConnection()
-        listenForMessages()
+        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")
+        if let url = url {
+            webSocketTask = session.webSocketTask(with: url)
+            webSocketTask?.resume()
+            
+            await sendInitialConnection()
+            listenForMessages()
+        }
     }
     
     private func sendInitialConnection() async {
@@ -136,10 +138,12 @@ class WebsocketClient: ObservableObject {
     private func send(json: [String: Any]) async {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
-            let jsonString = String(data: jsonData, encoding: .utf8)!
-            webSocketTask?.send(.string(jsonString)) { error in
-                if let error = error {
-                    print("Error in sending message: \(error.localizedDescription)")
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            if let jsonString = jsonString {
+                webSocketTask?.send(.string(jsonString)) { error in
+                    if let error = error {
+                        print("Error in sending message: \(error.localizedDescription)")
+                    }
                 }
             }
         } catch {
