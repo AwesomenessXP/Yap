@@ -8,16 +8,17 @@
 import SwiftUI
 import MapKit
 
-let mapView = MKMapView()
+let yapMapView = MKMapView()
 struct DarkModeMapView: UIViewRepresentable {
     var region: MKCoordinateRegion
     
     func makeUIView(context: Context) -> MKMapView {
-        mapView.setRegion(region, animated: true)
-        mapView.overrideUserInterfaceStyle = .dark
-        mapView.showsUserLocation = true
-        mapView.delegate = context.coordinator
-        return mapView
+        yapMapView.setRegion(region, animated: true)
+        yapMapView.overrideUserInterfaceStyle = .dark
+        yapMapView.showsUserLocation = true
+        yapMapView.setUserTrackingMode(.followWithHeading, animated: true)
+        yapMapView.delegate = context.coordinator
+        return yapMapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
@@ -39,7 +40,7 @@ struct DarkModeMapView: UIViewRepresentable {
 
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation {
-                let identifier = "UserLocationAnnotation"
+                let identifier = "user_location"
                 var view: MKAnnotationView
                 if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? UserLocationAnnotationView {
                     dequeuedView.annotation = annotation
@@ -50,6 +51,10 @@ struct DarkModeMapView: UIViewRepresentable {
                 return view
             }
             return nil
+        }
+        
+        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+            yapMapView.setUserTrackingMode(.followWithHeading, animated: true)
         }
 
     }
@@ -65,6 +70,8 @@ class UserLocationAnnotationView: MKAnnotationView {
     }
     
     required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        addSwiftUIView()
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -175,7 +182,9 @@ struct RadarView: View {
                 .frame(width: 20, height: 20)
                 .overlay(Circle().stroke(Color.white, lineWidth: 1))
         }
-        .onAppear(perform: performAnimation)
+        .onAppear(perform: {
+            performAnimation()
+        })
     }
     
     private func performAnimation() {
@@ -205,7 +214,7 @@ struct RadarView: View {
 
 struct MapView: View {
     @EnvironmentObject var locationManager: LocationManager
-    @State var cameraPosition: MKCoordinateRegion? = .userRegion
+    @State var cameraPosition: MKCoordinateRegion = .userRegion
     
     // Radar animation state variables
     @State var startAnimation = false
@@ -215,34 +224,27 @@ struct MapView: View {
     
     var body: some View {
         ZStack {
-            if let cameraPosition = cameraPosition {
-                DarkModeMapView(region: cameraPosition)
-                    .edgesIgnoringSafeArea(.all)
-            }
-        }
-        .onAppear() {
-            if let coords = locationManager.location?.last?.coordinate {
-                cameraPosition = MKCoordinateRegion(
-                    center: coords,
-                    latitudinalMeters: 100,
-                    longitudinalMeters: 100
-                )
-            }
+            DarkModeMapView(region: cameraPosition)
+                .edgesIgnoringSafeArea(.all)
+                .onChange(of: cameraPosition.center.latitude) {
+                    print("changed!")
+                }
+                .onAppear() {
+                    print("\(cameraPosition.center.latitude), \(cameraPosition.center.longitude)")
+                }
         }
     }
 }
 
 extension CLLocationCoordinate2D {
     static var userLocation: CLLocationCoordinate2D {
-        let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
-        let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
-        return .init(latitude: lat, longitude: long) // User's location
+        return .init(latitude: (manager.location?.coordinate.latitude ?? 0), longitude: ( manager.location?.coordinate.latitude ?? 0)) // User's location
     }
 }
 
 extension MKCoordinateRegion {
     static var userRegion: MKCoordinateRegion {
-        mapView.setCenter(.userLocation, animated: true)
+        yapMapView.setCenter(.userLocation, animated: true)
         return .init(center: .userLocation, latitudinalMeters: 100, longitudinalMeters: 100)
     }
 }

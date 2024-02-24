@@ -33,6 +33,11 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.location = locations
+        if let loc = locations.last?.coordinate {
+            yapMapView.setCenter(loc, animated: true)
+            let region = MKCoordinateRegion(center: loc, latitudinalMeters: 100, longitudinalMeters: 100)
+            yapMapView.setRegion(region, animated: true)
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

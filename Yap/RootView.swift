@@ -10,7 +10,6 @@ struct User {
 struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var websocketClient: WebsocketClient
-    @EnvironmentObject var locationModel: LocationModel
     @EnvironmentObject var settingsModel: SettingsModel
 
     @State private var messageText = ""
@@ -52,13 +51,12 @@ struct RootView: View {
                 .onTapGesture {
                     isFocused = false
                 }
-                .onAppear() {
-                    Task {
-                        do {
-                            try await startLocationUpdates()
-                        } catch {
-                            print("Unable to fetch location")
-                        }
+                .task {
+                    do {
+                        try await startLocationUpdates()
+                    }
+                    catch {
+                        print("Unable to fetch location")
                     }
                 }
                 .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
@@ -91,11 +89,8 @@ struct RootView: View {
                     .padding()
                     
                     Button {
-                        DispatchQueue.main.async {
-                            self.settingsModel.addUsername(name: username)
-                            self.usernameSet = true
-                        }
-                        
+                        let _ = self.settingsModel.addUsername(name: username)
+                        self.usernameSet = true
                     }
                     label: {
                         Text("Start Yapping")
@@ -111,8 +106,7 @@ struct RootView: View {
                 .background(Color.black)
             }
         }
-        .onAppear() {
-            
+        .onAppear {
             let token = UserDefaults.standard.value(forKey: "user_token")
             let hasUser = settingsModel.getUsername()
             
@@ -174,9 +168,7 @@ struct RootView: View {
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
             
             Button {
-                Task {
-                    sendMessage(message: messageText)
-                }
+                sendMessage(message: messageText)
             } label: {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.white)
@@ -193,7 +185,6 @@ struct RootView: View {
 //            if let speed = update.location?.speed {
                 latitude = Double(update.location?.coordinate.latitude ?? 0.0)
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
-                locationModel.storeCoords(lat: (update.location?.coordinate.latitude ?? 0.0), long: (update.location?.coordinate.longitude ?? 0.0))
 
                 if let latitude = latitude, let longitude = longitude {
                     websocketClient.update(latitude: latitude, longitude: longitude)
@@ -275,7 +266,6 @@ struct MessageView: View {
     RootView()
         .environmentObject(LocationManager())
         .environmentObject(WebsocketClient())
-        .environmentObject(LocationModel())
         .environmentObject(SettingsModel())
 }
 
