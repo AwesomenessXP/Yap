@@ -33,24 +33,6 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func connect() {
-<<<<<<< HEAD
-        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")
-        if let url = url {
-            webSocketTask = session.webSocketTask(with: url)
-            webSocketTask?.resume()
-            
-            sendInitialConnection()
-            listenForMessages()
-            
-            let token = UserDefaults.standard.value(forKey: "user_token")
-            if (token == nil) {
-                register()
-            }
-            else {
-                getMessages()
-            }
-        }
-=======
         DispatchQueue.global(qos: .background).async {
 
         let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")!
@@ -68,9 +50,6 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
             self.getMessages()
         }
         }
-
-        
->>>>>>> 50993ee274b37e0ce87f40743fa712141bfe0d3a
     }
     
     private func sendInitialConnection() {
