@@ -21,7 +21,7 @@ struct Message: Identifiable, Codable {
 class WebsocketClient: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession
-    @Published var messages: [Message]?
+    @Published var messages: [Message]? = [Message(id: "sdfsdf", displayName: "Yes", message: "idk", userId: "sdf")]
     private var latestVersionID = 0
     private var latestQueryID = 0
     private var requestId = 0
@@ -124,6 +124,8 @@ class WebsocketClient: ObservableObject {
                     let newMessages = try JSONDecoder().decode([Message].self, from: newData)
                     DispatchQueue.main.async {
                         self.messages = newMessages.reversed()
+                        self.messages?.append(Message(id: "sdfsdf", displayName: "Konsing", message: "YOOOOO", userId: "sdf"))
+                        self.messages?.append(Message(id: "sdfsdfsdfsdf", displayName: "Konsing", message: "I'm busy I cant make it tonight", userId: "ssdfdf"))
                     }
                     print("Messages loaded")
                 }

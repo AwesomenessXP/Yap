@@ -66,20 +66,15 @@ struct RootView: View {
             }
             else {
                 VStack {
-                    Spacer()
-                    logoView
-                        .scaleEffect(3)
-                    Spacer()
-                        .frame(height: 50)
                     Text("Enter a username")
-                        .font(.system(size: 23))
+                        .font(.system(size: 23)).bold()
                         .foregroundStyle(.white)
                     Group {
                         TextField("Username", text: $username)
                             .bold()
                             .foregroundStyle(.white)
-                            .padding(.leading, 15)
-                            .padding([.top, .bottom], 15)
+                            .frame(width: 330, height: 50)
+                            .multilineTextAlignment(.center)
                             .onChange(of: username) {
                                 if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     self.btnDisabled = false
@@ -90,10 +85,8 @@ struct RootView: View {
                                 }
                             }
                     }
-                    .background(RoundedRectangle(cornerRadius: 20).stroke(Color.gray.opacity(0.45), lineWidth: 2))
-                    .padding([.trailing, .leading], 30)
-                    Spacer()
-                        .frame(height: 35)
+                    .background(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.45), lineWidth: 2))
+                    .padding()
                     
                     Button {
                         self.usernameSet = true
@@ -101,17 +94,15 @@ struct RootView: View {
                     label: {
                         Text("Start Yapping")
                     }
-                    .foregroundStyle(.black)
-                    .bold()
-                    .padding([.trailing, .leading], 10)
-                    .padding()
+                    .frame(width: 330, height: 50)
+                    .foregroundStyle(.black).bold()
                     .disabled(self.btnDisabled)
                     .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.3), lineWidth: 2))
                     .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 15, style: .circular))
-                    Spacer()
                 }
-                .background(Color.black.edgesIgnoringSafeArea(.all))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black)
             }
         }
         .onAppear() {
@@ -126,12 +117,11 @@ struct RootView: View {
     var logoView: some View {
         HStack {
             Text("YAP")
-                .font(.title)
-                .bold()
+                .font(.system(size: 21)).bold()
                 .foregroundColor(.white)
             
             Image(systemName: "megaphone")
-                .font(.system(size: 21))
+                .font(.system(size: 18))
                 .foregroundColor(.white)
         }
     }
@@ -224,14 +214,22 @@ struct MessageView: View {
     
     var body: some View {
         if message.userId == websocketClient.user_id {
-            HStack {
-                Spacer()
-                Text(Optional(message.message.description) ?? "")
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal, 16)
+            VStack(alignment: .trailing) {
+                Text(Optional(message.displayName.description) ?? "")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 30)
+                    .padding(.bottom, -15)
+                
+                HStack {
+                    Spacer()
+                    Text(Optional(message.message.description) ?? "")
+                        .foregroundColor(Color.white)
+                        .padding(.horizontal, 9)
+                }
+                .padding(.trailing, 21)
+                .padding(.vertical, 12)
             }
-            .padding(.trailing, 21)
-            .padding(.vertical, 12)
     
 
         } else {
@@ -240,10 +238,13 @@ struct MessageView: View {
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.vertical, 3)
+                    .padding(.bottom, -5)
 
                 HStack {
                     Text(Optional(message.message.description) ?? "")
                         .foregroundColor(Color.white)
+                        .font(.system(size: 16))
+                        .padding(.vertical, 2.5)
                     Spacer()
                 }
             }
