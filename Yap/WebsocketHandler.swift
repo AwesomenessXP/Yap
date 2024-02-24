@@ -53,8 +53,6 @@ class WebsocketClient: ObservableObject {
     }
     
     func modifyQuerySet(args: [String : Double]) {
-        
-        
         if (latestQueryID != 0) {
             latestVersionID = latestVersionID + 1
             print("Sending Remove message \(latestVersionID) and \(latestQueryID)")
@@ -172,6 +170,4 @@ class WebsocketClient: ObservableObject {
             requestId += 1
         }
     }
-
-    
 }

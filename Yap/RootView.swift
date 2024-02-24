@@ -108,7 +108,7 @@ struct RootView: View {
         }
         .onAppear() {
             let hasUser = settingsModel.getUsername()
-            if let hasUser = hasUser {
+            if let _ = hasUser {
                 usernameSet = true
             }
         }
