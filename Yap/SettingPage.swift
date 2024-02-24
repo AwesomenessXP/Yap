@@ -11,8 +11,8 @@ import SwiftUI
 struct SettingPage: View {
     @FocusState var isFocused
     @State var time = ""
-    @State var userName: String = "You"
-    @State var settingTimer = coolDownTimer()
+    @State var userName: String = ""
+    @State var settingsModel = SettingsModel()
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -24,7 +24,8 @@ struct SettingPage: View {
                     }
                     
                     Section(header: Text("User profile")) {
-                        TextField("User Name", text: $userName).onTapGesture{
+                        TextField("awesomenessxp2", text: $userName)
+                            .onTapGesture{
                             isFocused = true
                         }
                         .foregroundColor(.white)
@@ -43,12 +44,17 @@ struct SettingPage: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
                             time = Date().description(with: .current)
-                            settingTimer.updateDate()
+                            settingsModel.updateDate()
                             print(time)
-                            dismiss()
+                            if settingsModel.addUsername(name: userName) {
+                                dismiss()
+                            }
                         }) { Text("Save") }
                     }
                 }
+            }
+            .onAppear() {
+                self.userName = settingsModel.getUsername() ?? ""
             }
         }
     }
@@ -58,4 +64,5 @@ struct SettingPage: View {
 #Preview {
     SettingPage()
         .environmentObject(LocationManager())
+        .environmentObject(SettingsModel())
 }

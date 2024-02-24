@@ -7,7 +7,7 @@
 
 import Foundation
 
-class coolDownTimer{
+class SettingsModel: ObservableObject {
     private var time : Date?
     private let CD = 5.0
     private let dateFormatter = DateFormatter()
@@ -46,5 +46,17 @@ class coolDownTimer{
             time = dateFormatter.date(from: time_str)
             UserDefaults.standard.synchronize()
         }
+    }
+    
+    func addUsername(name: String) -> Bool {
+        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            UserDefaults.standard.set(name, forKey: "username")
+            return true
+        }
+        return false
+    }
+    
+    func getUsername() -> String? {
+        return UserDefaults.standard.string(forKey: "username")
     }
 }

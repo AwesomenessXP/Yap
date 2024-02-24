@@ -11,12 +11,16 @@ struct RootView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var websocketClient: WebsocketClient
     @EnvironmentObject var locationModel: LocationModel
+    @EnvironmentObject var settingsModel: SettingsModel
 
     private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
-    let currentUser = User(name: "JKT")
+    @State var currentUser = User(name: "JKT")
     @State var latitude: Double?
     @State var longitude: Double?
+    @State var initUsernameNotSet: Bool = true
+    @State var usernameNotSet: Bool = true
+    @State var username: String = ""
     
     @FocusState var isFocused: Bool
 
@@ -54,6 +58,11 @@ struct RootView: View {
                     } catch {
                         print("Unable to fetch location")
                     }
+                }
+                self.username = settingsModel.getUsername() ?? ""
+                if !username.isEmpty {
+                    self.currentUser = User(name: username)
+                    self.initUsernameNotSet = false
                 }
             }
             .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
@@ -102,6 +111,20 @@ struct RootView: View {
                         messageText = String(messageText.prefix(240))
                     }
                     .padding(.leading, 15)
+                    .alert("Please enter a username to continue", isPresented: $initUsernameNotSet, actions: {
+                        TextField("username", text: $username)
+                            .onChange(of: username) {
+                                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    self.usernameNotSet = false
+                                    let _ = settingsModel.addUsername(name: username)
+                                }
+                                else {
+                                    self.usernameNotSet = true
+                                }
+                            }
+                        Button("OK") {}
+                            .disabled(self.usernameNotSet)
+                    })
             }
             .padding(.vertical, 8) // Adjust the vertical padding to fit your design needs
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.2), lineWidth: 2))
