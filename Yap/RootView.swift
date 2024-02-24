@@ -206,9 +206,7 @@ struct RootView: View {
         }
         if let latitude = latitude, let longitude = longitude {
             if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                Task {
-                    await websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
-                }
+                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
             }
         }
     }
