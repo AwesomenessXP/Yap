@@ -33,6 +33,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func connect() {
+<<<<<<< HEAD
         let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")
         if let url = url {
             webSocketTask = session.webSocketTask(with: url)
@@ -49,18 +50,42 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 getMessages()
             }
         }
+=======
+        DispatchQueue.global(qos: .background).async {
+
+        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")!
+            self.webSocketTask = self.session.webSocketTask(with: url)
+            self.webSocketTask?.resume()
+        
+            self.sendInitialConnection()
+            self.listenForMessages()
+        
+        let token = UserDefaults.standard.value(forKey: "user_token")
+        if (token == nil) {
+            self.register()
+        }
+        else {
+            self.getMessages()
+        }
+        }
+
+        
+>>>>>>> 50993ee274b37e0ce87f40743fa712141bfe0d3a
     }
     
     private func sendInitialConnection() {
-        let uuidString = UUID().uuidString
-        let connectionData: [String: Any] = [
-            "connectionCount": 0,
-            "lastCloseReason": "InitialConnect",
-            "type": "Connect",
-            "sessionId": uuidString
-        ]
-        
-         send(json: connectionData)
+        DispatchQueue.global(qos: .background).async {
+            
+            let uuidString = UUID().uuidString
+            let connectionData: [String: Any] = [
+                "connectionCount": 0,
+                "lastCloseReason": "InitialConnect",
+                "type": "Connect",
+                "sessionId": uuidString
+            ]
+            
+            self.send(json: connectionData)
+        }
     }
     
     func getMessages() {
@@ -111,22 +136,24 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     
     private func listenForMessages() {
         webSocketTask?.receive { [weak self] result in
-            switch result {
-            case .failure(let error):
-                print("Error in receiving message: \(error)")
-                print(result)
-            case .success(let message):
-                switch message {
-                case .string(let text):
-                    self?.handleMessage(text: text)
-                case .data(let data):
-                    print("Received binary data: \(data)")
-                @unknown default:
-                    fatalError()
+            DispatchQueue.global(qos: .background).async {
+                switch result {
+                case .failure(let error):
+                    print("Error in receiving message: \(error)")
+                case .success(let message):
+                    switch message {
+                    case .string(let text):
+                        self?.handleMessage(text: text)
+                    case .data(let data):
+                        print("Received binary data: \(data)")
+                    @unknown default:
+                        fatalError()
+                    }
                 }
-            
-                if let self = self {
-                    self.listenForMessages()
+                DispatchQueue.main.async {
+                    if let self = self {
+                        self.listenForMessages()
+                    }
                 }
             }
         }
@@ -146,10 +173,13 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                         let newMessages = try JSONDecoder().decode([Message].self, from: newData)
                         DispatchQueue.main.async {
                             self.messages = newMessages.reversed()
-//                            print("New messages:", newMessages)
                         }
+
                     } else if let value = modification["value"] as? [String: Any], let usersCount = value["users_count"] as? Int {
-                        user_count = usersCount
+                        DispatchQueue.main.async {
+                            self.user_count = usersCount
+                        }
+
                         print("Users count:", usersCount)
                     }
                 }
@@ -166,36 +196,41 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
 
     
     func register() {
-        let token = UUID().uuidString
-        let display_name = UserDefaults.standard.value(forKey: "username")
-        UserDefaults.standard.set(token, forKey: "user_token")
-        if let user_id = self.user_id {
-            let messagePayload: [String: Any] = [
-                "type": "Mutation",
-                "requestId": requestId,
-                "udfPath": "myFunctions:registerUser",
-                "args": [
-                    [
-                        "display_name": display_name ?? "",
-                        "vendor_id": user_id,
-                        "token": token
+        DispatchQueue.global(qos: .background).async {
+            
+            let token = UUID().uuidString
+            let display_name = UserDefaults.standard.value(forKey: "username")
+            UserDefaults.standard.set(token, forKey: "user_token")
+            if let user_id = self.user_id {
+                let messagePayload: [String: Any] = [
+                    "type": "Mutation",
+                    "requestId": self.requestId,
+                    "udfPath": "myFunctions:registerUser",
+                    "args": [
+                        [
+                            "display_name": display_name ?? "",
+                            "vendor_id": user_id,
+                            "token": token
+                        ]
                     ]
                 ]
-            ]
-        
-            send(json: messagePayload)
-            requestId += 1
+                
+                self.send(json: messagePayload)
+                self.requestId += 1
+            }
+            self.getMessages()
         }
-        getMessages()
     }
     
     func update(latitude: Double, longitude: Double) {
+        DispatchQueue.global(qos: .background).async {
+
         let token = UserDefaults.standard.value(forKey: "user_token")
         let display_name = UserDefaults.standard.value(forKey: "username")
         if let user_id = self.user_id {
             let messagePayload: [String: Any] = [
                 "type": "Mutation",
-                "requestId": requestId,
+                "requestId": self.requestId,
                 "udfPath": "myFunctions:updateUser",
                 "args": [
                     [
@@ -208,9 +243,11 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 ]
             ]
         
-                send(json: messagePayload)
-            requestId += 1
+            self.send(json: messagePayload)
+            self.requestId += 1
         }
+        }
+
     }
     
     
