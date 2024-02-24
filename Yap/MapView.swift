@@ -213,25 +213,12 @@ struct RadarView: View {
 }
 
 struct MapView: View {
-    @EnvironmentObject var locationManager: LocationManager
     @State var cameraPosition: MKCoordinateRegion = .userRegion
-    
-    // Radar animation state variables
-    @State var startAnimation = false
-    @State var fadeAnimation1 = false
-    @State var fadeAnimation2 = false
-    @State var fadeAnimation3 = false
     
     var body: some View {
         ZStack {
             DarkModeMapView(region: cameraPosition)
-                .edgesIgnoringSafeArea(.all)
-                .onChange(of: cameraPosition.center.latitude) {
-                    print("changed!")
-                }
-                .onAppear() {
-                    print("\(cameraPosition.center.latitude), \(cameraPosition.center.longitude)")
-                }
+                    .edgesIgnoringSafeArea(.all)
         }
     }
 }
@@ -244,8 +231,9 @@ extension CLLocationCoordinate2D {
 
 extension MKCoordinateRegion {
     static var userRegion: MKCoordinateRegion {
+        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         yapMapView.setCenter(.userLocation, animated: true)
-        return .init(center: .userLocation, latitudinalMeters: 100, longitudinalMeters: 100)
+        return .init(center: .userLocation, span: span)
     }
 }
 
