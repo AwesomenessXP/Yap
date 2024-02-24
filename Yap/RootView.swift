@@ -90,6 +90,7 @@ struct RootView: View {
                     
                     Button {
                         self.usernameSet = true
+                        let _ = settingsModel.addUsername(name: username)
                     }
                     label: {
                         Text("Start Yapping")
@@ -106,10 +107,9 @@ struct RootView: View {
             }
         }
         .onAppear() {
-            self.username = settingsModel.getUsername() ?? ""
-            if !username.isEmpty {
-                self.currentUser = User(name: username)
-                self.usernameSet = true
+            let hasUser = settingsModel.getUsername()
+            if let hasUser {
+                usernameSet = true
             }
         }
     }
@@ -198,6 +198,10 @@ struct RootView: View {
     
     func sendMessage(message: String) {
         messageText = ""
+        if let name = settingsModel.getUsername() {
+            self.currentUser = User(name: name)
+            self.usernameSet = true
+        }
         if let latitude = latitude, let longitude = longitude {
             if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)

@@ -9,7 +9,7 @@ import Foundation
 
 class SettingsModel: ObservableObject {
     private var time : Date?
-    private let CD = 5.0
+    private let CD = 30.0
     private let dateFormatter = DateFormatter()
     
     init(){
