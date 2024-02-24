@@ -85,7 +85,7 @@ struct RootView: View {
             
             HStack {
                 Spacer()
-                NavigationLink(destination: ContentView()) {
+                NavigationLink(destination: MapView()) {
                     Image(systemName: "map").foregroundColor(Color.white)
                 }
                     

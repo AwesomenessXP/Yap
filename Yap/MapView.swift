@@ -207,7 +207,7 @@ struct RadarView: View {
 
 // Now merging the ContentView with MapView and RadarAnimation
 // ContentView struct now uses DarkModeMapView for the map
-struct ContentView: View {
+struct MapView: View {
     @EnvironmentObject var locationManager: LocationManager
     @State var cameraPosition: MKCoordinateRegion? = .userRegion
     
@@ -253,7 +253,7 @@ extension MKCoordinateRegion {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        MapView()
             .environmentObject(LocationManager())
     }
 }
