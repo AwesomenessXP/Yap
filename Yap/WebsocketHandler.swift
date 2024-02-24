@@ -35,7 +35,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     func connect() {
         DispatchQueue.global(qos: .background).async {
 
-        let url = URL(string: "wss://nautical-wolf-360.convex.cloud/api/1.9.1/sync")!
+        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")!
             self.webSocketTask = self.session.webSocketTask(with: url)
             self.webSocketTask?.resume()
         
