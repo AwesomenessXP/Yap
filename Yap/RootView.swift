@@ -37,6 +37,7 @@ struct RootView: View {
                         }
                         .rotationEffect(.degrees(180))
                         .background(Color.black.opacity(0.9))
+                        .sensoryFeedback(.impact, trigger: messages.count)
                     }
                     else {
                         Spacer()
@@ -84,6 +85,7 @@ struct RootView: View {
                                     self.btnDisabled = true
                                 }
                             }
+                            .sensoryFeedback(.increase, trigger: username.count)
                     }
                     .background(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.45), lineWidth: 2))
                     .padding()
@@ -162,8 +164,10 @@ struct RootView: View {
                         messageText = String(messageText.prefix(240))
                     }
                     .padding(.leading, 15)
+                    .sensoryFeedback(.increase, trigger: messageText.count)
+
             }
-            .padding(.vertical, 8) // Adjust the vertical padding to fit your design needs
+            .padding(.vertical, 8)
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
             
             Button {

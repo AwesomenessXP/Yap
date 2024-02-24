@@ -21,7 +21,7 @@ struct YapApp: App {
                 .environmentObject(websocketClient)
                 .environmentObject(locationModel)
                 .task {
-                    await websocketClient.connect()
+                    websocketClient.connect()
                 }
                 .environmentObject(settingsModel)
         }
