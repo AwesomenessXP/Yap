@@ -59,7 +59,7 @@ class WebsocketClient: ObservableObject {
             "sessionId": uuidString
         ]
         
-        send(json: connectionData)
+        await send(json: connectionData)
     }
     
     func getMessages() {
@@ -124,8 +124,10 @@ class WebsocketClient: ObservableObject {
                 @unknown default:
                     fatalError()
                 }
-                
-            self?.listenForMessages()
+            
+                if let self = self {
+                    self.listenForMessages()
+                }
             }
         }
     }
@@ -212,13 +214,15 @@ class WebsocketClient: ObservableObject {
     }
     
     
-    private func send(json: [String: Any]) {
+    private func send(json: [String: Any]) async {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
-            let jsonString = String(data: jsonData, encoding: .utf8)!
-            webSocketTask?.send(.string(jsonString)) { error in
-                if let error = error {
-                    print("Error in sending message: \(error.localizedDescription)")
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            if let jsonString = jsonString {
+                webSocketTask?.send(.string(jsonString)) { error in
+                    if let error = error {
+                        print("Error in sending message: \(error.localizedDescription)")
+                    }
                 }
             }
         } catch {
@@ -244,12 +248,10 @@ class WebsocketClient: ObservableObject {
             ]
             
             // Convert the payload to JSON and send it
-            send(json: messagePayload)
+            await send(json: messagePayload)
             
             // Increment the requestId for the next message
             requestId += 1
         }
     }
-
-    
 }

@@ -43,9 +43,9 @@ struct SettingPage: View {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
-//                            time = Date().description(with: .current)
-//                            settingsModel.updateDate()
-//                            print(time)
+                            time = Date().description(with: .current)
+                            settingsModel.updateDate()
+                            print(time)
                             if settingsModel.addUsername(name: userName) {
                                 dismiss()
                             }
