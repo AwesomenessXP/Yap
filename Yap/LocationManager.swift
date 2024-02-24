@@ -2,8 +2,8 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
+let manager = CLLocationManager()
 class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
-    let manager = CLLocationManager()
     let updates = CLLocationUpdate.liveUpdates()
     
     @Published var degrees: Double = 0

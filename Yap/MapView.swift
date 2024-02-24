@@ -39,13 +39,13 @@ struct DarkModeMapView: UIViewRepresentable {
 
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation {
-                let identifier = "SwiftUIAnnotation"
+                let identifier = "UserLocationAnnotation"
                 var view: MKAnnotationView
-                if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? SwiftUIAnnotationView {
+                if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? UserLocationAnnotationView {
                     dequeuedView.annotation = annotation
                     view = dequeuedView
                 } else {
-                    view = SwiftUIAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                    view = UserLocationAnnotationView(annotation: annotation, reuseIdentifier: identifier)
                 }
                 return view
             }
@@ -55,7 +55,7 @@ struct DarkModeMapView: UIViewRepresentable {
     }
 }
 
-class SwiftUIAnnotationView: MKAnnotationView {
+class UserLocationAnnotationView: MKAnnotationView {
     private var hostingController: UIHostingController<RadarView>?
 
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
@@ -203,10 +203,6 @@ struct RadarView: View {
     }
 }
 
-// Add QuadCircle struct here as it's part of RadarView dependencies
-
-// Now merging the ContentView with MapView and RadarAnimation
-// ContentView struct now uses DarkModeMapView for the map
 struct MapView: View {
     @EnvironmentObject var locationManager: LocationManager
     @State var cameraPosition: MKCoordinateRegion? = .userRegion
