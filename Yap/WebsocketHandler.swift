@@ -59,7 +59,7 @@ class WebsocketClient: ObservableObject {
             "sessionId": uuidString
         ]
         
-        await send(json: connectionData)
+         send(json: connectionData)
     }
     
     func getMessages() {
@@ -71,7 +71,7 @@ class WebsocketClient: ObservableObject {
                 if let user_token = token {
                 latestVersionID = latestVersionID + 1
                 print("Sending Add message \(latestVersionID) and \(latestQueryID)")
-                send(json: [
+                 send(json: [
                     "type": "ModifyQuerySet",
                     "baseVersion": latestVersionID - 1,
                     "newVersion": latestVersionID,
@@ -214,7 +214,7 @@ class WebsocketClient: ObservableObject {
     }
     
     
-    private func send(json: [String: Any]) async {
+    private func send(json: [String: Any]) {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
             let jsonString = String(data: jsonData, encoding: .utf8)
@@ -248,7 +248,7 @@ class WebsocketClient: ObservableObject {
             ]
             
             // Convert the payload to JSON and send it
-            await send(json: messagePayload)
+             send(json: messagePayload)
             
             // Increment the requestId for the next message
             requestId += 1
