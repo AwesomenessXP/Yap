@@ -89,8 +89,8 @@ struct RootView: View {
                     .padding()
                     
                     Button {
-                        self.usernameSet = true
                         let _ = settingsModel.addUsername(name: username)
+                        self.usernameSet = true
                     }
                     label: {
                         Text("Start Yapping")
@@ -107,10 +107,16 @@ struct RootView: View {
             }
         }
         .onAppear() {
+            
+            let token = UserDefaults.standard.value(forKey: "user_token")
             let hasUser = settingsModel.getUsername()
-            if let hasUser {
+            
+            if (token == nil) {
+                usernameSet = false
+            } else if (hasUser != nil) {
                 usernameSet = true
             }
+    
         }
     }
     
@@ -183,13 +189,9 @@ struct RootView: View {
                 locationModel.storeCoords(lat: (update.location?.coordinate.latitude ?? 0.0), long: (update.location?.coordinate.longitude ?? 0.0))
 
                 if let latitude = latitude, let longitude = longitude {
-//                    if speed > 1.43 {
-                        websocketClient.modifyQuerySet(
-                            args: ["lat": latitude, "long": longitude]
-                        )
-//                    \
+                    websocketClient.update(latitude: latitude, longitude: longitude)
                 }
-//            }
+
             if update.isStationary {
                 break
             }
@@ -215,11 +217,12 @@ struct MessageView: View {
     var message: Message
     var currentUser: User
     var websocketClient: WebsocketClient
+    @State var true_id = UserDefaults.standard.value(forKey: "true_id") as? String ?? ""
     
     var body: some View {
-        if message.userId == websocketClient.user_id {
+        if message.user == true_id {
             VStack(alignment: .trailing) {
-                Text(Optional(message.displayName.description) ?? "")
+                Text(Optional(message.display_name.description) ?? "")
                     .font(.caption)
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
@@ -239,7 +242,7 @@ struct MessageView: View {
 
         } else {
             VStack(alignment: .leading) {
-                Text(Optional(message.displayName.description) ?? "")
+                Text(Optional(message.display_name.description) ?? "")
                     .font(.caption)
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
