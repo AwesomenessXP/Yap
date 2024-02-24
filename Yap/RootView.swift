@@ -17,72 +17,128 @@ struct RootView: View {
     @State var currentUser = User(name: "JKT")
     @State var latitude: Double?
     @State var longitude: Double?
-    @State var initUsernameNotSet: Bool = true
-    @State var usernameNotSet: Bool = true
+    @State var btnDisabled: Bool = true
     @State var username: String = ""
+    @State var usernameSet: Bool = false
     
     @FocusState var isFocused: Bool
 
     var body: some View {
         NavigationStack {
-            VStack {
-                headerView
-                if let messages = websocketClient.messages {
-                    ScrollView {
+            if self.usernameSet {
+                VStack {
+                    headerView
+                    if let messages = websocketClient.messages {
+                        ScrollView {
                             ForEach(messages) { message in
                                 MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
                             }
                             .rotationEffect(.degrees(180))
+                        }
+                        .rotationEffect(.degrees(180))
+                        .background(Color.black.opacity(0.9))
                     }
-                    .rotationEffect(.degrees(180))
-                    .background(Color.black.opacity(0.9))
+                    else {
+                        Spacer()
+                        ProgressView()
+                            .scaleEffect(2)
+                            .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                        Spacer()
+                    }
+                    inputField
                 }
-                else {
-                    Spacer()
-                    ProgressView()
-                        .scaleEffect(2)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                    Spacer()
+                .background(Color.black.edgesIgnoringSafeArea(.all))
+                .onTapGesture {
+                    isFocused = false
                 }
-                inputField
-            }
-            .background(Color.black.edgesIgnoringSafeArea(.all))
-            .onTapGesture {
-                isFocused = false
-            }
-            .onAppear() {
-                Task {
-                    do {
-                        try await startLocationUpdates()
-                    } catch {
-                        print("Unable to fetch location")
+                .onAppear() {
+                    Task {
+                        do {
+                            try await startLocationUpdates()
+                        } catch {
+                            print("Unable to fetch location")
+                        }
                     }
                 }
-                self.username = settingsModel.getUsername() ?? ""
-                if !username.isEmpty {
-                    self.currentUser = User(name: username)
-                    self.initUsernameNotSet = false
-                }
+                .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+                    Button("OK", role: .cancel) {}
+                })
             }
-            .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
-                Button("OK", role: .cancel) {}
-            })
+            else {
+                VStack {
+                    Spacer()
+                    logoView
+                        .scaleEffect(3)
+                    Spacer()
+                        .frame(height: 50)
+                    Text("Enter a username")
+                        .font(.system(size: 23))
+                        .foregroundStyle(.white)
+                    Group {
+                        TextField("Username", text: $username)
+                            .bold()
+                            .foregroundStyle(.white)
+                            .padding(.leading, 15)
+                            .padding([.top, .bottom], 15)
+                            .onChange(of: username) {
+                                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    self.btnDisabled = false
+                                    let _ = settingsModel.addUsername(name: username)
+                                }
+                                else {
+                                    self.btnDisabled = true
+                                }
+                            }
+                    }
+                    .background(RoundedRectangle(cornerRadius: 20).stroke(Color.gray.opacity(0.45), lineWidth: 2))
+                    .padding([.trailing, .leading], 30)
+                    Spacer()
+                        .frame(height: 35)
+                    
+                    Button {
+                        self.usernameSet = true
+                    }
+                    label: {
+                        Text("Start Yapping")
+                    }
+                    .foregroundStyle(.black)
+                    .bold()
+                    .padding([.trailing, .leading], 10)
+                    .padding()
+                    .disabled(self.btnDisabled)
+                    .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.3), lineWidth: 2))
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 15, style: .circular))
+                    Spacer()
+                }
+                .background(Color.black.edgesIgnoringSafeArea(.all))
+            }
+        }
+        .onAppear() {
+            self.username = settingsModel.getUsername() ?? ""
+            if !username.isEmpty {
+                self.currentUser = User(name: username)
+                self.usernameSet = true
+            }
+        }
+    }
+    
+    var logoView: some View {
+        HStack {
+            Text("YAP")
+                .font(.title)
+                .bold()
+                .foregroundColor(.white)
+            
+            Image(systemName: "megaphone")
+                .font(.system(size: 21))
+                .foregroundColor(.white)
         }
     }
 
     var headerView: some View {
         ZStack {
-            HStack {
-                Text("YAP")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
-                
-                Image(systemName: "megaphone")
-                    .font(.system(size: 21))
-                    .foregroundColor(.white)
-            }
-            
+            logoView
             HStack {
                 Spacer()
                 NavigationLink(destination: MapView()) {
@@ -110,20 +166,6 @@ struct RootView: View {
                         messageText = String(messageText.prefix(240))
                     }
                     .padding(.leading, 15)
-                    .alert("Please enter a username to continue", isPresented: $initUsernameNotSet, actions: {
-                        TextField("username", text: $username)
-                            .onChange(of: username) {
-                                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    self.usernameNotSet = false
-                                    let _ = settingsModel.addUsername(name: username)
-                                }
-                                else {
-                                    self.usernameNotSet = true
-                                }
-                            }
-                        Button("OK") {}
-                            .disabled(self.usernameNotSet)
-                    })
             }
             .padding(.vertical, 8) // Adjust the vertical padding to fit your design needs
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
