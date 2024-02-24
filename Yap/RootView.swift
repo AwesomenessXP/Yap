@@ -13,7 +13,6 @@ struct RootView: View {
     @EnvironmentObject var locationModel: LocationModel
     @EnvironmentObject var settingsModel: SettingsModel
 
-    private let timerInterval: TimeInterval = 1
     @State private var messageText = ""
     @State var currentUser = User(name: "JKT")
     @State var latitude: Double?
