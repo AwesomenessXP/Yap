@@ -91,16 +91,14 @@ struct RootView: View {
                     Button {
                         let _ = self.settingsModel.addUsername(name: username)
                         self.usernameSet = true
-                    }
-                    label: {
+                    } label: {
                         Text("Start Yappin")
                     }
                     .frame(width: 330, height: 50)
                     .foregroundStyle(.black).bold()
                     .disabled(self.btnDisabled)
-                    .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.3), lineWidth: 2))
                     .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 15, style: .circular))
+                    .cornerRadius(15)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.black)
