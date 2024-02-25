@@ -182,8 +182,8 @@ struct RootView: View {
     func startLocationUpdates() async throws {
         for try await update in locationManager.updates {
                 print("location updates")
-                latitude = Double(update.location?.coordinate.latitude ?? 0.0)
-                longitude = Double(update.location?.coordinate.longitude ?? 0.0)
+                latitude = update.location?.coordinate.latitude
+                longitude = update.location?.coordinate.longitude
 
                 if let latitude = latitude, let longitude = longitude {
                     let serialQueue = DispatchQueue(label: "coord_serial_queue")
