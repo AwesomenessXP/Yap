@@ -51,12 +51,14 @@ struct RootView: View {
                 .onTapGesture {
                     isFocused = false
                 }
-                .task {
-                    do {
-                        try await startLocationUpdates()
-                    }
-                    catch {
-                        print("Unable to fetch location")
+                .onAppear() {
+                    Task {
+                        do {
+                            try await startLocationUpdates()
+                        }
+                        catch {
+                            print("Unable to fetch location")
+                        }
                     }
                 }
                 .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
@@ -185,7 +187,11 @@ struct RootView: View {
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
 
                 if let latitude = latitude, let longitude = longitude {
-                    websocketClient.update(latitude: latitude, longitude: longitude)
+                    Task {
+                        UserDefaults.standard.set(latitude, forKey: "latitude")
+                        UserDefaults.standard.set(longitude, forKey: "longitude")
+                        websocketClient.update(latitude: latitude, longitude: longitude)
+                    }
                 }
 
             if update.isStationary {

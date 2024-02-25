@@ -54,7 +54,7 @@ struct DarkModeMapView: UIViewRepresentable {
         }
         
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-            yapMapView.setUserTrackingMode(.followWithHeading, animated: true)
+            yapMapView.userTrackingMode = .follow
         }
 
     }
@@ -213,27 +213,25 @@ struct RadarView: View {
 }
 
 struct MapView: View {
-    @State var cameraPosition: MKCoordinateRegion = .userRegion
+    @EnvironmentObject var locationManager: LocationManager
+    @State var cameraPosition: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: UserDefaults.standard.double(forKey: "latitude"), longitude: UserDefaults.standard.double(forKey: "longitude")), latitudinalMeters: 50, longitudinalMeters: 50)
     
     var body: some View {
         ZStack {
-            DarkModeMapView(region: cameraPosition)
+                DarkModeMapView(region: cameraPosition)
                     .edgesIgnoringSafeArea(.all)
+            
         }
-    }
-}
-
-extension CLLocationCoordinate2D {
-    static var userLocation: CLLocationCoordinate2D {
-        return .init(latitude: (manager.location?.coordinate.latitude ?? 0), longitude: ( manager.location?.coordinate.latitude ?? 0)) // User's location
-    }
-}
-
-extension MKCoordinateRegion {
-    static var userRegion: MKCoordinateRegion {
-        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-        yapMapView.setCenter(.userLocation, animated: true)
-        return .init(center: .userLocation, span: span)
+        .onAppear() {
+            let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
+            let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
+                cameraPosition = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: lat, longitude: long),
+                    latitudinalMeters: 50,
+                    longitudinalMeters: 50
+                )
+            print("\(lat), \(long)")
+        }
     }
 }
 
@@ -256,4 +254,3 @@ struct QuadCircle: Shape {
         return path
     }
 }
-
