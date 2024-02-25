@@ -90,11 +90,13 @@ struct RootView: View {
                     .background(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.45), lineWidth: 2))
                     .padding()
                     
-                    Button {
+                    Button(action: {
                         let _ = self.settingsModel.addUsername(name: username)
                         self.usernameSet = true
-                    } label: {
+                    }) {
                         Text("Start Yappin")
+                            .fontWeight(.semibold)
+                            .frame(width: 360, height: 50)
                     }
                     .frame(width: 330, height: 50)
                     .foregroundStyle(.black).bold()
