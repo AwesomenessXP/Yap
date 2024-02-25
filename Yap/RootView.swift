@@ -154,23 +154,26 @@ struct RootView: View {
                 TextField("Type something", text: $messageText)
                     .foregroundColor(.white)
                     .onChange(of: messageText) {
+                        // Limit message text to 240 characters
                         messageText = String(messageText.prefix(240))
                     }
                     .padding(.leading, 15)
                     .sensoryFeedback(.increase, trigger: messageText.count)
-
             }
             .padding(.vertical, 8)
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
             
-            Button {
+            Button(action: {
                 sendMessage(message: messageText)
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
+            }) {
+                // Change the button icon based on whether the messageText is empty or not
+                Image(systemName: messageText.isEmpty ? "arrow.up.circle" : "arrow.up.circle.fill")
                     .foregroundColor(.white)
             }
             .font(.system(size: 27))
             .padding(.leading, 5)
+            // Disable the button if the messageText is empty
+            .disabled(messageText.isEmpty)
         }
         .padding()
         .focused($isFocused)
