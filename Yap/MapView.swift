@@ -21,15 +21,14 @@ struct DarkModeMapView: UIViewRepresentable {
         yapMapView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: false)
         yapMapView.setCamera(camera, animated: false)
         yapMapView.overrideUserInterfaceStyle = .dark
-        yapMapView.showsUserLocation = true
-        yapMapView.setUserTrackingMode(.follow, animated: false)
+        yapMapView.showsUserLocation = false
+        yapMapView.setUserTrackingMode(.none, animated: false)
         yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: false)
         return yapMapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        camera.centerCoordinate = coord2D
-        yapMapView.showsUserLocation = true
+        yapMapView.setUserTrackingMode(.follow, animated: true)
     }
     
     func makeCoordinator() -> DarkModeMapCoordinator {
@@ -61,9 +60,9 @@ struct DarkModeMapView: UIViewRepresentable {
         }
         
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-            yapMapView.setUserTrackingMode(.follow, animated: false)
-            interacted.toggle()
+            yapMapView.setUserTrackingMode(.follow, animated: true)
         }
+
     }
 }
 
@@ -228,12 +227,6 @@ struct MapView: View {
         DarkModeMapView(coord2D: cameraPosition)
             .edgesIgnoringSafeArea(.all)
             .onAppear {
-                if !interacted {
-                    yapMapView.setUserTrackingMode(.follow, animated: true)
-                }
-                else {
-                    yapMapView.setUserTrackingMode(.none, animated: false)
-                }
                 let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
                 let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
                 cameraPosition = CLLocationCoordinate2D(latitude: lat, longitude: long)
