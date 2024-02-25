@@ -14,23 +14,22 @@ struct DarkModeMapView: UIViewRepresentable {
     let camera = MKMapCamera()
     
     func makeUIView(context: Context) -> MKMapView {
-//        yapMapView.setRegion(region, animated: false)
         camera.centerCoordinate = coord2D
         camera.pitch = 0 // Optional: Adjust the pitch (tilt) of the camera
-        yapMapView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: true)
-        yapMapView.setCamera(camera, animated: true)
+        yapMapView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: false)
+        yapMapView.setCamera(camera, animated: false)
         yapMapView.overrideUserInterfaceStyle = .dark
-        yapMapView.showsUserLocation = true
-        yapMapView.setUserTrackingMode(.follow, animated: true)
+        yapMapView.showsUserLocation = false
+        yapMapView.setUserTrackingMode(.follow, animated: false)
         yapMapView.delegate = context.coordinator
-        yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: true)
+        yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: false)
         return yapMapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
         camera.centerCoordinate = coord2D
-        uiView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: true)
-        uiView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: true)
+        uiView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: false)
+        uiView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: false)
     }
     
     func makeCoordinator() -> DarkModeMapCoordinator {
