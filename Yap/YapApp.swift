@@ -26,17 +26,26 @@ struct YapApp: App {
                 .environmentObject(websocketClient)
                 .environmentObject(settingsModel)
                 .environmentObject(appState)
-                .onChange(of: scenePhase) {
-                    switch scenePhase {
-                    case .active:
-                        appState.isActive = true
-                        websocketClient.connect()
-                    case .background, .inactive:
-                        appState.isActive = false
-                    @unknown default:
-                        break
-                    }
-                }
+//                .onAppear() {
+//                    websocketClient.connect()
+//                    appState.isActive = true
+//                }
+//                .onChange(of: scenePhase) {
+//                    switch scenePhase {
+//                    case .active:
+//                        Task {
+//                            appState.isActive = true
+//                            websocketClient.connect()
+//                        }
+//                    case .background, .inactive:
+//                        Task {
+//                            appState.isActive = false
+//                            websocketClient.connect()
+//                        }
+//                    @unknown default:
+//                        break
+//                    }
+//                }
         }
     }
 }
