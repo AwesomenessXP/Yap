@@ -24,9 +24,6 @@ struct YapApp: App {
             RootView()
                 .environmentObject(locationManager)
                 .environmentObject(websocketClient)
-                .task {
-                    websocketClient.connect()
-                }
                 .environmentObject(settingsModel)
                 .environmentObject(appState)
                 .onChange(of: scenePhase) {
