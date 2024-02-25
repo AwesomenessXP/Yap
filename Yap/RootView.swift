@@ -35,7 +35,7 @@ struct RootView: View {
                             .rotationEffect(.degrees(180))
                         }
                         .rotationEffect(.degrees(180))
-                        .background(Color.black.opacity(0.9))
+                        .background(Color.clear)
                         .sensoryFeedback(.impact, trigger: messages.count)
                     }
                     else {
