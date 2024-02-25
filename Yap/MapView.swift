@@ -10,23 +10,31 @@ import MapKit
 
 let yapMapView = MKMapView()
 struct DarkModeMapView: UIViewRepresentable {
-    var region: MKCoordinateRegion
+    var coord2D: CLLocationCoordinate2D
+    let camera = MKMapCamera()
     
     func makeUIView(context: Context) -> MKMapView {
-        yapMapView.setRegion(region, animated: true)
+//        yapMapView.setRegion(region, animated: false)
+        camera.centerCoordinate = coord2D
+        camera.pitch = 0 // Optional: Adjust the pitch (tilt) of the camera
+        yapMapView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: true)
+        yapMapView.setCamera(camera, animated: true)
         yapMapView.overrideUserInterfaceStyle = .dark
         yapMapView.showsUserLocation = true
-        yapMapView.setUserTrackingMode(.followWithHeading, animated: true)
+        yapMapView.setUserTrackingMode(.follow, animated: true)
         yapMapView.delegate = context.coordinator
+        yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: true)
         return yapMapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        uiView.setRegion(region, animated: true)
+        camera.centerCoordinate = coord2D
+        uiView.setRegion(MKCoordinateRegion(center: coord2D, latitudinalMeters: 10000, longitudinalMeters: 10000), animated: true)
+        uiView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: true)
     }
     
     func makeCoordinator() -> DarkModeMapCoordinator {
-        DarkModeMapCoordinator(self)
+        return DarkModeMapCoordinator(self)
     }
     
     class DarkModeMapCoordinator: NSObject, Observable, ObservableObject, MKMapViewDelegate {
@@ -76,7 +84,7 @@ class UserLocationAnnotationView: MKAnnotationView {
     }
     
     private func addSwiftUIView() {
-        let swiftUIView: RadarView = RadarView()
+        let swiftUIView = RadarView()
         let radarView = swiftUIView as RadarView
         hostingController = UIHostingController(rootView: radarView)
         
@@ -214,24 +222,21 @@ struct RadarView: View {
 
 struct MapView: View {
     @EnvironmentObject var locationManager: LocationManager
-    @State var cameraPosition: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: UserDefaults.standard.double(forKey: "latitude"), longitude: UserDefaults.standard.double(forKey: "longitude")), latitudinalMeters: 50, longitudinalMeters: 50)
+    let serialQueue = DispatchQueue(label: "coord_serial_queue")
+    @State var cameraPosition: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: UserDefaults.standard.double(forKey: "latitude"), longitude: UserDefaults.standard.double(forKey: "longitude"))
     
     var body: some View {
-        ZStack {
-                DarkModeMapView(region: cameraPosition)
-                    .edgesIgnoringSafeArea(.all)
-            
-        }
-        .onAppear() {
-            let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
-            let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
-                cameraPosition = MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: lat, longitude: long),
-                    latitudinalMeters: 50,
-                    longitudinalMeters: 50
-                )
-            print("\(lat), \(long)")
-        }
+        DarkModeMapView(coord2D: cameraPosition)
+            .edgesIgnoringSafeArea(.all)
+            .onAppear() {
+                let serialQueue = DispatchQueue(label: "coord_serial_queue")
+                serialQueue.sync {
+                    let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
+                    let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
+                    cameraPosition = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                    print("\(lat), \(long)")
+                }
+            }
     }
 }
 

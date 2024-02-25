@@ -186,9 +186,12 @@ struct RootView: View {
                 longitude = Double(update.location?.coordinate.longitude ?? 0.0)
 
                 if let latitude = latitude, let longitude = longitude {
-                    UserDefaults.standard.set(latitude, forKey: "latitude")
-                    UserDefaults.standard.set(longitude, forKey: "longitude")
-                    websocketClient.update(latitude: latitude, longitude: longitude)
+                    let serialQueue = DispatchQueue(label: "coord_serial_queue")
+                    serialQueue.sync {
+                        UserDefaults.standard.set(latitude, forKey: "latitude")
+                        UserDefaults.standard.set(longitude, forKey: "longitude")
+                        websocketClient.update(latitude: latitude, longitude: longitude)
+                    }
                 }
 
             if update.isStationary {
