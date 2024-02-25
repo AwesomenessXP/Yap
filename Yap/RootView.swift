@@ -93,7 +93,7 @@ struct RootView: View {
                         self.usernameSet = true
                     }
                     label: {
-                        Text("Start Yapping")
+                        Text("Start Yappin")
                     }
                     .frame(width: 330, height: 50)
                     .foregroundStyle(.black).bold()
@@ -121,12 +121,8 @@ struct RootView: View {
     
     var logoView: some View {
         HStack {
-            Text("YAP")
+            Text("YAPPIN")
                 .font(.system(size: 21)).bold()
-                .foregroundColor(.white)
-            
-            Image(systemName: "megaphone")
-                .font(.system(size: 18))
                 .foregroundColor(.white)
         }
     }
