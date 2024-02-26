@@ -132,11 +132,25 @@ struct RootView: View {
     }
     
     var logoView: some View {
-        HStack {
-            Text("YAPPIN")
-                .font(.system(size: 21)).bold()
-                .foregroundColor(.white)
+        
+        ZStack {
+            
+            HStack {
+                Spacer()
+                Text("YAPPIN")
+                    .font(.system(size: 21)).bold()
+                    .foregroundColor(.white)
+                Spacer()
+            }
+            HStack(alignment: .bottom) {
+                Text("\(websocketClient.user_count) users").font(.system(size: 16))
+                    .foregroundColor(.white)
+                Spacer()
+            }
+
+            
         }
+
     }
 
     var headerView: some View {
