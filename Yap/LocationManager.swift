@@ -3,11 +3,10 @@ import CoreLocation
 import MapKit
 
 let manager = CLLocationManager()
+
 class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
-    let updates = CLLocationUpdate.liveUpdates()
-    
     @Published var degrees: Double = 0
-    @Published var location: [CLLocation]?
+    @Published var location: CLLocation?
     
     override init() {
         super.init()
@@ -19,6 +18,15 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         print("\(manager.accuracyAuthorization)")
         
         manager.requestLocation()
+        manager.startUpdatingLocation()
+    }
+    
+    func startUpdatingLocation() {
+        manager.startUpdatingLocation()
+    }
+    
+    func stopUpdatingLocation() {
+        manager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
@@ -26,7 +34,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.location = locations
+        self.location = locations.last
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

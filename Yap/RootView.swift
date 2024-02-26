@@ -12,13 +12,14 @@ struct RootView: View {
     @EnvironmentObject var websocketClient: WebsocketClient
     @EnvironmentObject var settingsModel: SettingsModel
 
-    @State private var messageText = ""
+    @State var messageText = ""
     @State var currentUser = User(name: "JKT")
     @State var latitude: Double?
     @State var longitude: Double?
     @State var btnDisabled: Bool = true
     @State var username: String = ""
     @State var usernameSet: Bool = false
+    @State var timerInterval: TimeInterval = 1 // seconds
     @Environment(\.scenePhase) var scenePhase
 
     @FocusState var isFocused: Bool
@@ -29,15 +30,27 @@ struct RootView: View {
                 VStack {
                     headerView
                     if let messages = websocketClient.messages {
-                        ScrollView {
-                            ForEach(messages) { message in
-                                MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
+                        if #available(iOS 17, *) {
+                            ScrollView {
+                                ForEach(messages) { message in
+                                    MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
+                                }
+                                .rotationEffect(.degrees(180))
                             }
                             .rotationEffect(.degrees(180))
+                            .background(Color.clear)
+                            .sensoryFeedback(.impact, trigger: messages.count)
                         }
-                        .rotationEffect(.degrees(180))
-                        .background(Color.clear)
-                        .sensoryFeedback(.impact, trigger: messages.count)
+                        else {
+                            ScrollView {
+                                ForEach(messages) { message in
+                                    MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
+                                }
+                                .rotationEffect(.degrees(180))
+                            }
+                            .rotationEffect(.degrees(180))
+                            .background(Color.clear)
+                        }
                     }
                     else {
                         Spacer()
@@ -66,24 +79,26 @@ struct RootView: View {
                     }
                 }
                 .onChange(of: scenePhase) { newPhase in
-                                switch newPhase {
-                                    case .inactive:
-                                        print("inactive")
-                                    case .active:
-                                        Task {
-                                            do {
-                                                websocketClient.connect()
-                                                try await startLocationUpdates()
-                                            }
-                                            catch {
-                                                print("Unable to fetch location")
-                                            }
-                                        }
-                                        
-                                    case .background:
-                                        print("background")
+                    switch newPhase {
+                        case .inactive:
+                            print("inactive")
+                        case .active:
+                            Task {
+                                do {
+                                    websocketClient.connect()
+                                    try await startLocationUpdates()
+                                }
+                                catch {
+                                    print("Unable to fetch location")
                                 }
                             }
+                            
+                        case .background:
+                            print("background")
+                    @unknown default:
+                        fatalError()
+                    }
+                }
             }
             else {
                 VStack {
@@ -96,7 +111,7 @@ struct RootView: View {
                             .foregroundStyle(.white)
                             .frame(width: 330, height: 50)
                             .multilineTextAlignment(.center)
-                            .onChange(of: username) {
+                            .onChange(of: username, perform: { username in
                                 if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     self.btnDisabled = false
                                     let _ = settingsModel.addUsername(name: username)
@@ -104,8 +119,7 @@ struct RootView: View {
                                 else {
                                     self.btnDisabled = true
                                 }
-                            }
-                            .sensoryFeedback(.increase, trigger: username.count)
+                            })
                     }
                     .background(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.45), lineWidth: 2))
                     .padding()
@@ -142,9 +156,7 @@ struct RootView: View {
     }
     
     var logoView: some View {
-        
         ZStack {
-            
             HStack {
                 Spacer()
                 Text("YAPPIN")
@@ -187,15 +199,28 @@ struct RootView: View {
     var inputField: some View {
         HStack {
             HStack {
-                TextField("Type something", text: $messageText, axis: .vertical)
-                    .lineLimit(8)
-                    .foregroundColor(.white)
-                    .onChange(of: messageText) {
-                        // Limit message text to 240 characters
-                        messageText = String(messageText.prefix(500))
-                    }
-                    .padding([.leading, .trailing], 15)
-                    .sensoryFeedback(.increase, trigger: messageText.count)
+                if #available(iOS 17.0, *) {
+                    TextField("Type something", text: $messageText, axis: .vertical)
+                        .lineLimit(8)
+                        .foregroundColor(.white)
+                        .onChange(of: messageText) {
+                            // Limit message text to 240 characters
+                            messageText = String(messageText.prefix(500))
+                        }
+                        .padding([.leading, .trailing], 15)
+                        .sensoryFeedback(.increase, trigger: messageText.count)
+                }
+                else {
+                    TextField("Type something", text: $messageText, axis: .vertical)
+                        .lineLimit(8)
+                        .foregroundColor(.white)
+                        .onChange(of: messageText) { newValue in
+                            if newValue.count > 500 {
+                                messageText = String(newValue.prefix(500))
+                            }
+                        }
+                        .padding([.leading, .trailing], 15)
+                }
             }
             .padding(.vertical, 8)
             .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
@@ -203,25 +228,24 @@ struct RootView: View {
             Button(action: {
                 sendMessage(message: messageText)
             }) {
-                // Change the button icon based on whether the messageText is empty or not
                 Image(systemName: messageText.isEmpty ? "arrow.up.circle" : "arrow.up.circle.fill")
                     .foregroundColor(.white)
             }
             .font(.system(size: 27))
             .padding(.leading, 5)
-            // Disable the button if the messageText is empty
             .disabled(messageText.isEmpty)
         }
         .padding()
         .focused($isFocused)
     }
 
+    @MainActor
     func startLocationUpdates() async throws {
-        for try await update in locationManager.updates {
-                print("location updates")
-                latitude = update.location?.coordinate.latitude
-                longitude = update.location?.coordinate.longitude
-
+        Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
+            print("location updates")
+            Task { @MainActor in
+                latitude = locationManager.location?.coordinate.latitude
+                longitude = locationManager.location?.coordinate.longitude
                 if let latitude = latitude, let longitude = longitude {
                     let serialQueue = DispatchQueue(label: "coord_serial_queue")
                     serialQueue.sync {
@@ -230,9 +254,6 @@ struct RootView: View {
                         websocketClient.update(latitude: latitude, longitude: longitude)
                     }
                 }
-
-            if update.isStationary {
-                break
             }
         }
     }

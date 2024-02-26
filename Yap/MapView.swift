@@ -238,34 +238,34 @@ struct MapView: View {
                     cameraPosition = CLLocationCoordinate2D(latitude: lat, longitude: long)
                     print("\(lat), \(long)")
                     
-                    updateLookAroundScene()
+//                    updateLookAroundScene()
             }
             
             // Button to trigger the Look Around viewer
-            VStack {
-                
-                if isLookingAround, let scene = lookAroundScene {
-                    LookAroundPreview(initialScene: scene)
-                        .frame(width: 400, height: 350) // Specify the desired height here
-                        // You can also specify the width, or use .fixedSize() for intrinsic content size
-                        .cornerRadius(12)
-                }
-                
-                Spacer()
-                
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        isLookingAround.toggle() // Toggle the visibility state
-                    }) {
-                        Image(systemName: "binoculars")
-                            .padding()
-                            .background(Circle().fill(Color.black))
-                            .foregroundColor(.white)
-                    }
-                .padding()
-                }
-            }
+//            VStack {
+//                
+//                if isLookingAround, let scene = lookAroundScene {
+//                    LookAroundPreview(initialScene: scene)
+//                        .frame(width: 400, height: 350) // Specify the desired height here
+//                        // You can also specify the width, or use .fixedSize() for intrinsic content size
+//                        .cornerRadius(12)
+//                }
+//                
+//                Spacer()
+//                
+//                HStack {
+//                    Spacer()
+//                    Button(action: {
+//                        isLookingAround.toggle() // Toggle the visibility state
+//                    }) {
+//                        Image(systemName: "binoculars")
+//                            .padding()
+//                            .background(Circle().fill(Color.black))
+//                            .foregroundColor(.white)
+//                    }
+//                .padding()
+//                }
+//            }
         }
     }
     
