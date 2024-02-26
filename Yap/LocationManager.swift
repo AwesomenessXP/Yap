@@ -18,7 +18,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         
         print("\(manager.accuracyAuthorization)")
         
-        self.requestLocation()
+        manager.requestLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
@@ -38,7 +38,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         if status == .denied || status == .restricted || status == .notDetermined {
             return false
         }
-        self.requestLocation()
+        manager.requestLocation()
         return true
         
     }
