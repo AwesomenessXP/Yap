@@ -55,6 +55,16 @@ struct RootView: View {
                 .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
                     Button("OK", role: .cancel) {}
                 })
+                .onAppear {
+                    Task {
+                        do {
+                            try await startLocationUpdates()
+                        }
+                        catch {
+                            print("Unable to fetch location")
+                        }
+                    }
+                }
                 .onChange(of: scenePhase) { newPhase in
                                 switch newPhase {
                                     case .inactive:
