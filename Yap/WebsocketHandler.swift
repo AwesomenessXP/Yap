@@ -33,22 +33,26 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func connect() {
-        DispatchQueue.global(qos: .background).async {
-
-        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")!
+        let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")
+        if let url = url {
             self.webSocketTask = self.session.webSocketTask(with: url)
             self.webSocketTask?.resume()
-        
             self.sendInitialConnection()
-            self.listenForMessages()
-        
-        let token = UserDefaults.standard.value(forKey: "user_token")
-        if (token == nil) {
-            self.register()
-        }
-        else {
-            self.getMessages()
-        }
+            
+            print("active!!")
+            DispatchQueue.global(qos: .userInteractive).async {
+                self.listenForMessages()
+            }
+            
+            let token = UserDefaults.standard.value(forKey: "user_token")
+            if (token == nil) {
+                self.register()
+                print("register")
+            }
+            else {
+                print("fetch messages")
+                self.getMessages()
+            }
         }
     }
     
@@ -68,7 +72,6 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func getMessages() {
-        
         let token = UserDefaults.standard.value(forKey: "user_token")
         if ((token != nil) && (user_id != nil)) {
             if let user_id = user_id {
@@ -115,10 +118,13 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     
     private func listenForMessages() {
         webSocketTask?.receive { [weak self] result in
-            DispatchQueue.global(qos: .background).async {
+//            DispatchQueue.global(qos: .background).async {
                 switch result {
                 case .failure(let error):
+                    disconnected = true
                     print("Error in receiving message: \(error)")
+                    self?.disconnect()
+                    break
                 case .success(let message):
                     switch message {
                     case .string(let text):
@@ -128,13 +134,10 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                     @unknown default:
                         fatalError()
                     }
+                    self?.listenForMessages()
+                    break
                 }
-                DispatchQueue.main.async {
-                    if let self = self {
-                        self.listenForMessages()
-                    }
-                }
-            }
+//            }
         }
     }
     
@@ -281,4 +284,10 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
             requestId += 1
         }
     }
+    
+    func disconnect() {
+        let reason = "Client initiated disconnect".data(using: .utf8)
+        webSocketTask?.cancel(with: .normalClosure, reason: reason)
+    }
 }
+
