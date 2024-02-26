@@ -33,6 +33,10 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func connect() {
+        latestVersionID = 0
+        latestQueryID = 0
+        requestId = 0
+        
         let url = URL(string: "wss://intent-firefly-472.convex.cloud/api/1.9.1/sync")
         if let url = url {
             self.webSocketTask = self.session.webSocketTask(with: url)
@@ -50,7 +54,6 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 print("register")
             }
             else {
-                print("fetch messages")
                 self.getMessages()
             }
         }

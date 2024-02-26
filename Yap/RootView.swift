@@ -19,7 +19,8 @@ struct RootView: View {
     @State var btnDisabled: Bool = true
     @State var username: String = ""
     @State var usernameSet: Bool = false
-    
+    @Environment(\.scenePhase) var scenePhase
+
     @FocusState var isFocused: Bool
 
     var body: some View {
@@ -51,19 +52,28 @@ struct RootView: View {
                 .onTapGesture {
                     isFocused = false
                 }
-                .onAppear() {
-                    Task {
-                        do {
-                            try await startLocationUpdates()
-                        }
-                        catch {
-                            print("Unable to fetch location")
-                        }
-                    }
-                }
                 .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
                     Button("OK", role: .cancel) {}
                 })
+                .onChange(of: scenePhase) { newPhase in
+                                switch newPhase {
+                                    case .inactive:
+                                        print("inactive")
+                                    case .active:
+                                        Task {
+                                            do {
+                                                websocketClient.connect()
+                                                try await startLocationUpdates()
+                                            }
+                                            catch {
+                                                print("Unable to fetch location")
+                                            }
+                                        }
+                                        
+                                    case .background:
+                                        print("background")
+                                }
+                            }
             }
             else {
                 VStack {
