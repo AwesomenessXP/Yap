@@ -221,19 +221,69 @@ struct RadarView: View {
 struct MapView: View {
     @EnvironmentObject var locationManager: LocationManager
     
+    // State to manage the visibility of the Look Around viewer
+    @State private var isLookingAround: Bool = false
+    
+    @State private var lookAroundScene: MKLookAroundScene? = nil
+    
     @State var cameraPosition: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: UserDefaults.standard.double(forKey: "latitude"), longitude: UserDefaults.standard.double(forKey: "longitude"))
     
     var body: some View {
-        DarkModeMapView(coord2D: cameraPosition)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear {
-                let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
-                let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
-                cameraPosition = CLLocationCoordinate2D(latitude: lat, longitude: long)
-                print("\(lat), \(long)")
+        ZStack {
+            DarkModeMapView(coord2D: cameraPosition)
+                .edgesIgnoringSafeArea(.all)
+                .onAppear {
+                    let lat: CLLocationDegrees = UserDefaults.standard.double(forKey: "latitude")
+                    let long: CLLocationDegrees = UserDefaults.standard.double(forKey: "longitude")
+                    cameraPosition = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                    print("\(lat), \(long)")
+                    
+                    updateLookAroundScene()
             }
+            
+            // Button to trigger the Look Around viewer
+            VStack {
+                
+                if isLookingAround, let scene = lookAroundScene {
+                    LookAroundPreview(initialScene: scene)
+                        .frame(width: 400, height: 350) // Specify the desired height here
+                        // You can also specify the width, or use .fixedSize() for intrinsic content size
+                        .cornerRadius(12)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isLookingAround.toggle() // Toggle the visibility state
+                    }) {
+                        Image(systemName: "binoculars")
+                            .padding()
+                            .background(Circle().fill(Color.black))
+                            .foregroundColor(.white)
+                    }
+                .padding()
+                }
+            }
+        }
+    }
+    
+    func updateLookAroundScene() {
+        // Simulated function to create MKLookAroundScene from current coordinates
+        // Adjust based on actual methods to create or fetch an MKLookAroundScene
+        let request = MKLookAroundSceneRequest(coordinate: cameraPosition)
+        Task {
+            do {
+                let scene = try await request.scene
+                lookAroundScene = scene
+            } catch {
+                print("Error fetching LookAroundScene: \(error)")
+            }
+        }
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
