@@ -19,14 +19,6 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         print("\(manager.accuracyAuthorization)")
     }
     
-    func requestLocation() {
-        manager.startUpdatingLocation()
-    }
-    
-    func stopRequestLocation() {
-        manager.stopUpdatingLocation()
-    }
-    
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         degrees = newHeading.trueHeading
     }
