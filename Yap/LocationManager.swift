@@ -17,6 +17,8 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.requestWhenInUseAuthorization()
         
         print("\(manager.accuracyAuthorization)")
+        
+        self.requestLocation()
     }
     
     func requestLocation() {
@@ -44,6 +46,8 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         if status == .denied || status == .restricted || status == .notDetermined {
             return false
         }
+        self.requestLocation()
         return true
+        
     }
 }
