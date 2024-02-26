@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-var disconnected = false
-
 @main
 struct YapApp: App {
     @StateObject var locationManager = LocationManager()

@@ -118,10 +118,9 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     
     private func listenForMessages() {
         webSocketTask?.receive { [weak self] result in
-//            DispatchQueue.global(qos: .background).async {
+            DispatchQueue.global(qos: .background).async {
                 switch result {
                 case .failure(let error):
-                    disconnected = true
                     print("Error in receiving message: \(error)")
                     self?.disconnect()
                     break
@@ -137,7 +136,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                     self?.listenForMessages()
                     break
                 }
-//            }
+            }
         }
     }
     
