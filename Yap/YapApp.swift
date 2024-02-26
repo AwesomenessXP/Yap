@@ -18,10 +18,10 @@ struct YapApp: App {
             RootView()
                 .environmentObject(locationManager)
                 .environmentObject(websocketClient)
-                .task {
+                .environmentObject(settingsModel)
+                .onAppear() {
                     websocketClient.connect()
                 }
-                .environmentObject(settingsModel)
         }
     }
 }

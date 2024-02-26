@@ -153,13 +153,14 @@ struct RootView: View {
     var inputField: some View {
         HStack {
             HStack {
-                TextField("Type something", text: $messageText)
+                TextField("Type something", text: $messageText, axis: .vertical)
+                    .lineLimit(8)
                     .foregroundColor(.white)
                     .onChange(of: messageText) {
                         // Limit message text to 240 characters
-                        messageText = String(messageText.prefix(240))
+                        messageText = String(messageText.prefix(500))
                     }
-                    .padding(.leading, 15)
+                    .padding([.leading, .trailing], 15)
                     .sensoryFeedback(.increase, trigger: messageText.count)
             }
             .padding(.vertical, 8)

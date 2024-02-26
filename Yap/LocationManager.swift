@@ -21,14 +21,6 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         self.requestLocation()
     }
     
-    func requestLocation() {
-        manager.startUpdatingLocation()
-    }
-    
-    func stopRequestLocation() {
-        manager.stopUpdatingLocation()
-    }
-    
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         degrees = newHeading.trueHeading
     }
