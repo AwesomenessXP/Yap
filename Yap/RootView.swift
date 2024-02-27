@@ -27,135 +27,111 @@ struct RootView: View {
     var body: some View {
         NavigationStack {
             if self.usernameSet {
-                VStack {
-                    headerView
-                    if let messages = websocketClient.messages {
-                        if #available(iOS 17, *) {
-                            ScrollView {
-                                ForEach(messages) { message in
-                                    MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
-                                }
-                                .rotationEffect(.degrees(180))
-                            }
-                            .rotationEffect(.degrees(180))
-                            .background(Color.clear)
-                            .sensoryFeedback(.impact, trigger: messages.count)
-                        }
-                        else {
-                            ScrollView {
-                                ForEach(messages) { message in
-                                    MessageView(message: message, currentUser: currentUser, websocketClient: websocketClient)
-                                }
-                                .rotationEffect(.degrees(180))
-                            }
-                            .rotationEffect(.degrees(180))
-                            .background(Color.clear)
-                        }
-                    }
-                    else {
-                        Spacer()
-                        ProgressView()
-                            .scaleEffect(2)
-                            .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                        Spacer()
-                    }
-                    inputField
-                }
-                .background(Color.black.edgesIgnoringSafeArea(.all))
-                .onTapGesture {
-                    isFocused = false
-                }
-                .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
-                    Button("OK", role: .cancel) {}
-                })
-                .onAppear {
-                    Task {
-                        do {
-                            try await startLocationUpdates()
-                        }
-                        catch {
-                            print("Unable to fetch location")
-                        }
-                    }
-                }
-                .onChange(of: scenePhase) { newPhase in
-                    switch newPhase {
-                        case .inactive:
-                            print("inactive")
-                        case .active:
-                            Task {
-                                do {
-                                    websocketClient.connect()
-                                    try await startLocationUpdates()
-                                }
-                                catch {
-                                    print("Unable to fetch location")
-                                }
-                            }
-                            
-                        case .background:
-                            print("background")
-                    @unknown default:
-                        fatalError()
-                    }
-                }
+                ChatView
             }
             else {
-                VStack {
-                    Text("Enter a username")
-                        .font(.system(size: 23)).bold()
-                        .foregroundStyle(.white)
-                    Group {
-                        TextField("Username", text: $username)
-                            .bold()
-                            .foregroundStyle(.white)
-                            .frame(width: 330, height: 50)
-                            .multilineTextAlignment(.center)
-                            .onChange(of: username, perform: { username in
-                                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    self.btnDisabled = false
-                                    let _ = settingsModel.addUsername(name: username)
-                                }
-                                else {
-                                    self.btnDisabled = true
-                                }
-                            })
-                    }
-                    .background(RoundedRectangle(cornerRadius: 15).stroke(Color.gray.opacity(0.45), lineWidth: 2))
-                    .padding()
-                    
-                    Button(action: {
-                        let _ = self.settingsModel.addUsername(name: username)
-                        self.usernameSet = true
-                    }) {
-                        Text("Start Yappin")
-                            .fontWeight(.semibold)
-                            .frame(width: 360, height: 50)
-                    }
-                    .frame(width: 330, height: 50)
-                    .foregroundStyle(.black).bold()
-                    .disabled(self.btnDisabled)
-                    .background(.white)
-                    .cornerRadius(15)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black)
+                SignUpView
             }
         }
         .onAppear {
-            let token = UserDefaults.standard.value(forKey: "user_token")
-            let hasUser = settingsModel.getUsername()
-            
-            if (token == nil) {
-                usernameSet = false
-            } else if (hasUser != nil) {
-                usernameSet = true
-            }
-    
+            verifyToken()
         }
     }
     
-    var logoView: some View {
+    var SignUpView: some View {
+        VStack {
+            Text("Enter a username")
+                .font(.system(size: 23)).bold()
+                .foregroundStyle(.white)
+            Group {
+                TextField("Username", text: $username)
+                    .bold()
+                    .foregroundStyle(.white)
+                    .frame(width: 330, height: 50)
+                    .multilineTextAlignment(.center)
+                    .onChange(of: username, perform: { username in
+                        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            self.btnDisabled = false
+                            let _ = settingsModel.addUsername(name: username)
+                        }
+                        else {
+                            self.btnDisabled = true
+                        }
+                    })
+            }
+            .background(RoundedRectangle(cornerRadius: 15)
+                .stroke(Color.gray.opacity(0.45), lineWidth: 2))
+            .padding()
+            SignUpBtn
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+    }
+    
+    var SignUpBtn: some View {
+        Button(action: {
+            if self.settingsModel.addUsername(name: username) {
+                self.usernameSet = true
+            }
+        }) {
+            Text("Start Yappin")
+                .fontWeight(.semibold)
+                .frame(width: 360, height: 50)
+        }
+        .frame(width: 330, height: 50)
+        .foregroundStyle(.black).bold()
+        .disabled(self.btnDisabled)
+        .background(.white)
+        .cornerRadius(15)
+    }
+    
+    var ChatView: some View {
+        VStack {
+            HeaderView
+            if let messages = websocketClient.messages {
+                if #available(iOS 17, *) {
+                    MessagesView(messages: .constant(messages), currentUser: $currentUser)
+                        .sensoryFeedback(.impact, trigger: messages.count)
+                }
+                else {
+                    MessagesView(messages: .constant(messages), currentUser: $currentUser)
+                }
+            }
+            else {
+                CustomProgressView
+            }
+            InputField
+        }
+        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .onTapGesture {
+            isFocused = false
+        }
+        .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+            Button("OK", role: .cancel) {}
+        })
+        .onAppear {
+            Task {
+                await startLocationUpdates()
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            switch newPhase {
+            case .inactive:
+                print("inactive")
+            case .active:
+                Task {
+                    websocketClient.connect()
+                    await startLocationUpdates()
+                }
+            case .background:
+                print("background")
+            @unknown default:
+                fatalError()
+            }
+        }
+    }
+    
+    var LogoView: some View {
         ZStack {
             HStack {
                 Spacer()
@@ -169,15 +145,12 @@ struct RootView: View {
                     .foregroundColor(.white)
                 Spacer()
             }
-
-            
         }
-
     }
 
-    var headerView: some View {
+    var HeaderView: some View {
         ZStack {
-            logoView
+            LogoView
             HStack {
                 Spacer()
                 NavigationLink(destination: MapView()) {
@@ -192,42 +165,51 @@ struct RootView: View {
         }
         .padding()
         .background(Color.black)
-        
-        
+    }
+    
+    var CustomProgressView: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+                .scaleEffect(2)
+                .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+            Spacer()
+        }
+    }
+    
+    var InputFieldHelper: some View {
+        TextField("Type something", text: $messageText, axis: .vertical)
+            .lineLimit(8)
+            .foregroundColor(.white)
+            .padding([.leading, .trailing], 15)
     }
 
-    var inputField: some View {
+    var InputField: some View {
         HStack {
             HStack {
                 if #available(iOS 17.0, *) {
-                    TextField("Type something", text: $messageText, axis: .vertical)
-                        .lineLimit(8)
-                        .foregroundColor(.white)
+                    InputFieldHelper
                         .onChange(of: messageText) {
-                            // Limit message text to 240 characters
                             messageText = String(messageText.prefix(500))
                         }
-                        .padding([.leading, .trailing], 15)
                         .sensoryFeedback(.increase, trigger: messageText.count)
                 }
                 else {
-                    TextField("Type something", text: $messageText, axis: .vertical)
-                        .lineLimit(8)
-                        .foregroundColor(.white)
+                    InputFieldHelper
                         .onChange(of: messageText) { newValue in
                             if newValue.count > 500 {
                                 messageText = String(newValue.prefix(500))
                             }
                         }
-                        .padding([.leading, .trailing], 15)
                 }
             }
             .padding(.vertical, 8)
-            .background(RoundedRectangle(cornerRadius: 30).stroke(Color.gray.opacity(0.3), lineWidth: 2))
+            .background(
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+            )
             
-            Button(action: {
-                sendMessage(message: messageText)
-            }) {
+            Button(action: { sendMessage(message: messageText) }) {
                 Image(systemName: messageText.isEmpty ? "arrow.up.circle" : "arrow.up.circle.fill")
                     .foregroundColor(.white)
             }
@@ -240,7 +222,7 @@ struct RootView: View {
     }
 
     @MainActor
-    func startLocationUpdates() async throws {
+    func startLocationUpdates() async {
         Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
             print("location updates")
             Task { @MainActor in
@@ -270,12 +252,23 @@ struct RootView: View {
             }
         }
     }
+    
+    func verifyToken() {
+        let token = UserDefaults.standard.value(forKey: "user_token")
+        let hasUser = settingsModel.getUsername()
+        
+        if (token == nil) {
+            usernameSet = false
+        } else if (hasUser != nil) {
+            usernameSet = true
+        }
+    }
 
 }
 
 struct MessageView: View {
-    var message: Message
-    var currentUser: User
+    @Binding var message: Message
+    @Binding var currentUser: User
     var websocketClient: WebsocketClient
     @State var true_id = UserDefaults.standard.value(forKey: "true_id") as? String ?? ""
     
@@ -298,8 +291,6 @@ struct MessageView: View {
             }
             .padding(.trailing, 30)
             .padding(.leading, 30)
-    
-
         } else {
             VStack(alignment: .leading) {
                 Text(Optional(message.display_name.description) ?? "")
@@ -318,6 +309,26 @@ struct MessageView: View {
             }
             .padding(.trailing, 30)
             .padding(.leading, 30)
+        }
+    }
+}
+
+struct MessagesView: View {
+    @EnvironmentObject var websocketClient: WebsocketClient
+    @Binding var messages: [Message]
+    @Binding var currentUser: User
+    
+    var body: some View {
+        VStack {
+            ScrollView {
+                ForEach($messages) { message in
+                    MessageView(message: message, currentUser: $currentUser, websocketClient: websocketClient)
+                }
+                .rotationEffect(.degrees(180))
+            }
+            .rotationEffect(.degrees(180))
+            .background(Color.clear)
+            
         }
     }
 }
