@@ -16,7 +16,6 @@ struct RootView: View {
     @State var currentUser = User(name: "JKT")
     @State var latitude: Double?
     @State var longitude: Double?
-    @State var btnDisabled: Bool = true
     @State var username: String = ""
     @State var usernameSet: Bool = false
     @State var timerInterval: TimeInterval = 1 // seconds
@@ -30,59 +29,12 @@ struct RootView: View {
                 ChatView
             }
             else {
-                SignUpView
+                SignUpView(usernameSet: $usernameSet, username: $username)
             }
         }
         .onAppear {
             verifyToken()
         }
-    }
-    
-    var SignUpView: some View {
-        VStack {
-            Text("Enter a username")
-                .font(.system(size: 23)).bold()
-                .foregroundStyle(.white)
-            Group {
-                TextField("Username", text: $username)
-                    .bold()
-                    .foregroundStyle(.white)
-                    .frame(width: 330, height: 50)
-                    .multilineTextAlignment(.center)
-                    .onChange(of: username, perform: { username in
-                        if !usernameNotEmpty() {
-                            self.btnDisabled = false
-                            let _ = settingsModel.addUsername(name: username)
-                        }
-                        else {
-                            self.btnDisabled = true
-                        }
-                    })
-            }
-            .background(RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.gray.opacity(0.45), lineWidth: 2))
-            .padding()
-            SignUpBtn
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black)
-    }
-    
-    var SignUpBtn: some View {
-        Button(action: {
-            if self.settingsModel.addUsername(name: username) {
-                self.usernameSet = true
-            }
-        }) {
-            Text("Start Yappin")
-                .fontWeight(.semibold)
-                .frame(width: 360, height: 50)
-        }
-        .frame(width: 330, height: 50)
-        .foregroundStyle(.black).bold()
-        .disabled(self.btnDisabled)
-        .background(.white)
-        .cornerRadius(15)
     }
     
     var ChatView: some View {
@@ -264,6 +216,60 @@ struct RootView: View {
     }
 }
 
+struct SignUpView: View {
+    @EnvironmentObject var settingsModel: SettingsModel
+    @Binding var usernameSet: Bool
+    @Binding var username: String
+    @State private var btnDisabled: Bool = true
+    
+    var body: some View {
+        VStack {
+            Text("Enter a username")
+                .font(.system(size: 23)).bold()
+                .foregroundStyle(.white)
+            Group {
+                TextField("Username", text: $username)
+                    .bold()
+                    .foregroundStyle(.white)
+                    .frame(width: 330, height: 50)
+                    .multilineTextAlignment(.center)
+                    .onChange(of: username, perform: { username in
+                        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            self.btnDisabled = false
+                            let _ = settingsModel.addUsername(name: username)
+                        }
+                        else {
+                            self.btnDisabled = true
+                        }
+                    })
+            }
+            .background(RoundedRectangle(cornerRadius: 15)
+                .stroke(Color.gray.opacity(0.45), lineWidth: 2))
+            .padding()
+            SignUpBtn
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+    }
+    
+    var SignUpBtn: some View {
+        Button(action: {
+            if self.settingsModel.addUsername(name: username) {
+                self.usernameSet = true
+            }
+        }) {
+            Text("Start Yappin")
+                .fontWeight(.semibold)
+                .frame(width: 360, height: 50)
+        }
+        .frame(width: 330, height: 50)
+        .foregroundStyle(.black).bold()
+        .disabled(self.btnDisabled)
+        .background(.white)
+        .cornerRadius(15)
+    }
+}
+
 struct MessageView: View {
     @Binding var message: Message
     @Binding var currentUser: User
@@ -273,41 +279,38 @@ struct MessageView: View {
     var body: some View {
         if message.user == true_id {
             VStack(alignment: .trailing) {
-                Text(Optional(message.display_name.description) ?? "")
-                    .font(.caption)
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .padding(.vertical, -1)
-                
+                UserLabelView
                 HStack {
                     Spacer()
-                    Text(Optional(message.message.description) ?? "")
-                        .foregroundColor(Color.white)
-                        .font(.system(size: 16))
-                        .padding(.bottom, 18)
+                    UserMsgView
                 }
             }
-            .padding(.trailing, 30)
-            .padding(.leading, 30)
+            .padding([.trailing, .leading], 30)
         } else {
             VStack(alignment: .leading) {
-                Text(Optional(message.display_name.description) ?? "")
-                    .font(.caption)
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .padding(.vertical, -1)
-
+                UserLabelView
                 HStack {
-                    Text(Optional(message.message.description) ?? "")
-                        .foregroundColor(Color.white)
-                        .font(.system(size: 16))
-                        .padding(.bottom, 18)
+                    UserMsgView
                     Spacer()
                 }
             }
-            .padding(.trailing, 30)
-            .padding(.leading, 30)
+            .padding([.trailing, .leading], 30)
         }
+    }
+    
+    var UserLabelView: some View {
+        Text(Optional(message.display_name.description) ?? "")
+            .font(.caption)
+            .font(.system(size: 14))
+            .foregroundColor(.gray)
+            .padding(.vertical, -1)
+    }
+    
+    var UserMsgView: some View {
+        Text(Optional(message.message.description) ?? "")
+            .foregroundColor(Color.white)
+            .font(.system(size: 16))
+            .padding(.bottom, 18)
     }
 }
 
