@@ -20,6 +20,7 @@ struct RootView: View {
     @State var usernameSet: Bool = false
     @State var timerInterval: TimeInterval = 1 // seconds
     @Environment(\.scenePhase) var scenePhase
+    @FocusState private var isTextFieldFocused: Bool
 
     @FocusState var isFocused: Bool
 
@@ -87,14 +88,14 @@ struct RootView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text("YAPPIN")
-                    .font(.system(size: 21)).bold()
-                    .foregroundColor(.white)
+                Text("YAP")
+                    .font(.system(size: 18)).bold()
+                    .foregroundColor(.black)
                 Spacer()
             }
             HStack(alignment: .bottom) {
-                Text("\(websocketClient.user_count) users").font(.system(size: 16))
-                    .foregroundColor(.white)
+                Text("\(websocketClient.user_count) users").font(.system(size: 15))
+                    .foregroundColor(.black).bold()
                 Spacer()
             }
         }
@@ -106,17 +107,18 @@ struct RootView: View {
             HStack {
                 Spacer()
                 NavigationLink(destination: MapView()) {
-                    Image(systemName: "map").foregroundColor(Color.white)
+                    Image(systemName: "map").foregroundColor(Color.black)
                 }
                     
                 NavigationLink(destination: SettingPage()) {
-                    Image(systemName: "gear").foregroundColor(Color.white)
+                    Image(systemName: "gear").foregroundColor(Color.black)
                 }
             }
             
         }
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color.white))
         .padding()
-        .background(Color.black)
     }
     
     var CustomProgressView: some View {
@@ -130,10 +132,19 @@ struct RootView: View {
     }
     
     var InputFieldHelper: some View {
-        TextField("Type something", text: $messageText, axis: .vertical)
-            .lineLimit(8)
-            .foregroundColor(.white)
-            .padding([.leading, .trailing], 15)
+        VStack {
+            TextField("Type something", text: $messageText, axis: .vertical)
+                .focused($isTextFieldFocused)
+                .lineLimit(8)
+                .foregroundColor(.white)
+                .padding([.leading, .trailing], 15)
+                .onTapGesture {
+                    isTextFieldFocused = true
+                }
+        }
+        .onTapGesture {
+            isTextFieldFocused = false
+        }
     }
 
     var InputField: some View {
@@ -285,7 +296,8 @@ struct MessageView: View {
                     UserMsgView
                 }
             }
-            .padding([.trailing, .leading], 30)
+            .padding(.trailing, 28)
+            .padding(.leading, 80)
         } else {
             VStack(alignment: .leading) {
                 UserLabelView
@@ -294,7 +306,8 @@ struct MessageView: View {
                     Spacer()
                 }
             }
-            .padding([.trailing, .leading], 30)
+            .padding(.trailing, 80)
+            .padding(.leading, 28)
         }
     }
     
