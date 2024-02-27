@@ -50,7 +50,7 @@ struct RootView: View {
                     .frame(width: 330, height: 50)
                     .multilineTextAlignment(.center)
                     .onChange(of: username, perform: { username in
-                        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if !usernameNotEmpty() {
                             self.btnDisabled = false
                             let _ = settingsModel.addUsername(name: username)
                         }
@@ -247,29 +247,27 @@ struct RootView: View {
             self.usernameSet = true
         }
         if let latitude = latitude, let longitude = longitude {
-            if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if !usernameNotEmpty() {
                 websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
             }
         }
     }
     
+    func usernameNotEmpty() -> Bool {
+        return username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     func verifyToken() {
         let token = UserDefaults.standard.value(forKey: "user_token")
         let hasUser = settingsModel.getUsername()
-        
-        if (token == nil) {
-            usernameSet = false
-        } else if (hasUser != nil) {
-            usernameSet = true
-        }
+        usernameSet = (token == nil || hasUser != nil) ? false : usernameSet == true
     }
-
 }
 
 struct MessageView: View {
     @Binding var message: Message
     @Binding var currentUser: User
-    var websocketClient: WebsocketClient
+    @EnvironmentObject var websocketClient: WebsocketClient
     @State var true_id = UserDefaults.standard.value(forKey: "true_id") as? String ?? ""
     
     var body: some View {
@@ -322,7 +320,7 @@ struct MessagesView: View {
         VStack {
             ScrollView {
                 ForEach($messages) { message in
-                    MessageView(message: message, currentUser: $currentUser, websocketClient: websocketClient)
+                    MessageView(message: message, currentUser: $currentUser)
                 }
                 .rotationEffect(.degrees(180))
             }
