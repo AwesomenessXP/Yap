@@ -342,6 +342,7 @@ struct MessagesView: View {
             }
             .rotationEffect(.degrees(180))
             .background(Color.clear)
+            .scrollIndicators(.hidden)
             
         }
     }
