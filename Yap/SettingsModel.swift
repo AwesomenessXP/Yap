@@ -9,7 +9,7 @@ import Foundation
 
 // only run updateDate after run hasCD
 class SettingsModel: ObservableObject {
-    let userCD = CoolDownTimer(coolDownTime: 30.0)
+    let userCD = CoolDownTimer(coolDownTime: 5.0)
     
     func addUsername(name: String) -> (Bool, String) {
         var errorMessage = ""

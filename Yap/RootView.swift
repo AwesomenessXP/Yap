@@ -291,20 +291,25 @@ struct SignUpBtn: View {
                     Link("Terms and Conditions", destination: URL(string: termsUrl)!)
                         .foregroundStyle(.gray).fontWeight(.regular)
                 }
-            }
-        }        
+            }   .toggleStyle(CheckboxToggleStyle())
+                .frame(width: 300, alignment: .leading)
+                .padding(.bottom)
+        }
         Button(action: {
-            if self.settingsModel.addUsername(name: username) {
+            settingsModel.userCD.updateDate()
+            if self.settingsModel.addUsername(name: username).0 {
                 self.usernameSet = true
-            }}) {
+            }
+        }) {
             Text("Start Yappin")
                 .fontWeight(.semibold)
                 .frame(width: 360, height: 50)
         }
         .frame(width: 330, height: 50)
-        .foregroundStyle(.black).bold()
-        .disabled(self.btnDisabled)
-        .background(.white)
+        .foregroundStyle(.black)
+        .bold()
+        .disabled(!eulaAccepted || self.usernameSet)
+        .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
         .cornerRadius(15)
     }
 }
@@ -376,8 +381,23 @@ struct MessagesView: View {
     }
 }
 
-// Note: The SettingPage struct needs to be defined elsewhere in your code.
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        return HStack {
+            configuration.label
 
+            Spacer()
+
+            Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundColor(configuration.isOn ? .white : .white)
+                .onTapGesture {
+                    configuration.isOn.toggle()
+                }
+        }
+    }
+}
 #Preview {
     RootView()
         .environmentObject(LocationManager())
