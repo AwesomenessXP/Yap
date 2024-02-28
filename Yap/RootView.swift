@@ -95,8 +95,14 @@ struct RootView: View {
                 Spacer()
             }
             HStack(alignment: .bottom) {
-                Text("\(websocketClient.user_count) users").font(.system(size: 15))
-                    .foregroundColor(.black).bold()
+                if (websocketClient.user_count == 1) {
+                    Text("\(websocketClient.user_count) user").font(.system(size: 15))
+                        .foregroundColor(.black).bold()
+                } else {
+                    Text("\(websocketClient.user_count) users").font(.system(size: 15))
+                        .foregroundColor(.black).bold()
+                }
+                
                 Spacer()
             }
         }
@@ -117,7 +123,7 @@ struct RootView: View {
             }
             
         }
-        .padding(10)
+        .padding(15)
         .background(RoundedRectangle(cornerRadius: 18).fill(Color.white))
         .padding()
     }
@@ -251,6 +257,7 @@ struct SignUpView: View {
                     .onChange(of: username, perform: { username in
                         if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             self.btnDisabled = false
+                            let _ = settingsModel.addUsername(name: username)
                         }
                         else {
                             self.btnDisabled = true
@@ -275,8 +282,7 @@ struct SignUpBtn: View {
     
     var body: some View {
         Button(action: {
-            let (isUpdateSucessful ,_ ) = self.settingsModel.addUsername(name: username)
-            if isUpdateSucessful {
+            if self.settingsModel.addUsername(name: username) {
                 self.usernameSet = true
             }
         }) {
