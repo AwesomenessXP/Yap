@@ -71,7 +71,7 @@ struct SettingPage: View {
                                 websocketClient.messages = []
                                 removeMessagesAlert = "Content is temporarily hidden. Contact us for support, or restart to continue streaming messages."
                             }, label: {
-                                Text("Hide all content")
+                                Text("Hide all content").foregroundColor(.red)
                             })
                         }
                     }
