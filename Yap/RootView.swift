@@ -281,6 +281,7 @@ struct SignUpBtn: View {
     @State private var eulaAccepted = false
     let termsUrl = "https://www.example.com/terms"
     @Binding var btnDisabled: Bool
+    @State var error: String = ""
     
     var body: some View {
         VStack() {
@@ -297,9 +298,14 @@ struct SignUpBtn: View {
         }
         Button(action: {
             settingsModel.userCD.updateDate()
-            if self.settingsModel.addUsername(name: username).0 {
+            
+            let usernameAdd = self.settingsModel.addUsername(name: username)
+            if (usernameAdd.0) {
                 self.usernameSet = true
+            } else {
+                error = usernameAdd.1
             }
+            
         }) {
             Text("Start Yappin")
                 .fontWeight(.semibold)
@@ -311,6 +317,12 @@ struct SignUpBtn: View {
         .disabled(!eulaAccepted || self.usernameSet)
         .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
         .cornerRadius(15)
+        .alert(error, isPresented: Binding(get: {
+            return error.count > 0
+        }, set: {_,_ in })) {
+                    Button("OK", role: .cancel) { }
+                }
+
     }
 }
 

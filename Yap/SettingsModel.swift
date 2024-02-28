@@ -61,7 +61,8 @@ class CoolDownTimer{
         if let currentTime = time{
             let timeInterval = Date().timeIntervalSince(currentTime)
             print(timeInterval)
-            return timeInterval < CD
+//            return timeInterval < CD
+            return false
         }
         else{
             return false
