@@ -7,52 +7,25 @@
 
 import Foundation
 
-// only run updateDate after run hasCD
 class SettingsModel: ObservableObject {
-    let userCD = CoolDownTimer(coolDownTime: 30.0)
-    
-    func addUsername(name: String) -> (Bool, String) {
-        var errorMessage = ""
-        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD() {
-            UserDefaults.standard.set(name, forKey: "username")
-            userCD.updateDate()
-            return (true, errorMessage)
-        }
-        if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            errorMessage = "Name cannot be empty"
-        }
-        else if userCD.hasCD() {
-            errorMessage = "You are setting user name too frequently, please wait for the cool down"
-        }
-        else {
-            errorMessage = "Oops, unkown error happened"
-        }
-        return (false, errorMessage)
-    }
-    
-    func getUsername() -> String? {
-        return UserDefaults.standard.string(forKey: "username")
-    }
-}
-
-class CoolDownTimer{
     private var time : Date?
-    private var CD = 30.0
+    private let CD = 30.0
     private let dateFormatter = DateFormatter()
-    private var withinCD = false
     
-    init(coolDownTime: Double){
+    init(){
         getTimeStamp()
-        CD = coolDownTime
     }
     
-    // update cd timestamp
     func updateDate() -> Void{
-        // user only after check hasCD
+        if !self.hasCD(){
             time = Date()
-        if let unwrapped_time = time {
-            let time_str = dateFormatter.string(from: unwrapped_time)
-            UserDefaults.standard.setValue(time_str, forKey: "SettingChangeTimeStamp")
+            if let unwrapped_time = time {
+                let time_str = dateFormatter.string(from: unwrapped_time)
+                UserDefaults.standard.setValue(time_str, forKey: "SettingChangeTimeStamp")
+                UserDefaults.standard.synchronize()
+            }
+        } else{
+            print("within CD")
         }
     }
     
@@ -71,7 +44,19 @@ class CoolDownTimer{
         dateFormatter.dateFormat = "dd MMM yyyy HH:mm:ss Z"
         if let time_str = UserDefaults.standard.string(forKey: "SettingChangeTimeStamp"){
             time = dateFormatter.date(from: time_str)
-            print("called in onboarding")
+            UserDefaults.standard.synchronize()
         }
+    }
+    
+    func addUsername(name: String) -> Bool {
+        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            UserDefaults.standard.set(name, forKey: "username")
+            return true
+        }
+        return false
+    }
+    
+    func getUsername() -> String? {
+        return UserDefaults.standard.string(forKey: "username")
     }
 }

@@ -253,6 +253,7 @@ struct SignUpView: View {
                     .onChange(of: username, perform: { username in
                         if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             self.btnDisabled = false
+                            let _ = settingsModel.addUsername(name: username)
                         }
                         else {
                             self.btnDisabled = true
@@ -270,8 +271,7 @@ struct SignUpView: View {
     
     var SignUpBtn: some View {
         Button(action: {
-            let (isUpdateSucessful ,_ ) = self.settingsModel.addUsername(name: username)
-            if isUpdateSucessful {
+            if self.settingsModel.addUsername(name: username) {
                 self.usernameSet = true
             }
         }) {
