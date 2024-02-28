@@ -7,12 +7,13 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct SettingPage: View {
     @FocusState var isFocused
     @State var time = ""
     @State var userName: String = ""
-    @State var settingsModel = SettingsModel()
+    @ObservedObject var settingsModel = SettingsModel()
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -44,7 +45,7 @@ struct SettingPage: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
                             time = Date().description(with: .current)
-                            settingsModel.updateDate()
+                            settingsModel.updateDate
                             print(time)
                             if settingsModel.addUsername(name: userName) {
                                 dismiss()

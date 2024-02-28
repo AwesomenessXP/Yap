@@ -278,14 +278,25 @@ struct SignUpBtn: View {
     @EnvironmentObject var settingsModel: SettingsModel
     @Binding var usernameSet: Bool
     @Binding var username: String
+    @State private var eulaAccepted = false
+    let termsUrl = "https://www.example.com/terms"
     @Binding var btnDisabled: Bool
     
     var body: some View {
+        VStack() {
+            Toggle(isOn: $eulaAccepted) {
+                HStack(spacing: 1) {
+                    Text("I accept the ")
+                        .fontWeight(.regular).foregroundStyle(.white)
+                    Link("Terms and Conditions", destination: URL(string: termsUrl)!)
+                        .foregroundStyle(.gray).fontWeight(.regular)
+                }
+            }
+        }        
         Button(action: {
             if self.settingsModel.addUsername(name: username) {
                 self.usernameSet = true
-            }
-        }) {
+            }}) {
             Text("Start Yappin")
                 .fontWeight(.semibold)
                 .frame(width: 360, height: 50)
