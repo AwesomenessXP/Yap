@@ -13,7 +13,8 @@ class SettingsModel: ObservableObject {
     
     func addUsername(name: String) -> (Bool, String) {
         var errorMessage = ""
-        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD() {
+        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD(){
+            print("saved!")
             UserDefaults.standard.set(name, forKey: "username")
             userCD.updateDate()
             return (true, errorMessage)
