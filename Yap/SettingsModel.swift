@@ -13,17 +13,17 @@ class SettingsModel: ObservableObject {
     
     func addUsername(name: String) -> (Bool, String) {
         var errorMessage = ""
-        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD(){
+        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD().0 {
             print("saved!")
             UserDefaults.standard.set(name, forKey: "username")
             userCD.updateDate()
             return (true, errorMessage)
         }
         if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            errorMessage = "Name cannot be empty"
+            errorMessage = "Username cannot be empty"
         }
-        else if userCD.hasCD() {
-            errorMessage = "You are setting user name too frequently, please wait for the cool down"
+        else if userCD.hasCD().0 {
+            errorMessage = "Please wait another \(Int(30.0 - userCD.hasCD().1))s to change your username"
         }
         else {
             errorMessage = "Oops, unkown error happened"
@@ -57,15 +57,15 @@ class CoolDownTimer{
         }
     }
     
-    func hasCD() -> Bool{
+    func hasCD() -> (Bool, Double) {
+        var timeInterval = -1.0
         if let currentTime = time{
-            let timeInterval = Date().timeIntervalSince(currentTime)
+            timeInterval = Date().timeIntervalSince(currentTime)
             print(timeInterval)
-            return timeInterval < CD
-//            return false
+            return (timeInterval < CD, timeInterval)
         }
         else{
-            return false
+            return (false, timeInterval)
         }
     }
     

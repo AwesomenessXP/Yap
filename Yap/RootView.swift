@@ -268,7 +268,7 @@ struct SignUpView: View {
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
             .padding()
             
-            SignUpBtn(usernameSet: $usernameSet, username: $username, btnDisabled: $btnDisabled)
+            SignUpBtn(isLogin: $usernameSet, username: $username, btnDisabled: $btnDisabled)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
@@ -291,7 +291,7 @@ struct SignUpView: View {
 
 struct SignUpBtn: View {
     @EnvironmentObject var settingsModel: SettingsModel
-    @Binding var usernameSet: Bool
+    @Binding var isLogin: Bool
     @Binding var username: String
     @State private var eulaAccepted = false
     let termsUrl = "https://lighthearted-mandazi-3d73bb.netlify.app/Yappin.pdf"
@@ -300,24 +300,29 @@ struct SignUpBtn: View {
     
     var body: some View {
         VStack() {
-            Toggle(isOn: $eulaAccepted) {
-                HStack(spacing: 1) {
-                    Text("I accept the ")
-                        .fontWeight(.regular).foregroundStyle(.white)
-                    Link("Terms and Conditions", destination: URL(string: termsUrl)!)
-                        .foregroundStyle(.gray).fontWeight(.bold)
+            HStack {
+                Spacer()
+                Toggle(isOn: $eulaAccepted) {
+                    HStack(spacing: 1) {
+                        Text("I accept the ")
+                            .fontWeight(.regular).foregroundStyle(.white)
+                        Link("Terms and Conditions", destination: URL(string: termsUrl)!)
+                            .foregroundStyle(.gray).fontWeight(.bold)
+                    }
                 }
-            }   .toggleStyle(CheckboxToggleStyle())
-                .frame(width: 300, alignment: .leading)
+                .toggleStyle(CheckboxToggleStyle())
                 .font(.system(size: 12))
-            
+                Spacer()
+            }
+            Text(error)
+                .foregroundStyle(.red)
         }
         
         GeometryReader { geometry in // grab the screen size
             Button(action: {
                 let usernameAdd = self.settingsModel.addUsername(name: username)
                 if (usernameAdd.0) {
-                    self.usernameSet = true
+                    self.isLogin = true
                 } else {
                     error = usernameAdd.1
                 }
@@ -330,14 +335,18 @@ struct SignUpBtn: View {
             .frame(width: 330, height: 50)
             .foregroundStyle(.black)
             .bold()
-            .disabled(!eulaAccepted || self.usernameSet)
-            .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
+            .onChange(of: username, {
+                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    error = ""
+                    self.btnDisabled = false
+                }
+                else {
+                    self.btnDisabled = true
+                }
+            })
+            .disabled(!self.eulaAccepted && self.btnDisabled)
+            .background(self.eulaAccepted && !self.btnDisabled ? Color.white : Color.gray.opacity(0.5))
             .cornerRadius(15)
-            .alert(error, isPresented: Binding(get: {
-                return error.count > 0
-            }, set: {_,_ in })) {
-                Button("OK", role: .cancel) { }
-            }
             .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             
         }
