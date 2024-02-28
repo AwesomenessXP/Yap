@@ -455,9 +455,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Yap needs your location to find others in your radius";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Yap needs your location to find others in your radius";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Yap needs your location to find others in your radius";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Yap uses your location while you use the app to connect you to conversations happening in a 100 meter radius around you. We'll send your notifications in the background.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Yap uses your location in the background to send you notifications about conversations happening in your area";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Yap uses your location while you use the app to connect you to conversations happening in a 100 meter radius around you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -497,9 +497,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yap/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Yap needs your location to find others in your radius";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Yap needs your location to find others in your radius";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Yap needs your location to find others in your radius";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Yap uses your location while you use the app to connect you to conversations happening in a 100 meter radius around you. We'll send your notifications in the background.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Yap uses your location in the background to send you notifications about conversations happening in your area";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Yap uses your location while you use the app to connect you to conversations happening in a 100 meter radius around you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -291,7 +291,7 @@ struct SignUpBtn: View {
     @Binding var usernameSet: Bool
     @Binding var username: String
     @State private var eulaAccepted = false
-    let termsUrl = "https://www.example.com/terms"
+    let termsUrl = "https://lighthearted-mandazi-3d73bb.netlify.app/Yappin.pdf"
     @Binding var btnDisabled: Bool
     @State var error: String = ""
     
