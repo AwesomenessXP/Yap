@@ -86,6 +86,7 @@ struct RootView: View {
                 Text("YAP")
                     .font(.system(size: 18)).bold()
                     .foregroundColor(.black)
+                    .fontWeight(.heavy)
                 Spacer()
             }
             HStack(alignment: .bottom) {
@@ -249,6 +250,7 @@ struct SignUpView: View {
     
     var body: some View {
         VStack {
+            Spacer().frame(height: 250)
             Text("Enter a username")
                 .font(.system(size: 23)).bold()
                 .foregroundStyle(.white)
@@ -265,6 +267,7 @@ struct SignUpView: View {
             .background(RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
             .padding()
+            
             SignUpBtn(usernameSet: $usernameSet, username: $username, btnDisabled: $btnDisabled)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -302,36 +305,42 @@ struct SignUpBtn: View {
                     Text("I accept the ")
                         .fontWeight(.regular).foregroundStyle(.white)
                     Link("Terms and Conditions", destination: URL(string: termsUrl)!)
-                        .foregroundStyle(.gray).fontWeight(.regular)
+                        .foregroundStyle(.gray).fontWeight(.bold)
                 }
             }   .toggleStyle(CheckboxToggleStyle())
                 .frame(width: 300, alignment: .leading)
-                .padding(.bottom)
-        }
-        Button(action: {
-            let usernameAdd = self.settingsModel.addUsername(name: username)
-            if (usernameAdd.0) {
-                self.usernameSet = true
-            } else {
-                error = usernameAdd.1
-            }
+                .font(.system(size: 12))
             
-        }) {
-            Text("Start Yappin")
-                .fontWeight(.semibold)
-                .frame(width: 360, height: 50)
         }
-        .frame(width: 330, height: 50)
-        .foregroundStyle(.black)
-        .bold()
-        .disabled(!eulaAccepted || self.usernameSet)
-        .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
-        .cornerRadius(15)
-        .alert(error, isPresented: Binding(get: {
-            return error.count > 0
-        }, set: {_,_ in })) {
-                    Button("OK", role: .cancel) { }
+        
+        GeometryReader { geometry in // grab the screen size
+            Button(action: {
+                let usernameAdd = self.settingsModel.addUsername(name: username)
+                if (usernameAdd.0) {
+                    self.usernameSet = true
+                } else {
+                    error = usernameAdd.1
                 }
+                
+            }) {
+                Text("Start Yappin")
+                    .fontWeight(.semibold)
+                    .frame(width: 360, height: 50)
+            }
+            .frame(width: 330, height: 50)
+            .foregroundStyle(.black)
+            .bold()
+            .disabled(!eulaAccepted || self.usernameSet)
+            .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
+            .cornerRadius(15)
+            .alert(error, isPresented: Binding(get: {
+                return error.count > 0
+            }, set: {_,_ in })) {
+                Button("OK", role: .cancel) { }
+            }
+            .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
+            
+        }
 
     }
 }
@@ -406,17 +415,16 @@ struct MessagesView: View {
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         return HStack {
-            configuration.label
-
-            Spacer()
 
             Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
                 .resizable()
-                .frame(width: 24, height: 24)
+                .frame(width: 16, height: 16)
                 .foregroundColor(configuration.isOn ? .white : .white)
                 .onTapGesture {
                     configuration.isOn.toggle()
                 }
+            
+            configuration.label
         }
     }
 }
