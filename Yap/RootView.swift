@@ -18,7 +18,7 @@ struct RootView: View {
     @State var longitude: Double?
     @State var username: String = ""
     @State var isLogin: Bool = false
-    @State var timerInterval: TimeInterval = 1 // seconds
+    @State var timerInterval: TimeInterval = 60 // seconds
     @Environment(\.scenePhase) var scenePhase
     @FocusState private var isTextFieldFocused: Bool
 
@@ -73,6 +73,7 @@ struct RootView: View {
         .onAppear {
             print("IN CHAT VIEW")
             Task {
+                getLocation()
                 await startLocationUpdates()
             }
         }
@@ -189,16 +190,7 @@ struct RootView: View {
         Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
             print("location updates")
             Task { @MainActor in
-                latitude = locationManager.location?.coordinate.latitude
-                longitude = locationManager.location?.coordinate.longitude
-                if let latitude = latitude, let longitude = longitude {
-                    let serialQueue = DispatchQueue(label: "coord_serial_queue")
-                    serialQueue.sync {
-                        UserDefaults.standard.set(latitude, forKey: "latitude")
-                        UserDefaults.standard.set(longitude, forKey: "longitude")
-                        websocketClient.update(latitude: latitude, longitude: longitude)
-                    }
-                }
+                getLocation()
             }
         }
     }
@@ -239,6 +231,20 @@ struct RootView: View {
         let getUser = settingsModel.getUsername()
         isLogin = (token == nil || getUser == nil) ? false : true
         username = getUser ?? ""
+    }
+    
+    func getLocation() {
+        latitude = locationManager.location?.coordinate.latitude
+        longitude = locationManager.location?.coordinate.longitude
+        if let latitude = latitude, let longitude = longitude {
+            let serialQueue = DispatchQueue(label: "coord_serial_queue")
+            serialQueue.async {
+                print("location set")
+                UserDefaults.standard.set(latitude, forKey: "latitude")
+                UserDefaults.standard.set(longitude, forKey: "longitude")
+                websocketClient.update(latitude: latitude, longitude: longitude)
+            }
+        }
     }
 }
 
@@ -424,7 +430,6 @@ struct MessagesView: View {
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         return HStack {
-
             Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
                 .resizable()
                 .frame(width: 16, height: 16)

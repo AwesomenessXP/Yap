@@ -73,7 +73,6 @@ class CoolDownTimer{
         dateFormatter.dateFormat = "dd MMM yyyy HH:mm:ss Z"
         if let time_str = UserDefaults.standard.string(forKey: "SettingChangeTimeStamp"){
             time = dateFormatter.date(from: time_str)
-            print("called in onboarding")
         }
     }
 }
