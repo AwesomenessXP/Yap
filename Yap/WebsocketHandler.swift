@@ -293,6 +293,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     }
     
     func disconnect() {
+        user_count = -1
         let reason = "Client initiated disconnect".data(using: .utf8)
         webSocketTask?.cancel(with: .normalClosure, reason: reason)
     }
