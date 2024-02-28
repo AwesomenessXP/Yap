@@ -309,8 +309,6 @@ struct SignUpBtn: View {
                 .padding(.bottom)
         }
         Button(action: {
-            settingsModel.userCD.updateDate()
-            
             let usernameAdd = self.settingsModel.addUsername(name: username)
             if (usernameAdd.0) {
                 self.usernameSet = true

@@ -16,6 +16,8 @@ struct SettingPage: View {
     @ObservedObject var settingsModel = SettingsModel()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var websocketClient: WebsocketClient
+    @State var showAlert = false
+    @State var errorMsg = ""
     @State var removeMessagesAlert: String = ""
     
     var body: some View {
@@ -78,6 +80,13 @@ struct SettingPage: View {
                 }
                 .preferredColorScheme(.dark)
                 .navigationBarTitleDisplayMode(.inline)
+                .alert( isPresented: $showAlert){
+                                    Alert(
+                                        title: Text("User Name Update Fail"),
+                                        message: Text("\(errorMsg)."),
+                                        dismissButton: .default(Text("OK"))
+                                    )
+                                }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("Settings")
@@ -88,8 +97,17 @@ struct SettingPage: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
                             time = Date().description(with: .current)
-                            if settingsModel.addUsername(name: userName).0 {
+                            let setUserName = settingsModel.addUsername(name: userName)
+                            errorMsg = setUserName.1
+                            if setUserName.0 {
                                 dismiss()
+                            }
+                            else if userName == settingsModel.getUsername() ?? ""{
+                                dismiss()
+                            }
+                            else{
+                                self.userName = settingsModel.getUsername() ?? ""
+                                showAlert = true
                             }
                         }) { Text("Save") }
                     }
