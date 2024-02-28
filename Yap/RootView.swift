@@ -242,8 +242,6 @@ struct SignUpView: View {
     @Binding var usernameSet: Bool
     @Binding var username: String
     @State private var btnDisabled: Bool = true
-    @State private var eulaAccepted = false
-    let termsUrl = "https://www.example.com/terms"
     
     var body: some View {
         VStack {
@@ -267,15 +265,9 @@ struct SignUpView: View {
                     })
             }
             .background(RoundedRectangle(cornerRadius: 15)
-<<<<<<< Updated upstream
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
             .padding()
             SignUpBtn(usernameSet: $usernameSet, username: $username, btnDisabled: $btnDisabled)
-=======
-                .stroke(Color.gray.opacity(0.45), lineWidth: 2)).padding(.bottom, 10)
-            
-            SignUpBtn
->>>>>>> Stashed changes
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
@@ -288,45 +280,22 @@ struct SignUpBtn: View {
     @Binding var username: String
     @Binding var btnDisabled: Bool
     
-<<<<<<< Updated upstream
     var body: some View {
         Button(action: {
             if self.settingsModel.addUsername(name: username) {
                 self.usernameSet = true
-=======
-    var SignUpBtn: some View {
-        VStack() {
-            Toggle(isOn: $eulaAccepted) {
-                HStack(spacing: 1) {
-                    Text("I accept the ")
-                        .fontWeight(.regular).foregroundStyle(.white)
-                    Link("Terms and Conditions", destination: URL(string: termsUrl)!)
-                        .foregroundStyle(.gray).fontWeight(.regular)
-                }
->>>>>>> Stashed changes
             }
-            .toggleStyle(CheckboxToggleStyle())
-            .frame(width: 300, alignment: .leading)
-            .padding(.bottom)
-
-            Button(action: {
-                if self.settingsModel.addUsername(name: username) {
-                    self.usernameSet = true
-                }
-            }) {
-                Text("Start Yappin")
-                    .fontWeight(.semibold)
-                    .frame(width: 360, height: 50)
-            }
-            .frame(width: 330, height: 50)
-            .foregroundStyle(.black)
-            .bold()
-            .disabled(!eulaAccepted || self.usernameSet)
-            .background(eulaAccepted ? Color.white : Color.gray.opacity(0.5))
-            .cornerRadius(15)
+        }) {
+            Text("Start Yappin")
+                .fontWeight(.semibold)
+                .frame(width: 360, height: 50)
         }
+        .frame(width: 330, height: 50)
+        .foregroundStyle(.black).bold()
+        .disabled(self.btnDisabled)
+        .background(.white)
+        .cornerRadius(15)
     }
-
 }
 
 struct MessageView: View {
@@ -396,23 +365,8 @@ struct MessagesView: View {
     }
 }
 
-struct CheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        return HStack {
-            configuration.label
+// Note: The SettingPage struct needs to be defined elsewhere in your code.
 
-            Spacer()
-
-            Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundColor(configuration.isOn ? .white : .white)
-                .onTapGesture {
-                    configuration.isOn.toggle()
-                }
-        }
-    }
-}
 #Preview {
     RootView()
         .environmentObject(LocationManager())
