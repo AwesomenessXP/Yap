@@ -63,6 +63,7 @@ struct RootView: View {
             Button("OK", role: .cancel) {}
         })
         .onAppear {
+            print("IN CHAT VIEW")
             Task {
                 await startLocationUpdates()
             }
@@ -216,7 +217,9 @@ struct RootView: View {
             self.usernameSet = true
         }
         if let latitude = latitude, let longitude = longitude {
-            if !usernameNotEmpty() {
+            print("here")
+            if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                print("sent")
                 websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
             }
         }
@@ -228,8 +231,9 @@ struct RootView: View {
     
     func verifyToken() {
         let token = UserDefaults.standard.value(forKey: "user_token")
-        let hasUser = settingsModel.getUsername()
-        usernameSet = (token == nil || hasUser != nil) ? false : usernameSet == true
+        let getUser = settingsModel.getUsername()
+        usernameSet = (token == nil || getUser == nil) ? false : true
+        username = getUser ?? ""
     }
 }
 
@@ -263,13 +267,20 @@ struct SignUpView: View {
             .background(RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
             .padding()
-            SignUpBtn
+            SignUpBtn(usernameSet: $usernameSet, username: $username, btnDisabled: $btnDisabled)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
     }
+}
+
+struct SignUpBtn: View {
+    @EnvironmentObject var settingsModel: SettingsModel
+    @Binding var usernameSet: Bool
+    @Binding var username: String
+    @Binding var btnDisabled: Bool
     
-    var SignUpBtn: some View {
+    var body: some View {
         Button(action: {
             if self.settingsModel.addUsername(name: username) {
                 self.usernameSet = true
