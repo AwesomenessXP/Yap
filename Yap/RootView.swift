@@ -17,7 +17,7 @@ struct RootView: View {
     @State var latitude: Double?
     @State var longitude: Double?
     @State var username: String = ""
-    @State var usernameSet: Bool = false
+    @State var isLogin: Bool = false
     @State var timerInterval: TimeInterval = 1 // seconds
     @Environment(\.scenePhase) var scenePhase
     @FocusState private var isTextFieldFocused: Bool
@@ -26,11 +26,20 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack {
-            if self.usernameSet {
-                ChatView
+            if self.isLogin {
+                if #available(iOS 17, *) {
+                    ChatView.onChange(of: scenePhase) { _, newPhase in
+                        switchPhase(phase: newPhase)
+                    }
+                }
+                else {
+                    ChatView.onChange(of: scenePhase) { newPhase in
+                        switchPhase(phase: newPhase)
+                    }
+                }
             }
             else {
-                SignUpView(usernameSet: $usernameSet, username: $username)
+                SignUpView(usernameSet: $isLogin, username: $username)
             }
         }
         .onAppear {
@@ -55,8 +64,7 @@ struct RootView: View {
             }
             InputField
         }
-        .background(Color.black.edgesIgnoringSafeArea(.all))
-        .onTapGesture {
+        .background(Color.black.edgesIgnoringSafeArea(.all)).onTapGesture {
             isFocused = false
         }
         .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
@@ -68,21 +76,7 @@ struct RootView: View {
                 await startLocationUpdates()
             }
         }
-        .onChange(of: scenePhase) { newPhase in
-            switch newPhase {
-            case .inactive:
-                print("inactive")
-            case .active:
-                Task {
-                    websocketClient.connect()
-                    await startLocationUpdates()
-                }
-            case .background:
-                print("background")
-            @unknown default:
-                fatalError()
-            }
-        }
+
     }
     
     var LogoView: some View {
@@ -158,15 +152,13 @@ struct RootView: View {
         HStack {
             HStack {
                 if #available(iOS 17.0, *) {
-                    InputFieldHelper
-                        .onChange(of: messageText) {
+                    InputFieldHelper.onChange(of: messageText) {
                             messageText = String(messageText.prefix(500))
                         }
                         .sensoryFeedback(.increase, trigger: messageText.count)
                 }
                 else {
-                    InputFieldHelper
-                        .onChange(of: messageText) { newValue in
+                    InputFieldHelper.onChange(of: messageText) { newValue in
                             if newValue.count > 500 {
                                 messageText = String(newValue.prefix(500))
                             }
@@ -214,7 +206,7 @@ struct RootView: View {
         messageText = ""
         if let name = settingsModel.getUsername() {
             self.currentUser = User(name: name)
-            self.usernameSet = true
+            self.isLogin = true
         }
         if let latitude = latitude, let longitude = longitude {
             print("here")
@@ -225,14 +217,26 @@ struct RootView: View {
         }
     }
     
-    func usernameNotEmpty() -> Bool {
-        return username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    func switchPhase(phase: ScenePhase) {
+        switch phase {
+        case .inactive:
+            print("inactive")
+        case .active:
+            Task {
+                websocketClient.connect()
+                await startLocationUpdates()
+            }
+        case .background:
+            print("background")
+        @unknown default:
+            fatalError()
+        }
     }
     
     func verifyToken() {
         let token = UserDefaults.standard.value(forKey: "user_token")
         let getUser = settingsModel.getUsername()
-        usernameSet = (token == nil || getUser == nil) ? false : true
+        isLogin = (token == nil || getUser == nil) ? false : true
         username = getUser ?? ""
     }
 }
@@ -249,20 +253,14 @@ struct SignUpView: View {
                 .font(.system(size: 23)).bold()
                 .foregroundStyle(.white)
             Group {
-                TextField("Username", text: $username)
-                    .bold()
-                    .foregroundStyle(.white)
-                    .frame(width: 330, height: 50)
-                    .multilineTextAlignment(.center)
-                    .onChange(of: username, perform: { username in
-                        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            self.btnDisabled = false
-                            let _ = settingsModel.addUsername(name: username)
-                        }
-                        else {
-                            self.btnDisabled = true
-                        }
-                    })
+                if #available(iOS 17.0, *) {
+                    UsernameField
+                        .onChange(of: username) { checkBtnDisabled() }
+                }
+                else {
+                    UsernameField
+                        .onChange(of: username, { checkBtnDisabled() })
+                }
             }
             .background(RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
@@ -271,6 +269,20 @@ struct SignUpView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
+    }
+    
+    var UsernameField: some View {
+        TextField("Username", text: $username)
+            .bold()
+            .foregroundStyle(.white)
+            .frame(width: 330, height: 50)
+            .multilineTextAlignment(.center)
+    }
+    
+    func checkBtnDisabled() {
+        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            self.btnDisabled = false
+        }
     }
 }
 
