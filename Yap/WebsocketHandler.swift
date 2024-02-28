@@ -148,8 +148,8 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
         
         do {
             guard let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
-            print(jsonResponse)
-            print("")
+//            print(jsonResponse)
+//            print("")
             if let modifications = jsonResponse["modifications"] as? [[String: Any]] {
                 for modification in modifications {
                     if let type = modification["type"] as? String, type == "QueryUpdated",
@@ -252,8 +252,8 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     private func send(json: [String: Any]) {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
-            print(jsonData)
-            print("")
+//            print(jsonData)
+//            print("")
             let jsonString = String(data: jsonData, encoding: .utf8)
             if let jsonString = jsonString {
                 webSocketTask?.send(.string(jsonString)) { error in
