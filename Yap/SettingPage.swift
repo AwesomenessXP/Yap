@@ -41,14 +41,14 @@ struct SettingPage: View {
                         Button(action: {
                             openMail(emailTo: "s@fundsy.io",
                                      subject: "Reporting an issue",
-                                     body: "Flagging objectionable content:\n\n")
+                                     body: "Flagging objectionable content:\n\n\n\n\n\n\n\n\n----------\nSession Info: \(String(describing: websocketClient.messages))")
                         }, label: {
                             Text("Flag objectionable content")
                         })
                         Button(action: {
                             openMail(emailTo: "s@fundsy.io",
                                      subject: "Reporting an issue",
-                                     body: "Block this user for me:\n\n")
+                                     body: "Block request:\n\n\n\n\n\n\n\n\n----------\nSession Info: \(String(describing: websocketClient.messages))")
                         }, label: {
                             Text("Block abusive users")
                         })
@@ -56,7 +56,7 @@ struct SettingPage: View {
                         Button(action: {
                             openMail(emailTo: "s@fundsy.io",
                                      subject: "Reporting an issue",
-                                     body: "I would like support with:\n\n")
+                                     body: "I would like support with:\n\n\n\n\n\n\n\n\n----------\nSession Info: \(String(describing: websocketClient.messages))")
                         }, label: {
                             Text("Email us for support")
                         })
@@ -131,8 +131,8 @@ func openMail(emailTo:String, subject: String, body: String) {
 extension String {
     func fixToBrowserString() -> String {
         self.replacingOccurrences(of: ";", with: "%3B")
-            .replacingOccurrences(of: "\n", with: "%0D%0A")
-            .replacingOccurrences(of: " ", with: "+")
+            .replacingOccurrences(of: "\n", with: "\n")
+            .replacingOccurrences(of: " ", with: " ")
             .replacingOccurrences(of: "!", with: "%21")
             .replacingOccurrences(of: "\"", with: "%22")
             .replacingOccurrences(of: "\\", with: "%5C")

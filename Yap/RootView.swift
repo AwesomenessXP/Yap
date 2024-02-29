@@ -84,10 +84,11 @@ struct RootView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text("YAP")
+                Text("YAPPIN")
                     .font(.system(size: 18)).bold()
                     .foregroundColor(.black)
                     .fontWeight(.heavy)
+                    .italic()
                 Spacer()
             }
             HStack(alignment: .bottom) {
@@ -256,32 +257,48 @@ struct SignUpView: View {
     
     var body: some View {
         VStack {
-            Spacer().frame(height: 250)
-            Text("Enter a username")
-                .font(.system(size: 23)).bold()
-                .foregroundStyle(.white)
+            Spacer().frame(height: 75)
+            HStack {
+                Spacer()
+                Text("YAPPIN")
+                    .font(.system(size: 36)).bold()
+                    .foregroundColor(.white)
+                    .italic()
+                    .fontWeight(.heavy)
+                Spacer()
+            }.padding(.bottom,5)
+            HStack {
+                Spacer()
+                Text("Chat with people nearby you")
+                    .font(.system(size: 18)).bold()
+                    .foregroundColor(.white)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+            Spacer().frame(height: 20)
+//            Text("Enter a username")
+//                .font(.system(size: 23)).bold()
+//                .foregroundStyle(.white)
             Group {
-                if #available(iOS 17.0, *) {
-                    UsernameField
-                        .onChange(of: username) { checkBtnDisabled() }
-                }
-                else {
-                    UsernameField
-                        .onChange(of: username, { checkBtnDisabled() })
-                }
+                UsernameField
+                    .onChange(of: username) { newValue in
+                        checkBtnDisabled()
+                    }
             }
             .background(RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.gray.opacity(0.45), lineWidth: 2))
             .padding()
+            Spacer()
             
             SignUpBtn(isLogin: $usernameSet, username: $username, btnDisabled: $btnDisabled)
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
     }
     
     var UsernameField: some View {
-        TextField("Username", text: $username)
+        TextField("Choose your username", text: $username)
             .bold()
             .foregroundStyle(.white)
             .frame(width: 330, height: 50)
@@ -322,6 +339,8 @@ struct SignUpBtn: View {
             }
             Text(error)
                 .foregroundStyle(.red)
+            Spacer()
+            Spacer()
         }
         
         GeometryReader { geometry in // grab the screen size
@@ -341,7 +360,8 @@ struct SignUpBtn: View {
             .frame(width: 330, height: 50)
             .foregroundStyle(.black)
             .bold()
-            .onChange(of: username, {
+            .onChange(of: username, perform: {
+                username in
                 if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     error = ""
                     self.btnDisabled = false
