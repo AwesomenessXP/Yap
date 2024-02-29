@@ -73,7 +73,6 @@ struct RootView: View {
         .onAppear {
             print("IN CHAT VIEW")
             Task {
-                getLocation()
                 await startLocationUpdates()
             }
         }
@@ -188,6 +187,7 @@ struct RootView: View {
 
     @MainActor
     func startLocationUpdates() async {
+        getLocation()
         Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
             print("location updates")
             Task { @MainActor in
@@ -276,9 +276,6 @@ struct SignUpView: View {
                 Spacer()
             }
             Spacer().frame(height: 20)
-//            Text("Enter a username")
-//                .font(.system(size: 23)).bold()
-//                .foregroundStyle(.white)
             Group {
                 UsernameField
                     .onChange(of: username) { newValue in
