@@ -193,7 +193,7 @@ struct RootView: View {
     func startLocationUpdates() async {
         getLocation()
         Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-            print("location updates")
+//            print("location updates")
             Task { @MainActor in
                 getLocation()
             }
@@ -207,9 +207,7 @@ struct RootView: View {
             self.isLogin = true
         }
         if let latitude = latitude, let longitude = longitude {
-            print("here")
             if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                print("sent")
                 websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
             }
         }
@@ -221,10 +219,12 @@ struct RootView: View {
             print("inactive")
         case .active:
             Task {
+                timerInterval = 10
                 websocketClient.connect()
                 await startLocationUpdates()
             }
         case .background:
+            timerInterval = 120
             print("background")
         @unknown default:
             fatalError()
@@ -244,7 +244,6 @@ struct RootView: View {
         if let latitude = latitude, let longitude = longitude {
             let serialQueue = DispatchQueue(label: "coord_serial_queue")
             serialQueue.async {
-                print("location set")
                 UserDefaults.standard.set(latitude, forKey: "latitude")
                 UserDefaults.standard.set(longitude, forKey: "longitude")
                 websocketClient.update(latitude: latitude, longitude: longitude)

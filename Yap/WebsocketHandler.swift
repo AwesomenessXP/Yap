@@ -223,7 +223,6 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     func update(latitude: Double, longitude: Double) {
         DispatchQueue.global(qos: .background).async {
             
-        print("\(latitude) + \(longitude)")
 
         let token = UserDefaults.standard.value(forKey: "user_token")
         let display_name = UserDefaults.standard.value(forKey: "username")

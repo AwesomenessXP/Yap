@@ -49,10 +49,6 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         let status = manager.authorizationStatus
         if status == .denied || status == .restricted || status == .notDetermined {
             return false
-        } else if status == .authorizedWhenInUse {
-            print ("auth in use")
-        } else if status == .authorizedAlways {
-            print ("auth always")
         }
         manager.requestLocation()
         return true
