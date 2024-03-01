@@ -217,7 +217,7 @@ struct RootView: View {
     func switchPhase(phase: ScenePhase) {
         switch phase {
         case .inactive:
-            print("inactive")
+            timerInterval = 30
         case .active:
             Task {
                 timerInterval = 10
@@ -225,8 +225,7 @@ struct RootView: View {
                 await startLocationUpdates()
             }
         case .background:
-            timerInterval = 120
-            print("background")
+            timerInterval = 60
         @unknown default:
             fatalError()
         }
@@ -435,6 +434,7 @@ struct MessagesView: View {
     @Binding var messages: [Message]
     @Binding var currentUser: User
     @State private var previousMessages: [Message] = []
+    @State private var lastNotificationTime: Date = Date()
 
     var body: some View {
         VStack {
@@ -451,12 +451,17 @@ struct MessagesView: View {
                 previousMessages = messages
             }
             .onChange(of: messages) { currentMessages in
-                        let newMessages = currentMessages.filter { !previousMessages.contains($0) }
-                        if !newMessages.isEmpty {
-                            sendNotification(count: newMessages.count, first: newMessages[0])
-                        }
-                        previousMessages = currentMessages
-                    }
+                let newMessages = currentMessages.filter { !previousMessages.contains($0) }
+                if Date().timeIntervalSince(lastNotificationTime) < 60 {
+                    return
+                }
+                
+                sendNotification(count: newMessages.count, first: newMessages[0])
+                self.lastNotificationTime = Date()
+
+                
+                previousMessages = currentMessages
+            }
             
         }
     }

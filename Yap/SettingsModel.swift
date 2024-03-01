@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 // only run updateDate after run hasCD
 class SettingsModel: ObservableObject {

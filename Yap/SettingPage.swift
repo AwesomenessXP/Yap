@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import UserNotifications
 
 struct SettingPage: View {
     @FocusState var isFocused
@@ -20,21 +21,29 @@ struct SettingPage: View {
     @State var showAlert = false
     @State var errorMsg = ""
     @State var removeMessagesAlert: String = ""
+    @State var setNotif = false
     
     var body: some View {
         NavigationStack{
             ZStack {
                 Form {
                     Toggle("Notifications", isOn: Binding(get: {
-                        return settingsModel.getNotif()
-                    }, set: {
-                            value in
-                        settingsModel.setNotif(to: value)
-                        if (value) {
-                            locationManager.requestNotificationPermission()
-                        }
-                    }
-                    ))
+                                           settingsModel.getNotif()
+                                            
+                                       }, set: { value in
+                                           if value {
+                                               checkNotificationAuthorization { accessGranted in
+                                                   if !accessGranted {
+                                                       self.setNotif = true
+                                                   } else {
+                                                       settingsModel.setNotif(to: value)
+                                                   }
+                                               }
+                                           } else {
+                                               settingsModel.setNotif(to: value)
+
+                                           }
+                                       }))
 
                     Section(header: Text("Update username")) {
                         TextField("awesomenessxp2", text: $userName)
@@ -123,7 +132,37 @@ struct SettingPage: View {
             }
             .onAppear() {
                 self.userName = settingsModel.getUsername() ?? ""
-            }.colorScheme(.dark)
+            }.colorScheme(.dark).alert(isPresented: $setNotif) {
+                Alert(
+                    title: Text("Enable Notifications"),
+                    message: Text("To receive notifications, please enable them in the app settings."),
+                    primaryButton: .default(Text("Settings"), action: {
+                        // Open the app settings
+                        if let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) {
+                            UIApplication.shared.open(url)
+                        }
+                    }),
+                    secondaryButton: .cancel()
+                )
+            }
+        }
+    }
+}
+
+
+func checkNotificationAuthorization(completion: @escaping (Bool) -> Void) {
+    UNUserNotificationCenter.current().getNotificationSettings { settings in
+        DispatchQueue.main.async {
+            switch settings.authorizationStatus {
+            case .authorized, .provisional:
+                completion(true)
+            case .denied:
+                completion(false)
+//            case .notDetermined:
+//                self.requestNotificationPermission(completion: completion)
+            @unknown default:
+                completion(false)
+            }
         }
     }
 }
