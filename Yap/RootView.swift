@@ -18,7 +18,7 @@ struct RootView: View {
     @State var longitude: Double?
     @State var username: String = ""
     @State var isLogin: Bool = false
-    @State var timerInterval: TimeInterval = 60 // seconds
+    @State var timerInterval: TimeInterval = 10
     @Environment(\.scenePhase) var scenePhase
     @FocusState private var isTextFieldFocused: Bool
 

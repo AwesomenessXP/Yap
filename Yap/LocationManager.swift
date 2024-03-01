@@ -13,7 +13,11 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.delegate = self
         manager.startUpdatingHeading()
         manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        manager.requestWhenInUseAuthorization()
+        manager.requestAlwaysAuthorization()
+        manager.allowsBackgroundLocationUpdates = true
+        manager.pausesLocationUpdatesAutomatically = false
+
+()
         
         print("\(manager.accuracyAuthorization)")
         
@@ -45,6 +49,10 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         let status = manager.authorizationStatus
         if status == .denied || status == .restricted || status == .notDetermined {
             return false
+        } else if status == .authorizedWhenInUse {
+            print ("auth in use")
+        } else if status == .authorizedAlways {
+            print ("auth always")
         }
         manager.requestLocation()
         return true
