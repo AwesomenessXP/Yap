@@ -24,9 +24,9 @@ struct SettingPage: View {
         NavigationStack{
             ZStack {
                 Form {
-                    Section(header: Text("Notifications")) {
-                        Toggle("Super mode", isOn: .constant(true))
-                    }
+//                    Section(header: Text("Notifications")) {
+//                        Toggle("Super mode", isOn: .constant(true))
+//                    }
                     
                     Section(header: Text("Update username")) {
                         TextField("awesomenessxp2", text: $userName)
@@ -115,7 +115,7 @@ struct SettingPage: View {
             }
             .onAppear() {
                 self.userName = settingsModel.getUsername() ?? ""
-            }
+            }.colorScheme(.dark)
         }
     }
 }

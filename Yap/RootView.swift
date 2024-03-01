@@ -85,6 +85,7 @@ struct RootView: View {
                 Spacer()
                 Text("YAPPIN")
                     .font(.system(size: 18)).bold()
+                    .colorScheme(.dark)
                     .foregroundColor(.black)
                     .fontWeight(.heavy)
                     .italic()
@@ -93,9 +94,11 @@ struct RootView: View {
             HStack(alignment: .bottom) {
                 if (websocketClient.user_count <= 1) {
                     Text("1 user").font(.system(size: 15))
+                        .colorScheme(.light)
                         .foregroundColor(.black).bold()
                 } else {
                     Text("\(websocketClient.user_count) users").font(.system(size: 15))
+                        .colorScheme(.light)
                         .foregroundColor(.black).bold()
                 }
                 
@@ -139,6 +142,7 @@ struct RootView: View {
             TextField("Type something", text: $messageText, axis: .vertical)
                 .focused($isTextFieldFocused)
                 .lineLimit(8)
+                .colorScheme(.dark)
                 .foregroundColor(.white)
                 .padding([.leading, .trailing], 15)
                 .onTapGesture {
@@ -295,8 +299,9 @@ struct SignUpView: View {
     }
     
     var UsernameField: some View {
-        TextField("Choose your username", text: $username)
+        TextField("Choose a username", text: $username)
             .bold()
+            .colorScheme(.dark)
             .foregroundStyle(.white)
             .frame(width: 330, height: 50)
             .multilineTextAlignment(.center)
@@ -412,6 +417,7 @@ struct MessageView: View {
             .font(.caption)
             .font(.system(size: 14))
             .foregroundColor(.gray)
+            .colorScheme(.dark)
             .padding(.vertical, -1)
     }
     
@@ -419,6 +425,7 @@ struct MessageView: View {
         Text(Optional(message.message.description) ?? "")
             .foregroundColor(Color.white)
             .font(.system(size: 16))
+            .colorScheme(.dark)
             .padding(.bottom, 18)
     }
 }
