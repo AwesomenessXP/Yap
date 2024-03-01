@@ -1,13 +1,15 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import UserNotifications
 
 let manager = CLLocationManager()
 
 class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
     @Published var degrees: Double = 0
     @Published var location: CLLocation?
-    
+    @ObservedObject var settingsModel = SettingsModel()
+
     override init() {
         super.init()
         manager.delegate = self
@@ -16,7 +18,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.requestAlwaysAuthorization()
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
-
+        self.requestNotificationPermission()
 ()
         
         print("\(manager.accuracyAuthorization)")
@@ -53,5 +55,16 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.requestLocation()
         return true
         
+    }
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if granted {
+                print("Permission granted")
+                self.settingsModel.setNotif(to: true)
+            } else if let error = error {
+                print("Permission denied: \(error.localizedDescription)")
+                self.settingsModel.setNotif(to: false)
+            }
+        }
     }
 }

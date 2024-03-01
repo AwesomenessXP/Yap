@@ -9,6 +9,7 @@ import Foundation
 
 // only run updateDate after run hasCD
 class SettingsModel: ObservableObject {
+    
     let userCD = CoolDownTimer(coolDownTime: 30.0)
     
     func addUsername(name: String) -> (Bool, String) {
@@ -33,6 +34,13 @@ class SettingsModel: ObservableObject {
     
     func getUsername() -> String? {
         return UserDefaults.standard.string(forKey: "username")
+    }
+    func getNotif() -> Bool {
+        return UserDefaults.standard.bool(forKey: "notif")
+    }
+    func setNotif(to: Bool) -> Bool? {
+        UserDefaults.standard.setValue(to, forKey: "notif")
+        return self.getNotif()
     }
 }
 

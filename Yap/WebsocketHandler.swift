@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-struct Message: Identifiable, Codable {
+struct Message: Identifiable, Codable, Equatable {
     let id: String
     let display_name: String
     let message: String
@@ -14,6 +14,10 @@ struct Message: Identifiable, Codable {
         case user = "user"
     }
     var _id: String { id }
+    
+    static func ==(lhs: Message, rhs: Message) -> Bool {
+        return lhs.id == rhs.id
+    }
 
 }
 

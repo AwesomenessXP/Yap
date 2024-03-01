@@ -16,6 +16,7 @@ struct SettingPage: View {
     @ObservedObject var settingsModel = SettingsModel()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var websocketClient: WebsocketClient
+    @EnvironmentObject var locationManager: LocationManager
     @State var showAlert = false
     @State var errorMsg = ""
     @State var removeMessagesAlert: String = ""
@@ -24,10 +25,17 @@ struct SettingPage: View {
         NavigationStack{
             ZStack {
                 Form {
-//                    Section(header: Text("Notifications")) {
-//                        Toggle("Super mode", isOn: .constant(true))
-//                    }
-                    
+                    Toggle("Notifications", isOn: Binding(get: {
+                        return settingsModel.getNotif()
+                    }, set: {
+                            value in
+                        settingsModel.setNotif(to: value)
+                        if (value) {
+                            locationManager.requestNotificationPermission()
+                        }
+                    }
+                    ))
+
                     Section(header: Text("Update username")) {
                         TextField("awesomenessxp2", text: $userName)
                             .onTapGesture{

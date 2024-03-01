@@ -2,6 +2,7 @@ import SwiftUI
 import CoreLocation
 import CoreLocationUI
 import MapKit
+import UserNotifications
 
 struct User {
     var name: String
@@ -433,7 +434,8 @@ struct MessagesView: View {
     @EnvironmentObject var websocketClient: WebsocketClient
     @Binding var messages: [Message]
     @Binding var currentUser: User
-    
+    @State private var previousMessages: [Message] = []
+
     var body: some View {
         VStack {
             ScrollView {
@@ -445,6 +447,16 @@ struct MessagesView: View {
             .rotationEffect(.degrees(180))
             .background(Color.clear)
             .scrollIndicators(.hidden)
+            .onAppear {
+                previousMessages = messages
+            }
+            .onChange(of: messages) { currentMessages in
+                        let newMessages = currentMessages.filter { !previousMessages.contains($0) }
+                        if !newMessages.isEmpty {
+                            sendNotification(count: newMessages.count, first: newMessages[0])
+                        }
+                        previousMessages = currentMessages
+                    }
             
         }
     }
@@ -465,6 +477,38 @@ struct CheckboxToggleStyle: ToggleStyle {
         }
     }
 }
+
+private func sendNotification(count: Int, first: Message) {
+    
+    let notif = UserDefaults.standard.bool(forKey: "notif")
+
+    if (notif) {
+        
+        let content = UNMutableNotificationContent()
+        if (count == 1) {
+            content.title = "New message sent near you"
+        } else {
+            content.title = "\(count) new messages sent near you"
+        
+        }
+        
+        content.body = "\(first.display_name) said \(first.message)"
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error.localizedDescription)")
+            }
+        }
+        
+    }
+    
+
+}
+
 #Preview {
     RootView()
         .environmentObject(LocationManager())
