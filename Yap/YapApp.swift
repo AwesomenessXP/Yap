@@ -9,14 +9,12 @@ import SwiftUI
 
 @main
 struct YapApp: App {
-    @StateObject var locationManager = LocationManager()
     @StateObject var settingsModel = SettingsModel()
     let websocketClient = WebsocketClient()
     
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(locationManager)
                 .environmentObject(websocketClient)
                 .environmentObject(settingsModel)
                 .onAppear() {

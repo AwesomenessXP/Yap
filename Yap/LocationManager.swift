@@ -3,12 +3,13 @@ import CoreLocation
 import MapKit
 import UserNotifications
 
-let manager = CLLocationManager()
-
 class LocationManager: NSObject, ObservableObject, Observable, CLLocationManagerDelegate {
-    @Published var degrees: Double = 0
-    @Published var location: CLLocation?
+    var degrees: Double = 0
+    var location: CLLocation?
     @ObservedObject var settingsModel = SettingsModel()
+    
+    let manager = CLLocationManager()
+    static let shared = LocationManager()
 
     override init() {
         super.init()

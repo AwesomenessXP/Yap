@@ -219,8 +219,6 @@ struct RadarView: View {
 }
 
 struct MapView: View {
-    @EnvironmentObject var locationManager: LocationManager
-    
     // State to manage the visibility of the Look Around viewer
     @State private var isLookingAround: Bool = false
     

@@ -33,6 +33,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
     
     override init() {
         session = URLSession(configuration: .default)
+        super.init()
     }
     
     func connect() {
@@ -167,6 +168,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                     } else if let value = modification["value"] as? [String: Any], let usersCount = value["users_count"] as? Int {
                         Task { @MainActor in
                             self.user_count = usersCount
+                            print("sfs")
                         }
 
                         print("Users count:", usersCount)

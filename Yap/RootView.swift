@@ -9,7 +9,6 @@ struct User {
 }
 
 struct RootView: View {
-    @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var websocketClient: WebsocketClient
     @EnvironmentObject var settingsModel: SettingsModel
 
@@ -69,7 +68,7 @@ struct RootView: View {
         .background(Color.black.edgesIgnoringSafeArea(.all)).onTapGesture {
             isFocused = false
         }
-        .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
+        .alert("YAP needs to use your location to access your messages", isPresented: .constant(!LocationManager.shared.isAuthorized()), actions: {
             Button("OK", role: .cancel) {}
         })
         .alert("Your message was unsent because it was offensive", isPresented: $msgUnsent, actions: {
@@ -253,8 +252,8 @@ struct RootView: View {
     }
     
     func getLocation() {
-        latitude = locationManager.location?.coordinate.latitude
-        longitude = locationManager.location?.coordinate.longitude
+        latitude = LocationManager.shared.location?.coordinate.latitude
+        longitude = LocationManager.shared.location?.coordinate.longitude
         if let latitude = latitude, let longitude = longitude {
             let serialQueue = DispatchQueue(label: "coord_serial_queue")
             serialQueue.async {
@@ -534,7 +533,6 @@ private func sendNotification(count: Int, first: Message) {
 
 #Preview {
     RootView()
-        .environmentObject(LocationManager())
         .environmentObject(WebsocketClient())
         .environmentObject(SettingsModel())
 }

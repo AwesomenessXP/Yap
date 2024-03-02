@@ -20,6 +20,14 @@ class SettingsModel: ObservableObject {
                 if !isOffensive {
                     print("saved!")
                     UserDefaults.standard.set(name, forKey: "username")
+                    Task { @MainActor in
+                        let latitude = LocationManager.shared.location?.coordinate.latitude
+                        let longitude = LocationManager.shared.location?.coordinate.longitude
+                        if let latitude = latitude, let longitude = longitude {
+                            UserDefaults.standard.set(latitude, forKey: "latitude")
+                            UserDefaults.standard.set(longitude, forKey: "longitude")
+                        }
+                    }
                     userCD.updateDate()
                     return (true, errorMessage, .clean)
                 }

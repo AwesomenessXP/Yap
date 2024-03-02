@@ -17,7 +17,6 @@ struct SettingPage: View {
     @ObservedObject var settingsModel = SettingsModel()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var websocketClient: WebsocketClient
-    @EnvironmentObject var locationManager: LocationManager
     @State var showAlert = false
     @State var errorMsg = ""
     @State var removeMessagesAlert: String = ""
@@ -113,6 +112,9 @@ struct SettingPage: View {
                                 errorMsg = "Please choose an appropriate username next time"
                             }
                             if setUserName.0 {
+                                if let latitude = LocationManager.shared.location?.coordinate.latitude, let longitude = LocationManager.shared.location?.coordinate.longitude {
+                                    websocketClient.update(latitude: latitude, longitude: longitude)
+                                }
                                 dismiss()
                             }
                             else if userName == settingsModel.getUsername() ?? "" {
@@ -195,5 +197,6 @@ extension String {
 #Preview {
     SettingPage()
         .environmentObject(LocationManager())
+        .environmentObject(WebsocketClient())
         .environmentObject(SettingsModel())
 }
