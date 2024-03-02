@@ -190,13 +190,11 @@ struct RootView: View {
         .focused($isFocused)
     }
 
-    @MainActor
     func startLocationUpdates() async {
         getLocation()
         Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { timer in
-//            print("location updates")
-            Task { @MainActor in
-                getLocation()
+            Task {
+                await getLocation()
             }
         }
     }
