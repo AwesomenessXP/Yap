@@ -97,13 +97,6 @@ struct SettingPage: View {
                 }
                 .preferredColorScheme(.dark)
                 .navigationBarTitleDisplayMode(.inline)
-                .alert( isPresented: $showAlert){
-                                    Alert(
-                                        title: Text("User Name Update Fail"),
-                                        message: Text("\(errorMsg)."),
-                                        dismissButton: .default(Text("OK"))
-                                    )
-                                }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("Settings")
@@ -127,6 +120,13 @@ struct SettingPage: View {
                                 showAlert = true
                             }
                         }) { Text("Save") }
+                            .alert( isPresented: $showAlert){
+                                Alert(
+                                    title: Text("User Name Update Fail"),
+                                    message: Text("\(errorMsg)."),
+                                    dismissButton: .default(Text("OK"))
+                                )
+                            }
                     }
                 }
             }
