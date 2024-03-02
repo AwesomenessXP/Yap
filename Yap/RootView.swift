@@ -456,9 +456,11 @@ struct MessagesView: View {
                     return
                 }
                 
-                sendNotification(count: newMessages.count, first: newMessages[0])
-                self.lastNotificationTime = Date()
-
+                if let lastMessage = newMessages.last {
+                    if (newMessages.count > 0) {
+                        sendNotification(count: newMessages.count, first: lastMessage)
+                    }
+                }
                 
                 previousMessages = currentMessages
             }

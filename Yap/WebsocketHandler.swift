@@ -264,6 +264,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 webSocketTask?.send(.string(jsonString)) { error in
                     if let error = error {
                         print("Error in sending message: \(error.localizedDescription)")
+                        self.connect()
                     }
                 }
             }
