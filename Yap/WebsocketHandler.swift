@@ -48,7 +48,7 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
             self.sendInitialConnection()
             
             print("active!!")
-            DispatchQueue.global(qos: .userInteractive).async {
+            DispatchQueue.global(qos: .default).async {
                 self.listenForMessages()
             }
             
@@ -58,14 +58,15 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                 print("register")
             }
             else {
-                self.getMessages()
+                DispatchQueue.global(qos: .default).async {
+                    self.getMessages()
+                }
             }
         }
     }
     
     private func sendInitialConnection() {
-        DispatchQueue.global(qos: .background).async {
-            
+        DispatchQueue.global(qos: .default).async {
             let uuidString = UUID().uuidString
             let connectionData: [String: Any] = [
                 "connectionCount": 0,
@@ -160,12 +161,12 @@ class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessio
                        let value = modification["value"] as? [[String: Any]] {
                         let newData = try JSONSerialization.data(withJSONObject: value)
                         let newMessages = try JSONDecoder().decode([Message].self, from: newData)
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             self.messages = newMessages.reversed()
                         }
 
                     } else if let value = modification["value"] as? [String: Any], let usersCount = value["users_count"] as? Int {
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             self.user_count = usersCount
                         }
 

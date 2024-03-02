@@ -36,11 +36,11 @@ struct SettingPage: View {
                                                    if !accessGranted {
                                                        self.setNotif = true
                                                    } else {
-                                                       settingsModel.setNotif(to: value)
+                                                       let _ = settingsModel.setNotif(to: value)
                                                    }
                                                }
                                            } else {
-                                               settingsModel.setNotif(to: value)
+                                               let _ = settingsModel.setNotif(to: value)
 
                                            }
                                        }))
@@ -156,7 +156,7 @@ func checkNotificationAuthorization(completion: @escaping (Bool) -> Void) {
             switch settings.authorizationStatus {
             case .authorized, .provisional:
                 completion(true)
-            case .denied:
+            case .denied, .notDetermined, .ephemeral:
                 completion(false)
 //            case .notDetermined:
 //                self.requestNotificationPermission(completion: completion)

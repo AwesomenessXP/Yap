@@ -60,10 +60,10 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
                 print("Permission granted")
-                self.settingsModel.setNotif(to: true)
+                let _ = self.settingsModel.setNotif(to: true)
             } else if let error = error {
                 print("Permission denied: \(error.localizedDescription)")
-                self.settingsModel.setNotif(to: false)
+                let _ = self.settingsModel.setNotif(to: false)
             }
         }
     }
