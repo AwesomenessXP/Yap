@@ -105,21 +105,24 @@ struct SettingPage: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
+                        Button(action: { Task {
                             time = Date().description(with: .current)
-                            let setUserName = settingsModel.addUsername(name: userName)
+                            let setUserName = await settingsModel.addUsername(name: userName)
                             errorMsg = setUserName.1
+                            if setUserName.2 == .offensive {
+                                errorMsg = "Please choose an appropriate username next time"
+                            }
                             if setUserName.0 {
                                 dismiss()
                             }
-                            else if userName == settingsModel.getUsername() ?? ""{
+                            else if userName == settingsModel.getUsername() ?? "" {
                                 dismiss()
                             }
-                            else{
+                            else {
                                 self.userName = settingsModel.getUsername() ?? ""
-                                showAlert = true
+                                self.showAlert = true
                             }
-                        }) { Text("Save") }
+                        }}) { Text("Save") }
                             .alert( isPresented: $showAlert){
                                 Alert(
                                     title: Text("User Name Update Fail"),

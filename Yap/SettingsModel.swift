@@ -13,13 +13,18 @@ class SettingsModel: ObservableObject {
     
     let userCD = CoolDownTimer(coolDownTime: 30.0)
     
-    func addUsername(name: String) -> (Bool, String) {
+    func addUsername(name: String) async -> (Bool, String, InputQuality) {
         var errorMessage = ""
         if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !userCD.hasCD().0 {
-            print("saved!")
-            UserDefaults.standard.set(name, forKey: "username")
-            userCD.updateDate()
-            return (true, errorMessage)
+            if let isOffensive = await OpenAIHandler.shared.isOffensive(input: name) {
+                if !isOffensive {
+                    print("saved!")
+                    UserDefaults.standard.set(name, forKey: "username")
+                    userCD.updateDate()
+                    return (true, errorMessage, .clean)
+                }
+                return (false, errorMessage, .offensive)
+            }
         }
         if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Username cannot be empty"
@@ -30,7 +35,7 @@ class SettingsModel: ObservableObject {
         else {
             errorMessage = "Oops, unkown error happened"
         }
-        return (false, errorMessage)
+        return (false, errorMessage, .unknownQol)
     }
     
     func getUsername() -> String? {

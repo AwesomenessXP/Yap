@@ -21,7 +21,6 @@ struct Message: Identifiable, Codable, Equatable {
 
 }
 
-
 class WebsocketClient: NSObject, ObservableObject, URLSessionDelegate, URLSessionWebSocketDelegate {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession

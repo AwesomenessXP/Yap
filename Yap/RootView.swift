@@ -19,6 +19,7 @@ struct RootView: View {
     @State var longitude: Double?
     @State var username: String = ""
     @State var isLogin: Bool = false
+    @State var msgUnsent: Bool = false
     @State var timerInterval: TimeInterval = 10
     @Environment(\.scenePhase) var scenePhase
     @FocusState private var isTextFieldFocused: Bool
@@ -70,6 +71,9 @@ struct RootView: View {
         }
         .alert("YAP needs to use your location to access your messages", isPresented: .constant(!locationManager.isAuthorized()), actions: {
             Button("OK", role: .cancel) {}
+        })
+        .alert("Your message was unsent because it was offensive", isPresented: $msgUnsent, actions: {
+            Button("OK", role: .cancel) { self.msgUnsent = false }
         })
         .onAppear {
             print("IN CHAT VIEW")
@@ -207,7 +211,19 @@ struct RootView: View {
         }
         if let latitude = latitude, let longitude = longitude {
             if !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
+                Task {
+                    if let isOffensive = 
+                        await OpenAIHandler.shared.isOffensive(input: message) {
+                        if !isOffensive {
+                            websocketClient.sendMessage(displayName: self.currentUser.name, latitude: latitude, longitude: longitude, message: message)
+                            print("this msg is safe")
+                        }
+                        else {
+                            print("Uh oh spaghettio! This message is offensive")
+                            self.msgUnsent = true
+                        }
+                    }
+                }
             }
         }
     }
@@ -319,6 +335,7 @@ struct SignUpBtn: View {
     let termsUrl = "https://lighthearted-mandazi-3d73bb.netlify.app/Yappin.pdf"
     @Binding var btnDisabled: Bool
     @State var error: String = ""
+    @State var unsentError: String = ""
     
     var body: some View {
         VStack() {
@@ -338,20 +355,25 @@ struct SignUpBtn: View {
             }
             Text(error)
                 .foregroundStyle(.red)
+            Text(unsentError)
+                .foregroundStyle(.red)
             Spacer()
             Spacer()
         }
         
         GeometryReader { geometry in // grab the screen size
-            Button(action: {
-                let usernameAdd = self.settingsModel.addUsername(name: username)
-                if (usernameAdd.0) {
+            Button(action: { Task {
+                let usernameAdd = await self.settingsModel.addUsername(name: username)
+                if (usernameAdd.0 && usernameAdd.2 == .clean) {
                     self.isLogin = true
                 } else {
                     error = usernameAdd.1
+                    if usernameAdd.2 == .offensive {
+                        unsentError = "Please choose an appropriate name next time"
+                    }
                 }
                 
-            }) {
+            }}) {
                 Text("Start Yappin")
                     .fontWeight(.semibold)
                     .frame(width: 360, height: 50)
@@ -459,7 +481,6 @@ struct MessagesView: View {
                         sendNotification(count: newMessages.count, first: lastMessage)
                     }
                 }
-                
                 previousMessages = currentMessages
             }
             
@@ -497,7 +518,7 @@ private func sendNotification(count: Int, first: Message) {
         
         }
         
-        content.body = "\(first.display_name) said \(first.message)"
+        content.body = "\(first.display_name): \(first.message)"
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
@@ -508,10 +529,7 @@ private func sendNotification(count: Int, first: Message) {
                 print("Error scheduling notification: \(error.localizedDescription)")
             }
         }
-        
     }
-    
-
 }
 
 #Preview {
