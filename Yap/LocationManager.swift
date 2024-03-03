@@ -19,7 +19,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.requestAlwaysAuthorization()
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
-        self.requestNotificationPermission()
+//        self.requestNotificationPermission()
 ()
         
         print("\(manager.accuracyAuthorization)")
@@ -57,15 +57,16 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         return true
         
     }
-    func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-            if granted {
-                print("Permission granted")
-                let _ = self.settingsModel.setNotif(to: true)
-            } else if let error = error {
-                print("Permission denied: \(error.localizedDescription)")
-                let _ = self.settingsModel.setNotif(to: false)
-            }
-        }
-    }
+    
+//    func requestNotificationPermission() {
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+//            if granted {
+//                print("Permission granted")
+//                let _ = self.settingsModel.setNotif(to: true)
+//            } else if let error = error {
+//                print("Permission denied: \(error.localizedDescription)")
+//                let _ = self.settingsModel.setNotif(to: false)
+//            }
+//        }
+//    }
 }

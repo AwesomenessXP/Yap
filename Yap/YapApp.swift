@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct YapApp: App {
+    @UIApplicationDelegateAdaptor(APNManager.self) var apnManager
     @StateObject var settingsModel = SettingsModel()
     let websocketClient = WebsocketClient()
     

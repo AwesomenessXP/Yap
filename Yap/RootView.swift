@@ -2,13 +2,15 @@ import SwiftUI
 import CoreLocation
 import CoreLocationUI
 import MapKit
-import UserNotifications
+//import UserNotifications
 
 struct User {
     var name: String
 }
 
 struct RootView: View {
+    // Register the AppDelegate for UIKit life cycle events
+    @EnvironmentObject var apnManager: APNManager
     @EnvironmentObject var websocketClient: WebsocketClient
     @EnvironmentObject var settingsModel: SettingsModel
 
@@ -22,8 +24,8 @@ struct RootView: View {
     @State var timerInterval: TimeInterval = 10
     @Environment(\.scenePhase) var scenePhase
     @FocusState private var isTextFieldFocused: Bool
-
     @FocusState var isFocused: Bool
+    @State private var deviceToken: String = ""
 
     var body: some View {
         NavigationStack {
@@ -469,19 +471,19 @@ struct MessagesView: View {
             .onAppear {
                 previousMessages = messages
             }
-            .onChange(of: messages) { currentMessages in
-                let newMessages = currentMessages.filter { !previousMessages.contains($0) }
-                if Date().timeIntervalSince(lastNotificationTime) < 60 {
-                    return
-                }
-                
-                if let lastMessage = newMessages.last {
-                    if (newMessages.count > 0) {
-                        sendNotification(count: newMessages.count, first: lastMessage)
-                    }
-                }
-                previousMessages = currentMessages
-            }
+//            .onChange(of: messages) { currentMessages in
+//                let newMessages = currentMessages.filter { !previousMessages.contains($0) }
+//                if Date().timeIntervalSince(lastNotificationTime) < 60 {
+//                    return
+//                }
+//                
+//                if let lastMessage = newMessages.last {
+//                    if (newMessages.count > 0) {
+//                        sendNotification(count: newMessages.count, first: lastMessage)
+//                    }
+//                }
+//                previousMessages = currentMessages
+//            }
             
         }
     }
@@ -503,37 +505,38 @@ struct CheckboxToggleStyle: ToggleStyle {
     }
 }
 
-private func sendNotification(count: Int, first: Message) {
-    
-    let notif = UserDefaults.standard.bool(forKey: "notif")
-
-    if (notif) {
-        
-        let content = UNMutableNotificationContent()
-        if (count == 1) {
-            content.title = "New message sent near you"
-        } else {
-            content.title = "\(count) new messages sent near you"
-        
-        }
-        
-        content.body = "\(first.display_name): \(first.message)"
-        content.sound = .default
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
-            }
-        }
-    }
-}
+//private func sendNotification(count: Int, first: Message) {
+//    
+//    let notif = UserDefaults.standard.bool(forKey: "notif")
+//
+//    if (notif) {
+//        
+//        let content = UNMutableNotificationContent()
+//        if (count == 1) {
+//            content.title = "New message sent near you"
+//        } else {
+//            content.title = "\(count) new messages sent near you"
+//        
+//        }
+//        
+//        content.body = "\(first.display_name): \(first.message)"
+//        content.sound = .default
+//
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+//        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+//
+//        UNUserNotificationCenter.current().add(request) { error in
+//            if let error = error {
+//                print("Error scheduling notification: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+//}
 
 #Preview {
     RootView()
         .environmentObject(WebsocketClient())
         .environmentObject(SettingsModel())
+        .environmentObject(APNManager())
 }
 

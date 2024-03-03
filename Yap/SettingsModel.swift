@@ -52,10 +52,10 @@ class SettingsModel: ObservableObject {
     func getNotif() -> Bool {
         return UserDefaults.standard.bool(forKey: "notif")
     }
-    func setNotif(to: Bool) -> Bool? {
-        UserDefaults.standard.setValue(to, forKey: "notif")
-        return self.getNotif()
-    }
+//    func setNotif(to: Bool) -> Bool? {
+//        UserDefaults.standard.setValue(to, forKey: "notif")
+//        return self.getNotif()
+//    }
 }
 
 class CoolDownTimer{

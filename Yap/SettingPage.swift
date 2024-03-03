@@ -26,23 +26,20 @@ struct SettingPage: View {
         NavigationStack{
             ZStack {
                 Form {
-                    Toggle("Notifications", isOn: Binding(get: {
-                                           settingsModel.getNotif()
-                                            
-                                       }, set: { value in
-                                           if value {
-                                               checkNotificationAuthorization { accessGranted in
-                                                   if !accessGranted {
-                                                       self.setNotif = true
-                                                   } else {
-                                                       let _ = settingsModel.setNotif(to: value)
-                                                   }
-                                               }
-                                           } else {
-                                               let _ = settingsModel.setNotif(to: value)
-
-                                           }
-                                       }))
+//                    Toggle("Notifications", isOn: Binding(get: {settingsModel.getNotif()}, set: { value in
+//                           if value {
+//                               checkNotificationAuthorization { accessGranted in
+//                                   if !accessGranted {
+//                                       self.setNotif = true
+//                                   } else {
+//                                       let _ = settingsModel.setNotif(to: value)
+//                                   }
+//                               }
+//                           } else {
+//                               let _ = settingsModel.setNotif(to: value)
+//
+//                           }
+//                       }))
 
                     Section(header: Text("Update username")) {
                         TextField("awesomenessxp2", text: $userName)
