@@ -11,6 +11,9 @@
 		3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBD2B77E34E00ADB53E /* LocationManager.swift */; };
 		3511BCC02B77E35500ADB53E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3511BCBF2B77E35500ADB53E /* RootView.swift */; };
 		35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */; };
+		75785FAD2B9374E90016FF0D /* OpenAIHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75785FAC2B9374E90016FF0D /* OpenAIHandler.swift */; };
+		75785FAF2B9374FA0016FF0D /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75785FAE2B9374FA0016FF0D /* OpenAIModel.swift */; };
+		75785FB12B9467E60016FF0D /* APNManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75785FB02B9467E60016FF0D /* APNManager.swift */; };
 		758270662B88654F00FCA694 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758270652B88654F00FCA694 /* SettingsModel.swift */; };
 		7582706E2B88688600FCA694 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7582706D2B88688600FCA694 /* Assets.xcassets */; };
 		758270702B88696600FCA694 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7582706F2B88696600FCA694 /* Launch Screen.storyboard */; };
@@ -44,6 +47,9 @@
 		3511BCBD2B77E34E00ADB53E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		3511BCBF2B77E35500ADB53E /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		35898B112B85DDEF008A96F6 /* WebsocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketHandler.swift; sourceTree = "<group>"; };
+		75785FAC2B9374E90016FF0D /* OpenAIHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAIHandler.swift; sourceTree = "<group>"; };
+		75785FAE2B9374FA0016FF0D /* OpenAIModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
+		75785FB02B9467E60016FF0D /* APNManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNManager.swift; sourceTree = "<group>"; };
 		758270652B88654F00FCA694 /* SettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		7582706D2B88688600FCA694 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7582706F2B88696600FCA694 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -109,8 +115,11 @@
 				20FBDEE92B8499FA00107807 /* SettingPage.swift */,
 				758270652B88654F00FCA694 /* SettingsModel.swift */,
 				E7A81C392B77304D00150AF4 /* YapApp.swift */,
+				75785FAE2B9374FA0016FF0D /* OpenAIModel.swift */,
+				75785FAC2B9374E90016FF0D /* OpenAIHandler.swift */,
 				3511BCBD2B77E34E00ADB53E /* LocationManager.swift */,
 				3511BCBF2B77E35500ADB53E /* RootView.swift */,
+				75785FB02B9467E60016FF0D /* APNManager.swift */,
 				758270712B891E6B00FCA694 /* MapView.swift */,
 				7582706D2B88688600FCA694 /* Assets.xcassets */,
 				7582706F2B88696600FCA694 /* Launch Screen.storyboard */,
@@ -280,7 +289,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75785FAD2B9374E90016FF0D /* OpenAIHandler.swift in Sources */,
+				75785FAF2B9374FA0016FF0D /* OpenAIModel.swift in Sources */,
 				758270722B891E6B00FCA694 /* MapView.swift in Sources */,
+				75785FB12B9467E60016FF0D /* APNManager.swift in Sources */,
 				758270662B88654F00FCA694 /* SettingsModel.swift in Sources */,
 				35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */,
 				3511BCC02B77E35500ADB53E /* RootView.swift in Sources */,

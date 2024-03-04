@@ -103,7 +103,7 @@ struct RootView: View {
                         .colorScheme(.light)
                         .foregroundColor(.black).bold()
                 } else {
-                    Text("\(websocketClient.user_count) users").font(.system(size: 15))
+                    Text("\(websocketClient.user_count) online").font(.system(size: 15))
                         .colorScheme(.light)
                         .foregroundColor(.black).bold()
                 }
