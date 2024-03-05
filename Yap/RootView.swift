@@ -468,23 +468,12 @@ struct MessagesView: View {
             .rotationEffect(.degrees(180))
             .background(Color.clear)
             .scrollIndicators(.hidden)
+            .gesture(DragGesture().onChanged { _ in
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            })
             .onAppear {
                 previousMessages = messages
             }
-//            .onChange(of: messages) { currentMessages in
-//                let newMessages = currentMessages.filter { !previousMessages.contains($0) }
-//                if Date().timeIntervalSince(lastNotificationTime) < 60 {
-//                    return
-//                }
-//                
-//                if let lastMessage = newMessages.last {
-//                    if (newMessages.count > 0) {
-//                        sendNotification(count: newMessages.count, first: lastMessage)
-//                    }
-//                }
-//                previousMessages = currentMessages
-//            }
-            
         }
     }
 }
