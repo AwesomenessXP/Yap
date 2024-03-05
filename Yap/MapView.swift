@@ -23,7 +23,7 @@ struct DarkModeMapView: UIViewRepresentable {
         yapMapView.overrideUserInterfaceStyle = .dark
         yapMapView.showsUserLocation = false
         yapMapView.setUserTrackingMode(.none, animated: false)
-        yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 1800, maxCenterCoordinateDistance: 1800), animated: false)
+        yapMapView.setCameraZoomRange(MKMapView.CameraZoomRange.init(minCenterCoordinateDistance: 100000, maxCenterCoordinateDistance: 100000), animated: false)
         return yapMapView
     }
     
