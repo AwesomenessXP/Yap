@@ -402,6 +402,7 @@ struct SignUpBtn: View {
     }
 }
 
+
 struct MessageView: View {
     @Binding var message: Message
     @Binding var currentUser: User
@@ -439,6 +440,7 @@ struct MessageView: View {
             .foregroundColor(.gray)
             .colorScheme(.dark)
             .padding(.vertical, -1)
+            .textSelection(.enabled)
     }
     
     var UserMsgView: some View {
@@ -447,6 +449,7 @@ struct MessageView: View {
             .font(.system(size: 16))
             .colorScheme(.dark)
             .padding(.bottom, 18)
+            .textSelection(.enabled)
     }
 }
 
