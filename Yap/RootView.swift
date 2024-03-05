@@ -408,29 +408,25 @@ struct MessageView: View {
     @Binding var currentUser: User
     @EnvironmentObject var websocketClient: WebsocketClient
     @State var true_id = UserDefaults.standard.value(forKey: "true_id") as? String ?? ""
-    
+    var displayUsername: Bool
+
     var body: some View {
-        if message.user == true_id {
-            VStack(alignment: .trailing) {
+        VStack(alignment: message.user == true_id ? .trailing : .leading) {
+            if displayUsername {
                 UserLabelView
-                HStack {
-                    Spacer()
-                    UserMsgView
-                }
             }
-            .padding(.trailing, 28)
-            .padding(.leading, 80)
-        } else {
-            VStack(alignment: .leading) {
-                UserLabelView
-                HStack {
-                    UserMsgView
+            HStack {
+                if message.user == true_id {
+                    Spacer()
+                }
+                UserMsgView
+                if message.user != true_id {
                     Spacer()
                 }
             }
-            .padding(.trailing, 80)
-            .padding(.leading, 28)
         }
+        .padding(message.user == true_id ? .trailing : .leading, 28)
+        .padding(message.user != true_id ? .trailing : .leading, 80)
     }
     
     var UserLabelView: some View {
@@ -463,9 +459,11 @@ struct MessagesView: View {
     var body: some View {
         VStack {
             ScrollView {
-                ForEach($messages) { message in
-                    MessageView(message: message, currentUser: $currentUser)
-                }
+                ForEach(Array(zip(messages.indices, messages)), id: \.0) { index, message in
+                                    MessageView(message: .constant(message),
+                                                currentUser: $currentUser,
+                                                displayUsername: shouldDisplayUsername(for: index))
+                                }
                 .rotationEffect(.degrees(180))
             }
             .rotationEffect(.degrees(180))
@@ -479,6 +477,14 @@ struct MessagesView: View {
             }
         }
     }
+    
+    private func shouldDisplayUsername(for index: Int) -> Bool {
+        if index == 0 {
+            return true
+        }
+        return messages[index].user != messages[index - 1].user
+    }
+    
 }
 
 struct CheckboxToggleStyle: ToggleStyle {
