@@ -99,10 +99,18 @@ struct RootView: View {
             }
             HStack(alignment: .bottom) {
                 if (websocketClient.user_count <= 1) {
-                    Text("1 user").font(.system(size: 15))
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 5, height: 5)
+                        .padding(.bottom, 5)
+                    Text("1 online").font(.system(size: 15))
                         .colorScheme(.light)
                         .foregroundColor(.black).bold()
                 } else {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 5, height: 5)
+                        .padding(.bottom, 5)
                     Text("\(websocketClient.user_count) online").font(.system(size: 15))
                         .colorScheme(.light)
                         .foregroundColor(.black).bold()
