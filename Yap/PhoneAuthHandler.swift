@@ -8,7 +8,7 @@
 import Foundation
 import Supabase
 
-class PhoneAuthHandler {
+class PhoneAuthHandler: ObservableObject {
     static let shared = PhoneAuthHandler()
     private var supabase: SupabaseClient?
     private var auth: AuthClient?
@@ -22,17 +22,19 @@ class PhoneAuthHandler {
         }
     }
     
-    func signIn(phoneNum: String) async throws -> Void {
-        print("signing in!")
-        guard let supabase = supabase else { return }
+    func signIn(phoneNum: String) async throws -> Bool {
+        guard let supabase = supabase else { return false }
         try await supabase.auth.signInWithOTP(phone: phoneNum)
+        return true
     }
     
-    func verifyOTP(phoneNum: String, otp: String) async throws -> Void {
-        try await supabase?.auth.verifyOTP(
+    func verifyOTP(phoneNum: String, otp: String) async throws -> Bool {
+        guard let supabase = supabase else { return false }
+        try await supabase.auth.verifyOTP(
             phone: phoneNum,
             token: otp,
             type: .sms
         )
+        return true
     }
 }

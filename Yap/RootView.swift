@@ -14,6 +14,7 @@ struct RootView: View {
     @EnvironmentObject var apnManager: APNManager
     @EnvironmentObject var websocketClient: WebsocketClient
     @EnvironmentObject var settingsModel: SettingsModel
+    @EnvironmentObject var label: PhoneNumModel
 
     @State var messageText = ""
     @State var currentUser = User(name: "JKT")
@@ -31,7 +32,7 @@ struct RootView: View {
     @State private var deviceToken: String = ""
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             if self.isLogin {
                 if #available(iOS 17, *) {
                     ChatView.onChange(of: scenePhase) { _, newPhase in
@@ -45,7 +46,7 @@ struct RootView: View {
                 }
             }
             else {
-                SignUpView(usernameSet: $isLogin, username: $username, phoneNum: $phoneNum, formattedNum: $formattedNum)
+                SignUpView(isLogin: $isLogin, username: $username, phoneNum: $phoneNum, formattedNum: $formattedNum)
             }
         }
         .onAppear {
@@ -73,9 +74,6 @@ struct RootView: View {
         .background(Color.black.edgesIgnoringSafeArea(.all)).onTapGesture {
             isFocused = false
         }
-        .alert("YAP needs to use your location to access your messages", isPresented: .constant(!LocationManager.shared.isAuthorized()), actions: {
-            Button("OK", role: .cancel) {}
-        })
         .alert("Your message was unsent because it was offensive", isPresented: $msgUnsent, actions: {
             Button("OK", role: .cancel) { self.msgUnsent = false }
         })
@@ -412,5 +410,6 @@ struct CheckboxToggleStyle: ToggleStyle {
         .environmentObject(WebsocketClient())
         .environmentObject(SettingsModel())
         .environmentObject(APNManager())
+        .environmentObject(PhoneNumModel())
 }
 

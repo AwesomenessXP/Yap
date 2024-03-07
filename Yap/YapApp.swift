@@ -12,7 +12,7 @@ struct YapApp: App {
     @UIApplicationDelegateAdaptor(APNManager.self) var apnManager
     @StateObject var settingsModel = SettingsModel()
     @StateObject var phoneNumModel = PhoneNumModel()
-    let websocketClient = WebsocketClient()
+    @StateObject var websocketClient = WebsocketClient()
     
     var body: some Scene {
         WindowGroup {
@@ -20,6 +20,7 @@ struct YapApp: App {
                 .environmentObject(websocketClient)
                 .environmentObject(settingsModel)
                 .environmentObject(phoneNumModel)
+                .environmentObject(websocketClient)
                 .onAppear() {
                     websocketClient.connect()
                 }

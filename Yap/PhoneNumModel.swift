@@ -13,6 +13,8 @@ class PhoneNumModel: ObservableObject {
     @Published var buttonShown: Double = 0
     @Published var isDisabled: Bool = true
     @Published var color: Color = .red
+    @Published var phoneNum: String = ""
+    @Published var isAuth: Bool = false
     
     let MAXDIGITS = 10
     
@@ -30,7 +32,9 @@ class PhoneNumModel: ObservableObject {
         guard let phoneNumber = try? phoneNumberKit.parse(
             number, withRegion: "US", ignoreType: true
         ) else { return ""}
-        return phoneNumberKit.format(phoneNumber, toType: .e164)
+        
+        self.phoneNum = phoneNumberKit.format(phoneNumber, toType: .e164)
+        return self.phoneNum
     }
 
     // Update the label based on validity of user's number
