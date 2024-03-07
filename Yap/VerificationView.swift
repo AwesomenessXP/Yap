@@ -17,7 +17,7 @@ import SwiftUI
 
 struct VerificationView: View {
     @EnvironmentObject var settingsModel: SettingsModel
-    @EnvironmentObject var label: PhoneNumModel
+    @EnvironmentObject var phoneNumModel: PhoneNumModel
     @State private var otpFields: [String] = Array(repeating: " ", count: 6)
     @State private var previousOTPValues = Array(repeating: " ", count: 6)
     @FocusState private var focusedField: Int?
@@ -65,7 +65,7 @@ struct VerificationView: View {
                 }
             }
 
-            Text("Verification code sent to \(label.phoneNum)")
+            Text("Verification code sent to \(phoneNumModel.phoneNum)")
                 .foregroundColor(Color.gray)
                 .font(.subheadline)
                 .padding()
@@ -79,12 +79,12 @@ struct VerificationView: View {
                         await sendOTP()
                     }
                 }
-                    .frame(width: 330, height: 50)
-                    .foregroundStyle(.black)
-                    .bold()
-                    .background(Color.white)
-                    .cornerRadius(15)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
+                .frame(width: 330, height: 50)
+                .foregroundStyle(.black)
+                .bold()
+                .background(Color.white)
+                .cornerRadius(15)
+                .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -127,7 +127,7 @@ struct VerificationView: View {
     
     func sendOTP() async -> Bool {
         do {
-            return try await PhoneAuthHandler.shared.signIn(phoneNum: label.phoneNum)
+            return try await PhoneAuthHandler.shared.signIn(phoneNum: phoneNumModel.phoneNum)
         }
         catch {
             print("Error signing in: \(error.localizedDescription)")
@@ -139,7 +139,7 @@ struct VerificationView: View {
         do {
             let concat = otpFields.compactMap{$0}.joined(separator: "")
             return try await PhoneAuthHandler.shared.verifyOTP(
-                phoneNum: label.phoneNum,
+                phoneNum: phoneNumModel.phoneNum,
                 otp: concat
             )
         }

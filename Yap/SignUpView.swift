@@ -3,7 +3,7 @@ import PhoneNumberKit
 
 struct SignUpView: View {
     @EnvironmentObject var settingsModel: SettingsModel
-    @EnvironmentObject var label: PhoneNumModel
+    @EnvironmentObject var phoneNumModel: PhoneNumModel
     @FocusState var isFocused: Bool
     @Binding var isLogin: Bool
     @Binding var username: String
@@ -87,16 +87,16 @@ struct SignUpView: View {
         }
         .keyboardType(.numberPad)
         .onChange(of: phoneNum) { newValue in
-            var unformatted = label.unformatNum(number: newValue)
-            unformatted = String(unformatted.prefix(label.MAXDIGITS))
+            var unformatted = phoneNumModel.unformatNum(number: newValue)
+            unformatted = String(unformatted.prefix(phoneNumModel.MAXDIGITS))
             phoneNum = PartialFormatter().formatPartial(unformatted)
-            formattedNum = label.asYouType (
+            formattedNum = phoneNumModel.asYouType (
                 number: phoneNum,
                 phoneNumberKit: phoneNumberKit,
                 formattedNumber: $formattedNum
             )
             print("formatted num: \(formattedNum)")
-            label.updateLabel(number: phoneNum)
+            phoneNumModel.updateLabel(number: phoneNum)
         }
         .padding([.trailing, .leading], 20)
         .frame(width: 330, height: 50)
@@ -155,19 +155,6 @@ struct SignUpBtn: View {
                     .fontWeight(.semibold)
                     .frame(width: 360, height: 50)
             }
-//            .onAppear() {
-//                Task {
-//                    let usernameAdd = await self.settingsModel.addUsername(name: username)
-//                    if (usernameAdd.0 && usernameAdd.2 == .clean) {
-//                        self.isLogin = true
-//                    } else {
-//                        error = usernameAdd.1
-//                        if usernameAdd.2 == .offensive {
-//                            unsentError = "Please choose an appropriate name next time"
-//                        }
-//                    }
-//                }
-//            }
             .frame(width: 330, height: 50)
             .foregroundStyle(.black)
             .bold()

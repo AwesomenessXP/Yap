@@ -14,7 +14,6 @@ class PhoneNumModel: ObservableObject {
     @Published var isDisabled: Bool = true
     @Published var color: Color = .red
     @Published var phoneNum: String = ""
-    @Published var isAuth: Bool = false
     
     let MAXDIGITS = 10
     
