@@ -4,6 +4,7 @@ import PhoneNumberKit
 struct SignUpView: View {
     @EnvironmentObject var settingsModel: SettingsModel
     @EnvironmentObject var phoneNumModel: PhoneNumModel
+    @EnvironmentObject var label: PhoneNumModel
     @FocusState var isFocused: Bool
     @Binding var isLogin: Bool
     @Binding var username: String
@@ -66,9 +67,16 @@ struct SignUpView: View {
             .foregroundStyle(.white)
             .padding(.leading, 20)
             .frame(width: 330, height: 50)
-            .onChange(of: username) { newValue in
+            .onChange(of: username, perform: {
+                username in
                 checkBtnDisabled()
-            }
+                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    self.btnDisabled = false
+                }
+                else {
+                    self.btnDisabled = true
+                }
+            })
     }
     
     var PhoneNumField: some View {
@@ -88,6 +96,7 @@ struct SignUpView: View {
         .keyboardType(.numberPad)
         .onChange(of: phoneNum) { newValue in
             var unformatted = phoneNumModel.unformatNum(number: newValue)
+            if newValue.count >= phoneNumModel.MAXDIGITS { label.isDisabled = false }
             unformatted = String(unformatted.prefix(phoneNumModel.MAXDIGITS))
             phoneNum = PartialFormatter().formatPartial(unformatted)
             formattedNum = phoneNumModel.asYouType (
@@ -97,6 +106,7 @@ struct SignUpView: View {
             )
             print("formatted num: \(formattedNum)")
             phoneNumModel.updateLabel(number: phoneNum)
+            checkBtnDisabled()
         }
         .padding([.trailing, .leading], 20)
         .frame(width: 330, height: 50)
@@ -144,34 +154,25 @@ struct SignUpBtn: View {
             Spacer()
         }
         
-        GeometryReader { geometry in // grab the screen size
-            NavigationLink {
-                VerificationView(username: $username, 
-                                 isLogin: $isLogin,
-                                 error: $error,
-                                 unsentError: $unsentError)
-            } label: {
-                Text("Send OTP")
-                    .fontWeight(.semibold)
-                    .frame(width: 360, height: 50)
+        if self.eulaAccepted && !self.btnDisabled && !label.isDisabled {
+            GeometryReader { geometry in // grab the screen size
+                NavigationLink {
+                    VerificationView(username: $username,
+                                     isLogin: $isLogin,
+                                     error: $error,
+                                     unsentError: $unsentError)
+                } label: {
+                    Text("Send OTP")
+                        .fontWeight(.semibold)
+                        .frame(width: 360, height: 50)
+                }
+                .frame(width: 330, height: 50)
+                .foregroundStyle(.black)
+                .bold()
+                .background(Color.white)
+                .cornerRadius(15)
+                .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             }
-            .frame(width: 330, height: 50)
-            .foregroundStyle(.black)
-            .bold()
-            .onChange(of: username, perform: {
-                username in
-                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    error = ""
-                    self.btnDisabled = false
-                }
-                else {
-                    self.btnDisabled = true
-                }
-            })
-            .disabled(!self.eulaAccepted && self.btnDisabled && label.isDisabled)
-            .background(self.eulaAccepted && !self.btnDisabled ? Color.white : Color.gray.opacity(0.5))
-            .cornerRadius(15)
-            .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
         }
     }
 }
