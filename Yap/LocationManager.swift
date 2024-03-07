@@ -20,7 +20,7 @@ class LocationManager: NSObject, ObservableObject, Observable, CLLocationManager
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
 //        self.requestNotificationPermission()
-()
+//()
         
         print("\(manager.accuracyAuthorization)")
         

@@ -329,6 +329,16 @@ struct SignUpView: View {
             .multilineTextAlignment(.center)
     }
     
+    var PhoneNumField: some View {
+        TextField("Choose a username", text: $username)
+            .bold()
+            .colorScheme(.dark)
+            .foregroundStyle(.white)
+            .frame(width: 330, height: 50)
+            .multilineTextAlignment(.center)
+            .keyboardType(.numberPad)
+    }
+    
     func checkBtnDisabled() {
         if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             self.btnDisabled = false
@@ -383,7 +393,7 @@ struct SignUpBtn: View {
                 }
                 
             }}) {
-                Text("Start Yappin")
+                Text("Continue to Auth")
                     .fontWeight(.semibold)
                     .frame(width: 360, height: 50)
             }
