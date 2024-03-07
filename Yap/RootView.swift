@@ -2,6 +2,7 @@ import SwiftUI
 import CoreLocation
 import CoreLocationUI
 import MapKit
+import PhoneNumberKit
 //import UserNotifications
 
 struct User {
@@ -19,6 +20,8 @@ struct RootView: View {
     @State var latitude: Double?
     @State var longitude: Double?
     @State var username: String = ""
+    @State var phoneNum: String = ""
+    @State var formattedNum: String = ""
     @State var isLogin: Bool = false
     @State var msgUnsent: Bool = false
     @State var timerInterval: TimeInterval = 10
@@ -42,7 +45,7 @@ struct RootView: View {
                 }
             }
             else {
-                SignUpView(usernameSet: $isLogin, username: $username)
+                SignUpView(usernameSet: $isLogin, username: $username, phoneNum: $phoneNum, formattedNum: $formattedNum)
             }
         }
         .onAppear {
@@ -272,151 +275,6 @@ struct RootView: View {
                 websocketClient.update(latitude: latitude, longitude: longitude)
             }
         }
-    }
-}
-
-struct SignUpView: View {
-    @EnvironmentObject var settingsModel: SettingsModel
-    @Binding var usernameSet: Bool
-    @Binding var username: String
-    @State private var btnDisabled: Bool = true
-    
-    var body: some View {
-        VStack {
-            Spacer().frame(height: 75)
-            HStack {
-                Spacer()
-                Text("YAPPIN")
-                    .font(.system(size: 36)).bold()
-                    .foregroundColor(.white)
-                    .italic()
-                    .fontWeight(.heavy)
-                Spacer()
-            }.padding(.bottom,5)
-            HStack {
-                Spacer()
-                Text("Chat with people nearby you")
-                    .font(.system(size: 18)).bold()
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
-                Spacer()
-            }
-            Spacer().frame(height: 20)
-            Group {
-                UsernameField
-                    .onChange(of: username) { newValue in
-                        checkBtnDisabled()
-                    }
-            }
-            .background(RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.gray.opacity(0.45), lineWidth: 2))
-            .padding()
-            Spacer()
-            
-            SignUpBtn(isLogin: $usernameSet, username: $username, btnDisabled: $btnDisabled)
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black)
-    }
-    
-    var UsernameField: some View {
-        TextField("Choose a username", text: $username)
-            .bold()
-            .colorScheme(.dark)
-            .foregroundStyle(.white)
-            .frame(width: 330, height: 50)
-            .multilineTextAlignment(.center)
-    }
-    
-    var PhoneNumField: some View {
-        TextField("Choose a username", text: $username)
-            .bold()
-            .colorScheme(.dark)
-            .foregroundStyle(.white)
-            .frame(width: 330, height: 50)
-            .multilineTextAlignment(.center)
-            .keyboardType(.numberPad)
-    }
-    
-    func checkBtnDisabled() {
-        if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            self.btnDisabled = false
-        }
-    }
-}
-
-struct SignUpBtn: View {
-    @EnvironmentObject var settingsModel: SettingsModel
-    @Binding var isLogin: Bool
-    @Binding var username: String
-    @State private var eulaAccepted = false
-    let termsUrl = "https://lighthearted-mandazi-3d73bb.netlify.app/Yappin.pdf"
-    @Binding var btnDisabled: Bool
-    @State var error: String = ""
-    @State var unsentError: String = ""
-    
-    var body: some View {
-        VStack() {
-            HStack {
-                Spacer()
-                Toggle(isOn: $eulaAccepted) {
-                    HStack(spacing: 1) {
-                        Text("I accept the ")
-                            .fontWeight(.regular).foregroundStyle(.white)
-                        Link("Terms and Conditions", destination: URL(string: termsUrl)!)
-                            .foregroundStyle(.gray).fontWeight(.bold)
-                    }
-                }
-                .toggleStyle(CheckboxToggleStyle())
-                .font(.system(size: 12))
-                Spacer()
-            }
-            Text(error)
-                .foregroundStyle(.red)
-            Text(unsentError)
-                .foregroundStyle(.red)
-            Spacer()
-            Spacer()
-        }
-        
-        GeometryReader { geometry in // grab the screen size
-            Button(action: { Task {
-                let usernameAdd = await self.settingsModel.addUsername(name: username)
-                if (usernameAdd.0 && usernameAdd.2 == .clean) {
-                    self.isLogin = true
-                } else {
-                    error = usernameAdd.1
-                    if usernameAdd.2 == .offensive {
-                        unsentError = "Please choose an appropriate name next time"
-                    }
-                }
-                
-            }}) {
-                Text("Continue to Auth")
-                    .fontWeight(.semibold)
-                    .frame(width: 360, height: 50)
-            }
-            .frame(width: 330, height: 50)
-            .foregroundStyle(.black)
-            .bold()
-            .onChange(of: username, perform: {
-                username in
-                if !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    error = ""
-                    self.btnDisabled = false
-                }
-                else {
-                    self.btnDisabled = true
-                }
-            })
-            .disabled(!self.eulaAccepted && self.btnDisabled)
-            .background(self.eulaAccepted && !self.btnDisabled ? Color.white : Color.gray.opacity(0.5))
-            .cornerRadius(15)
-            .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
-            
-        }
-
     }
 }
 

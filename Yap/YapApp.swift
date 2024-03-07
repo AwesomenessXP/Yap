@@ -11,6 +11,7 @@ import SwiftUI
 struct YapApp: App {
     @UIApplicationDelegateAdaptor(APNManager.self) var apnManager
     @StateObject var settingsModel = SettingsModel()
+    @StateObject var phoneNumModel = PhoneNumModel()
     let websocketClient = WebsocketClient()
     
     var body: some Scene {
@@ -18,6 +19,7 @@ struct YapApp: App {
             RootView()
                 .environmentObject(websocketClient)
                 .environmentObject(settingsModel)
+                .environmentObject(phoneNumModel)
                 .onAppear() {
                     websocketClient.connect()
                 }
