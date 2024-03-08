@@ -22,6 +22,9 @@
 		7582706E2B88688600FCA694 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7582706D2B88688600FCA694 /* Assets.xcassets */; };
 		758270702B88696600FCA694 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7582706F2B88696600FCA694 /* Launch Screen.storyboard */; };
 		758270722B891E6B00FCA694 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758270712B891E6B00FCA694 /* MapView.swift */; };
+		75D97C472B9ABF8100198086 /* PhoneNumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D97C462B9ABF8100198086 /* PhoneNumModel.swift */; };
+		75D97C492B9ABF8800198086 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D97C482B9ABF8800198086 /* SignUpView.swift */; };
+		75D97C4C2B9ABFA100198086 /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 75D97C4B2B9ABFA100198086 /* PhoneNumberKit */; };
 		E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C392B77304D00150AF4 /* YapApp.swift */; };
 		E7A81C412B77304F00150AF4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */; };
 		E7A81C4B2B77304F00150AF4 /* YapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A81C4A2B77304F00150AF4 /* YapTests.swift */; };
@@ -60,6 +63,8 @@
 		7582706D2B88688600FCA694 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7582706F2B88696600FCA694 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		758270712B891E6B00FCA694 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		75D97C462B9ABF8100198086 /* PhoneNumModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumModel.swift; sourceTree = "<group>"; };
+		75D97C482B9ABF8800198086 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		E7A81C362B77304D00150AF4 /* Yap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A81C392B77304D00150AF4 /* YapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YapApp.swift; sourceTree = "<group>"; };
 		E7A81C402B77304F00150AF4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -75,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75D97C4C2B9ABFA100198086 /* PhoneNumberKit in Frameworks */,
 				20FB7DD72B985FDE007D5E52 /* Supabase in Frameworks */,
 				20FB7DD52B985FDE007D5E52 /* Auth in Frameworks */,
 			);
@@ -128,6 +134,8 @@
 				75785FAC2B9374E90016FF0D /* OpenAIHandler.swift */,
 				3511BCBD2B77E34E00ADB53E /* LocationManager.swift */,
 				3511BCBF2B77E35500ADB53E /* RootView.swift */,
+				75D97C482B9ABF8800198086 /* SignUpView.swift */,
+				75D97C462B9ABF8100198086 /* PhoneNumModel.swift */,
 				75785FB02B9467E60016FF0D /* APNManager.swift */,
 				758270712B891E6B00FCA694 /* MapView.swift */,
 				756EF0052B97CD4200FBDE2C /* VerificationView.swift */,
@@ -183,6 +191,7 @@
 			packageProductDependencies = (
 				20FB7DD42B985FDE007D5E52 /* Auth */,
 				20FB7DD62B985FDE007D5E52 /* Supabase */,
+				75D97C4B2B9ABFA100198086 /* PhoneNumberKit */,
 			);
 			productName = Yap;
 			productReference = E7A81C362B77304D00150AF4 /* Yap.app */;
@@ -258,6 +267,7 @@
 			mainGroup = E7A81C2D2B77304D00150AF4;
 			packageReferences = (
 				20FB7DD32B985FDE007D5E52 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				75D97C4A2B9ABFA100198086 /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
 			);
 			productRefGroup = E7A81C372B77304D00150AF4 /* Products */;
 			projectDirPath = "";
@@ -303,6 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				75785FAD2B9374E90016FF0D /* OpenAIHandler.swift in Sources */,
+				75D97C472B9ABF8100198086 /* PhoneNumModel.swift in Sources */,
 				75785FAF2B9374FA0016FF0D /* OpenAIModel.swift in Sources */,
 				758270722B891E6B00FCA694 /* MapView.swift in Sources */,
 				20FB7DCB2B9855B9007D5E52 /* PhoneAuthHandler.swift in Sources */,
@@ -311,6 +322,7 @@
 				758270662B88654F00FCA694 /* SettingsModel.swift in Sources */,
 				35898B122B85DDEF008A96F6 /* WebsocketHandler.swift in Sources */,
 				3511BCC02B77E35500ADB53E /* RootView.swift in Sources */,
+				75D97C492B9ABF8800198086 /* SignUpView.swift in Sources */,
 				E7A81C3A2B77304D00150AF4 /* YapApp.swift in Sources */,
 				20FBDEEA2B8499FA00107807 /* SettingPage.swift in Sources */,
 				3511BCBE2B77E34E00ADB53E /* LocationManager.swift in Sources */,
@@ -679,6 +691,14 @@
 				minimumVersion = 2.3.1;
 			};
 		};
+		75D97C4A2B9ABFA100198086 /* XCRemoteSwiftPackageReference "PhoneNumberKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/PhoneNumberKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.7.9;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -691,6 +711,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 20FB7DD32B985FDE007D5E52 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		75D97C4B2B9ABFA100198086 /* PhoneNumberKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 75D97C4A2B9ABFA100198086 /* XCRemoteSwiftPackageReference "PhoneNumberKit" */;
+			productName = PhoneNumberKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -38,7 +38,7 @@ struct SignUpView: View {
                         .foregroundColor(.white)
                         .fontWeight(.semibold)
                     Spacer()
-                }
+                }.padding(.bottom, 10)
                 Group {
                     UsernameField
                         .focused($isFocused)
@@ -46,8 +46,15 @@ struct SignUpView: View {
                         .focused($isFocused)
                 }
                 .background(RoundedRectangle(cornerRadius: 15)
-                    .stroke(Color.gray.opacity(0.45), lineWidth: 2))
-                .padding()
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white, Color.gray]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 2
+                    ))
+                .padding(.bottom, 8)
                 Spacer()
                 
                 SignUpBtn(isLogin: $isLogin, username: $username, btnDisabled: $btnDisabled)
@@ -151,7 +158,7 @@ struct SignUpBtn: View {
                 .foregroundStyle(.red)
             Spacer()
             Spacer()
-        }
+        }.padding(.top,5)
         
         if self.eulaAccepted && !self.btnDisabled && !label.isDisabled {
             GeometryReader { geometry in // grab the screen size
