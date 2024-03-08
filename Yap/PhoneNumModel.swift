@@ -28,6 +28,7 @@ class PhoneNumModel: ObservableObject {
     // Mutate the user inputted number if formatted correctly
     func asYouType(number: String, phoneNumberKit: PhoneNumberKit,
                    formattedNumber: Binding<String>) -> String {
+        if number.count >= MAXDIGITS { self.isDisabled = false }
         guard let phoneNumber = try? phoneNumberKit.parse(
             number, withRegion: "US", ignoreType: true
         ) else { return ""}

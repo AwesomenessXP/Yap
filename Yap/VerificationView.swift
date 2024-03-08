@@ -69,6 +69,8 @@ struct VerificationView: View {
                 .foregroundColor(Color.gray)
                 .font(.subheadline)
                 .padding()
+            Text(error)
+                .foregroundStyle(.red)
             GeometryReader { geometry in
                 Button("Resend Code") {
                     DispatchQueue.main.async {
@@ -76,7 +78,11 @@ struct VerificationView: View {
                         otpFields = Array(repeating: " ", count: 6)
                     }
                     Task {
-                        await sendOTP()
+                        self.error = ""
+                        let sent = await sendOTP()
+                        if !sent {
+                            self.error = "Unable to send an OTP to this number"
+                        }
                     }
                 }
                 .frame(width: 330, height: 50)
@@ -92,7 +98,10 @@ struct VerificationView: View {
         .onAppear() {
             focusedField = 0
             Task {
-                await sendOTP()
+                let sent = await sendOTP()
+                if !sent {
+                    self.error = "Unable to send an OTP to this number"
+                }
             }
         }
         .alert("YAP needs to use your location to access your messages", isPresented: .constant(!LocationManager.shared.isAuthorized()), actions: {
@@ -100,7 +109,7 @@ struct VerificationView: View {
         })
     }
     
-    func startVerify() async {
+    func startVerify() async -> Bool {
         let verified = await verifyOTP()
         if verified {
             let usernameAdd = await self.settingsModel.addUsername(name: username)
@@ -109,6 +118,7 @@ struct VerificationView: View {
                     self.isLogin = true
                     print("logged in!")
                 }
+                return true
             } else {
                 self.error = usernameAdd.1
                 if usernameAdd.2 == .offensive {
@@ -116,6 +126,7 @@ struct VerificationView: View {
                 }
             }
         }
+        return false
     }
     
     func verifyToken() async {
@@ -168,7 +179,10 @@ struct VerificationView: View {
         }// else if
         else if otpFields[5] != " " {
             Task {
-                await startVerify()
+                let verified = await startVerify()
+                if !verified {
+                    self.error = "Unable to verify the OTP"
+                }
             }
         }
     }

@@ -96,7 +96,6 @@ struct SignUpView: View {
         .keyboardType(.numberPad)
         .onChange(of: phoneNum) { newValue in
             var unformatted = phoneNumModel.unformatNum(number: newValue)
-            if newValue.count >= phoneNumModel.MAXDIGITS { label.isDisabled = false }
             unformatted = String(unformatted.prefix(phoneNumModel.MAXDIGITS))
             phoneNum = PartialFormatter().formatPartial(unformatted)
             formattedNum = phoneNumModel.asYouType (
