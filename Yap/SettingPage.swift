@@ -23,7 +23,7 @@ struct SettingPage: View {
     @State var setNotif = false
     
     var body: some View {
-        NavigationStack{
+        //NavigationStack{
             ZStack {
                 Form {
 //                    Toggle("Notifications", isOn: Binding(get: {settingsModel.getNotif()}, set: { value in
@@ -149,7 +149,7 @@ struct SettingPage: View {
             }
         }
     }
-}
+//}
 
 
 func checkNotificationAuthorization(completion: @escaping (Bool) -> Void) {
