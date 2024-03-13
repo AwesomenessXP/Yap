@@ -83,7 +83,7 @@
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
-      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldUseLaunchSchemeArgsEnv = "NO"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
@@ -97,6 +97,13 @@
             ReferencedContainer = "container:Yap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "supabase_key"
+            value = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpamFibnhqYm9pbmVvb2prcGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3NzYyNDIsImV4cCI6MjAyNTM1MjI0Mn0.jxRS6H3jdG5FlbJcGmmycajcoRJkx7b4H_69Wsr7TJU"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -44,6 +44,7 @@ class APNManager: NSObject, UIApplicationDelegate, UNUserNotificationCenterDeleg
                      error: Error) {
         // Try again later.
         print("Failed to register")
+        print(error.localizedDescription)
     }
 }
 
