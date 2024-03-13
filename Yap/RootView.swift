@@ -365,7 +365,7 @@ struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         return HStack {
             Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                .font(.system(size: 25))
+                .font(.system(size: 40))
                 .foregroundColor(.white)
                 .onTapGesture {
                     DispatchQueue.main.async {
