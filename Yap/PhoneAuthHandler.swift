@@ -37,4 +37,13 @@ class PhoneAuthHandler: ObservableObject {
         )
         return true
     }
+    
+    func listenForAuth() async {
+        guard let supabase = supabase else { return }
+        for await (event, session) in await supabase.auth.authStateChanges {
+            if event == .signedIn {
+                
+            }
+        }
+    }
 }

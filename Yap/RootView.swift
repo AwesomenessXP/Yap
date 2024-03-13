@@ -369,7 +369,9 @@ struct CheckboxToggleStyle: ToggleStyle {
                 .frame(width: 16, height: 16)
                 .foregroundColor(configuration.isOn ? .white : .white)
                 .onTapGesture {
-                    configuration.isOn.toggle()
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        configuration.isOn.toggle()
+                    }
                 }
             
             configuration.label

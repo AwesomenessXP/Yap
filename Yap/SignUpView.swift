@@ -148,6 +148,7 @@ struct SignUpBtn: View {
                             .foregroundStyle(.gray).fontWeight(.bold)
                     }
                 }
+                .padding()
                 .toggleStyle(CheckboxToggleStyle())
                 .font(.system(size: 15))
                 Spacer()

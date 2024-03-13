@@ -99,7 +99,7 @@ struct VerificationView: View {
             focusedField = 0
             Task {
                 let sent = await sendOTP()
-                if !sent {
+                if sent == false {
                     self.error = "Unable to send an OTP to this number"
                 }
             }
