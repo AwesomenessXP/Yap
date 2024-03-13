@@ -58,8 +58,7 @@ struct SignUpView: View {
                 Spacer()
                 
                 SignUpBtn(isLogin: $isLogin, username: $username, btnDisabled: $btnDisabled)
-                Spacer()
-                    .frame(height: 5)
+
             }
             .onTapGesture {
                 self.isFocused = false
@@ -137,7 +136,7 @@ struct SignUpBtn: View {
     @State var unsentError: String = ""
     
     var body: some View {
-        VStack() {
+        VStack {
             HStack {
                 Spacer()
                 Toggle(isOn: $eulaAccepted) {
