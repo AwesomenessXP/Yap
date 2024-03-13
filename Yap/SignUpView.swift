@@ -137,20 +137,21 @@ struct SignUpBtn: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                Toggle(isOn: $eulaAccepted) {
-                    HStack(spacing: 1) {
-                        Text("I accept the ")
-                            .fontWeight(.regular).foregroundStyle(.white)
-                        Link("Terms and Conditions", destination: URL(string: termsUrl)!)
-                            .foregroundStyle(.gray).fontWeight(.bold)
+            if let url = URL(string: termsUrl) {
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $eulaAccepted) {
+                        HStack(spacing: 1) {
+                            Text("I accept the ")
+                                .fontWeight(.regular).foregroundStyle(.white)
+                            Link("Terms and Conditions", destination: url)
+                                .foregroundStyle(.gray).fontWeight(.bold)
+                        }
                     }
+                    .padding()
+                    .toggleStyle(CheckboxToggleStyle())
+                    Spacer()
                 }
-                .padding()
-                .toggleStyle(CheckboxToggleStyle())
-                .font(.system(size: 15))
-                Spacer()
             }
             Text(error)
                 .foregroundStyle(.red)

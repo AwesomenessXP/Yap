@@ -365,10 +365,11 @@ struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         return HStack {
             Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                .font(.system(size: 20))
-                .foregroundColor(configuration.isOn ? .white : .white)
+                .font(.system(size: 25))
+                .foregroundColor(.white)
                 .onTapGesture {
                     DispatchQueue.main.async {
+                        print("\(configuration.isOn)")
                         configuration.isOn.toggle()
                     }
                 }

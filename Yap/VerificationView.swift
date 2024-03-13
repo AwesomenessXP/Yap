@@ -180,7 +180,7 @@ struct VerificationView: View {
         else if otpFields[5] != " " {
             Task {
                 let verified = await startVerify()
-                if !verified {
+                if verified == false {
                     self.error = "Unable to verify the OTP"
                 }
             }
